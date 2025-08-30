@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Kick Logo Icon originally from SevenTV Monorepo: https://github.com/SevenTV/SevenTV/blob/main/apps/website/src/components/icons/kick-logo.svelte -->
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" width="256" height="256" fill="white">
+  <path d="M64 464V48H192V144H272V96H320V48H448V176H400V224H352V288H400V336H441V464H313V416H264.5V368H200V464H64Z"/>
+</svg>

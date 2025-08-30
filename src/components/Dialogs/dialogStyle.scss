@@ -1,0 +1,99 @@
+.dialog-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000; /* Ensure it covers other content */
+    border: none;
+}
+dialog {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1001; /* Ensure it appears above the backdrop */
+
+    width: 300px;
+    height: 100px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+    background-color: #0a0a0a;
+    color: white;
+    border: none;
+    border-radius: 10px;
+
+    .platforms {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+
+        button {
+            background-color: #191919;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: inherit;
+            border: none;
+            border-radius: 5px;
+            
+            padding: 10px;
+
+            * {
+                margin: 0;
+            }
+
+            img {
+                width: 16px;
+                height: 16px;
+                margin-right: 5px;
+            }
+            &:hover {
+                background-color: #282828;
+            }
+            &:disabled {
+                background-color: #101010;
+                cursor: not-allowed;
+                
+                p, img {
+                    opacity: 0.5;
+                }
+            }
+        }
+    }
+
+    &.confirmation-dialog {
+        width: 500px;
+        height: auto;
+
+        .content {
+            padding: 20px;
+
+            .text {
+                p {
+                    margin: 2px;
+                    font-weight: bold;
+                }
+            }
+
+            button {
+                margin-top: 10px;
+                background-color: #4caf50;
+				color: white;
+				padding: 10px 20px;
+				border: none;
+				border-radius: 5px;
+				cursor: pointer;
+            }
+            button.cancel {
+                background-color: #f44336;
+            }
+        }
+    }
+}
