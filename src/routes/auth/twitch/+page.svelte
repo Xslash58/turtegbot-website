@@ -30,7 +30,7 @@
 
 		localStorage.setItem('turteg-token', token);
 
-		//location.href = '/';
+		location.href = '/';
 	});
 </script>
 
