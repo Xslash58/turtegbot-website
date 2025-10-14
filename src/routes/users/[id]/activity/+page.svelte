@@ -206,6 +206,16 @@
 						<a href={`https://7tv.app/emote-sets/${JSON.parse(log.details).toEmoteSet?.id}`}
 							target="_blank">{JSON.parse(log.details).toEmoteSet?.name}</a
 						>
+					{:else if log.actionType == '7tv_replace'}
+						Replaced 7TV emote
+						<a href={`https://7tv.app/emotes/${JSON.parse(log.details).oldEmote?.id}`}
+							target="_blank">{JSON.parse(log.details).oldEmote?.name}</a>
+						to
+						<a href={`https://7tv.app/emotes/${JSON.parse(log.details).newEmote?.id}`}
+							target="_blank">{JSON.parse(log.details).newEmote?.name}</a>
+						in
+						<a href={`https://7tv.app/emote-sets/${JSON.parse(log.details).emoteSet?.id}`}
+							target="_blank">{JSON.parse(log.details).emoteSet?.name}</a>
 					{:else}
 						{log.actionType}
 					{/if}
