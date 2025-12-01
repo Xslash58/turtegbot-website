@@ -1,7 +1,27 @@
 <script lang="ts">
 	import { page } from "$app/state";
 
+	const emoteUrls = [
+		"https://cdn.7tv.app/emote/01GQ637BD800023EFT95G0MECC/4x.avif",
+		"https://cdn.7tv.app/emote/01HRQJ7J2G0008EJM05NVB2SYD/4x.avif",
+		"https://cdn.7tv.app/emote/01J6Q2AS900007DP4FW3NF42RA/4x.avif",
+		"https://cdn.7tv.app/emote/01HJN8TYR0000BYEJVE2JB316C/4x.avif",
+		"https://cdn.7tv.app/emote/01J0VRQRV80006HGJYSD04F5VA/4x.avif",
+		"https://cdn.7tv.app/emote/01GV56F8QR0006FW5TVZVMFVWE/4x.avif",
+		"https://cdn.7tv.app/emote/01GQFT1WF80002Q9KS8SKQMHHY/4x.avif",
+		"https://cdn.7tv.app/emote/01GXY8F948000CAGQJD077GE47/4x.avif",
+		"https://cdn.7tv.app/emote/01H94RXK8G000A3085VTM7A7ME/4x.avif",
+		"https://cdn.7tv.app/emote/01GWSGBQ7R0008X0SB6ANMACKG/4x.avif"
+	]
+
 	let title = page.error?.message ?? "Error";
+	let status = page.status ?? 500;
+	let randomEmoteUrl = emoteUrls[Math.floor(Math.random() * emoteUrls.length)];
+
+	if(page.error?.message == "fake_notfound") {
+		title = "Not Found";
+		status = 404;
+	}
 </script>
 
 <svelte:head>
@@ -9,13 +29,14 @@
 </svelte:head>
 
 <div class="container">
+	<img src={randomEmoteUrl} alt="random emote">
 	<h1>{title}</h1>
 	<span>
-		{#if page.status === 401}
+		{#if status === 401}
 			You are unauthorized to view this page.
-		{:else if page.status === 403}
+		{:else if status === 403}
 			You do not have permission to view this page.
-		{:else if page.status === 404}
+		{:else if status === 404}
 			The page you were looking for could not be found.
 		{:else}
 			An internal error occurred.
@@ -32,6 +53,7 @@
 	.container {
 		height: 100%;
 
+		flex: 1;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -40,6 +62,10 @@
 		text-align: center;
 
 		font-size: 1.25rem;
+
+		h1 {
+			margin: 0;
+		}
 	}
 
 	a {

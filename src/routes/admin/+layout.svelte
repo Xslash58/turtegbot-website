@@ -3,6 +3,7 @@
 	import { onMount } from 'svelte';
 	import { myUser } from '$lib/stores/userStore';
 	import SideBar from '../../components/admin/SideBar.svelte';
+	import { error } from '@sveltejs/kit';
 
 	let { data, children } = $props();
 
@@ -11,6 +12,11 @@
 	myUser.subscribe((value) => {
 		if (value) {
 			me = value;
+		}
+
+		if (!me || !me.role || me.role.power < 5) {
+			console.log('Access denied: insufficient permissions');
+			error(404, 'fake_notfound');
 		}
 	});
 
