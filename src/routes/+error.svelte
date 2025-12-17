@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { goto } from "$app/navigation";
 	import { page } from "$app/state";
+	import { myUser } from "$lib/stores/userStore";
 
 	const emoteUrls = [
 		"https://cdn.7tv.app/emote/01GQ637BD800023EFT95G0MECC/4x.avif",
@@ -22,6 +24,12 @@
 		title = "Not Found";
 		status = 404;
 	}
+
+	myUser.subscribe((value) => {
+		if (value && window && location) {
+			goto(location.href)
+		}
+	});
 </script>
 
 <svelte:head>
