@@ -26,7 +26,7 @@
 	}
 
 	myUser.subscribe((value) => {
-		if (value && window && location) {
+		if (value && window && location && page.error?.message.startsWith("fake_")) {
 			goto(location.href)
 		}
 	});
