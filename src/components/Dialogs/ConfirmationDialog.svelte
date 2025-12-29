@@ -26,7 +26,7 @@
 </script>
 
 {#if visible}
-	<button class="dialog-backdrop" on:click={close} aria-label="Close login dialog"></button>
+	<button class="dialog-backdrop" on:click={close} aria-label="Close confirmation dialog"></button>
 	<dialog class="confirmation-dialog" transition:fade={{ duration: 200 }} open>
 		<section class="content">
             <section class="text">
