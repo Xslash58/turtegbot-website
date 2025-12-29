@@ -49,6 +49,9 @@
 		<ul>
 			<li><a href="/">Home</a></li>
 			<li><a href="/commands">Commands</a></li>
+			{#if import.meta.env.VITE_RECAPS == '1'}
+				<li><a href="/recap/2025" class="special-event">RECAP 2025</a></li>
+			{/if}
 			{#if user && user.role?.power >= 5}
 				<li><a href="/admin" style="color: red;">Admin</a></li>
 			{/if}
