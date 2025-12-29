@@ -96,8 +96,8 @@
 				<h1>No Recap Available</h1>
 				<h2>It seems like you don't have any Recap data for 2025.</h2>
 				<p>
-					You had to use TurtegBot in 2025 at least once in order to have a Recap. But don't worry, keep using the
-					bot and you'll get one next year!
+					You had to use TurtegBot in 2025 at least once in order to have a Recap. But don't worry,
+					keep using the bot and you'll get one next year!
 				</p>
 				<p>For now, feel free to explore the community Recap.</p>
 			</section>
@@ -147,7 +147,7 @@
 			<section class="seventv">
 				<section class="text">
 					<h2>7TV</h2>
-					<p>Let's check one of the most used feature in the entire bot!</p>
+					<p>One of the most used feature in the entire bot!</p>
 				</section>
 				<section class="achievement">
 					<p id="title">Total actions</p>
@@ -170,7 +170,7 @@
 			<section class="reminders">
 				<section class="text">
 					<h2>Reminders</h2>
-					<p>Let's see how people were bothered!</p>
+					<p>A year of staying on top of things!</p>
 				</section>
 				<section class="achievements">
 					<section class="achievement">
@@ -231,6 +231,14 @@
 					</svg>
 				</section>
 			</section>
+
+			<section class="thankyou">
+				<section class="wall-of-text">
+					<h1>Thank You!</h1>
+					<h2>We appreciate you being part of the TurtegBot Community in 2025.</h2>
+					<p>Hope to see you and your chat next year!</p>
+				</section>
+			</section>
 		</section>
 		<p>Generated: {roomRecap?.generated_at.toLocaleString()}</p>
 	{:else if category === 1 && userRecap}
@@ -271,10 +279,7 @@
 			<section class="turtles">
 				<section class="text">
 					<h2>🐢 Turtles 🐢</h2>
-					<p>
-						A lot has happened during 2025 but let's take a while to appreciate the core bot
-						features!
-					</p>
+					<p>Let's take a moment to appreciate the core bot feature!</p>
 				</section>
 				<section class="achievement">
 					<p id="title">Turtles Collected</p>
@@ -293,7 +298,7 @@
 			<section class="seventv">
 				<section class="text">
 					<h2>7TV</h2>
-					<p>Let's check one of the most used feature in the entire bot!</p>
+					<p>One of the most used feature in the entire bot!</p>
 				</section>
 				<section class="achievement">
 					<p id="title">Total actions</p>
@@ -318,7 +323,7 @@
 			<section class="reminders">
 				<section class="text">
 					<h2>Reminders</h2>
-					<p>Let's see how you bothered people!</p>
+					<p>A year of staying on top of things!</p>
 				</section>
 				<section class="achievements">
 					<section class="achievement">
@@ -384,6 +389,14 @@
 							{/if}
 						{/each}
 					</svg>
+				</section>
+			</section>
+
+			<section class="thankyou">
+				<section class="wall-of-text">
+					<h1>Thank You!</h1>
+					<h2>We appreciate you being part of the TurtegBot Community in 2025.</h2>
+					<p>Hope to see you next year!</p>
 				</section>
 			</section>
 		</section>
@@ -476,10 +489,7 @@
 			<section class="turtles">
 				<section class="text">
 					<h2>🐢 Turtles 🐢</h2>
-					<p>
-						A lot has happened during 2025 but let's take a while to appreciate the core bot
-						features!
-					</p>
+					<p>Let's take a moment to appreciate the core bot feature!</p>
 				</section>
 
 				<section class="achievements">
@@ -519,7 +529,7 @@
 			<section class="seventv">
 				<section class="text">
 					<h2>7TV</h2>
-					<p>Let's check one of the most used feature in the entire bot!</p>
+					<p>One of the most used feature in the entire bot!</p>
 				</section>
 
 				<section class="achievements">
@@ -563,7 +573,7 @@
 			<section class="reminders">
 				<section class="text">
 					<h2>Reminders</h2>
-					<p>Let's see how you bothered people!</p>
+					<p>A year of staying on top of things!</p>
 				</section>
 				<section class="achievements">
 					<section class="achievement">
@@ -592,7 +602,7 @@
 			<section class="monthly-usage">
 				<section class="text">
 					<h2>Monthly Usage</h2>
-					<p>Here's how your usage was distributed throughout the year.</p>
+					<p>Here's the usage distributed throughout the year.</p>
 
 					<svg viewBox="0 0 600 300" style="width: 100%; max-width: 800px; height: auto;">
 						{#each [1, 2, 3, 4, 5, 6, 7, 8, 9] as month}
@@ -613,7 +623,17 @@
 					</svg>
 				</section>
 			</section>
+
+			<section class="thankyou">
+				<section class="wall-of-text">
+					<h1>Thank You!</h1>
+					<h2>We appreciate you being part of the TurtegBot Community in 2025.</h2>
+					<p>Hope to see you next year!</p>
+				</section>
+			</section>
 		</section>
+		
+		<p>Generated: ±2025-12-28</p>
 	{/if}
 </section>
 
@@ -883,6 +903,12 @@
 			.text {
 				width: 100%;
 			}
+		}
+
+		.thankyou {
+			width: 100%;
+			padding: 2rem 0;
+			color: white;
 		}
 
 		.achievements {
