@@ -3,6 +3,7 @@
 	import type { User } from '$lib/API/Models/Users';
 	import { GetMe } from '$lib/API/Users';
 	import christmasBg from '$lib/assets/header-xmas.png';
+	import christmasLights from '$lib/assets/header-xmas-lights.avif'
 	import turtegLogo from '$lib/assets/favicon.png';
 
 	import { loginModalVisible } from '$lib/stores/modalStore';
@@ -80,13 +81,13 @@
 	{#if import.meta.env.VITE_CHRISTMAS == '1'}
 		<section class="seasonal-xmas">
 			<img
-				src="https://i.xslash.ovh/SB7cK59f.avif"
+				src={christmasLights}
 				alt="christmas left corner lights"
 				class="corner left"
 				style="display: none;"
 			/>
 			<img
-				src="https://i.xslash.ovh/SB7cK59f.avif"
+				src={christmasLights}
 				alt="christmas left corner lights"
 				class="corner right"
 			/>
