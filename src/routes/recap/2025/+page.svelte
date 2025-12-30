@@ -406,11 +406,11 @@
 			<section class="achievements main-achievements">
 				<section class="achievement">
 					<p id="title">Commands Executed</p>
-					<p>230,724</p>
+					<p>233,176</p>
 				</section>
 				<section class="achievement">
 					<p id="title">Most Days Using Bot</p>
-					<p>265</p>
+					<p>266</p>
 				</section>
 				<section class="achievement">
 					<p id="title">Used In Channels</p>
@@ -428,10 +428,16 @@
 
 			<section class="best-room">
 				<h2>Most Days Using Bot</h2>
-				<section class="achievement">
-					<p>j0ann_a</p>
+				<section class="achievements">
+					<section class="achievement">
+						<p>j0ann_a</p>
+					</section>
+					<p>and</p>
+					<section class="achievement">
+						<p>xnatalla</p>
+					</section>
 				</section>
-				<p>Days: 265</p>
+				<p>Days: 266</p>
 			</section>
 
 			<section class="best-room">
@@ -439,7 +445,7 @@
 				<section class="achievement">
 					<p>j0ann_a</p>
 				</section>
-				<p>Commands Executed: 25,774</p>
+				<p>Commands Executed: 25,871</p>
 			</section>
 
 			<section class="tier-commands">
@@ -495,15 +501,15 @@
 				<section class="achievements">
 					<section class="achievement">
 						<p id="title">Turtles Collected</p>
-						<p>189,590</p>
+						<p>193,437</p>
 					</section>
 					<section class="achievement">
 						<p id="title">Duels</p>
-						<p>533</p>
+						<p>564</p>
 					</section>
 					<section class="achievement">
 						<p id="title">Turtles Lost</p>
-						<p>138,297</p>
+						<p>140,007</p>
 					</section>
 				</section>
 
@@ -535,15 +541,15 @@
 				<section class="achievements">
 					<section class="achievement">
 						<p id="title">Total actions</p>
-						<p>18,261</p>
+						<p>18,389</p>
 					</section>
 					<section class="achievement">
 						<p id="title">Emotes Actions</p>
-						<p>17,223</p>
+						<p>17,314</p>
 					</section>
 					<section class="achievement">
 						<p id="title">Presence Updates</p>
-						<p>811</p>
+						<p>831</p>
 					</section>
 					<section class="achievement">
 						<p id="title">Cosmetics Changed</p>
@@ -557,7 +563,7 @@
 						<section class="achievement">
 							<p>j0ann_a</p>
 						</section>
-						<p>Actions: 2,273</p>
+						<p>Actions: 2,275</p>
 					</section>
 
 					<section class="seventv-user">
@@ -578,7 +584,7 @@
 				<section class="achievements">
 					<section class="achievement">
 						<p id="title">Total</p>
-						<p>13,587</p>
+						<p>13,832</p>
 					</section>
 				</section>
 				<section class="user-stats">
@@ -587,14 +593,14 @@
 						<section class="achievement">
 							<p>j0ann_a</p>
 						</section>
-						<p>Count: 1,326</p>
+						<p>Count: 1,339</p>
 					</section>
 					<section class="remind-user">
 						<h2>Most Reminders Received by</h2>
 						<section class="achievement">
 							<p>wrrrnika5</p>
 						</section>
-						<p>Count: 838</p>
+						<p>Count: 851</p>
 					</section>
 				</section>
 			</section>
@@ -607,7 +613,7 @@
 					<svg viewBox="0 0 600 300" style="width: 100%; max-width: 800px; height: auto;">
 						{#each [1, 2, 3, 4, 5, 6, 7, 8, 9] as month}
 							{@const monthNames = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']}
-							{@const data = [13748, 24941, 29994, 30420, 37780, 25257, 26579, 23862, 16005]}
+							{@const data = [13748, 24941, 29994, 30420, 37780, 25257, 26579, 23862, 20586]}
 							{@const value = data[month - 1]}
 							{@const height = (value / 37780) * 200}
 							{@const x = 50 + (month - 1) * 60}
@@ -633,7 +639,7 @@
 			</section>
 		</section>
 		
-		<p>Generated: ±2025-12-28</p>
+		<p>Generated: ±2025-12-29T21:50:00</p>
 	{/if}
 </section>
 
@@ -720,6 +726,10 @@
 
 			p {
 				margin: 0.5rem 0;
+			}
+
+			.achievements {
+				margin-top: 0;
 			}
 
 			.achievement {
