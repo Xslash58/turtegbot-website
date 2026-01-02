@@ -1,13 +1,17 @@
 <script lang="ts">
 	import type { Recap, RoomRecap } from '$lib/API/Models/Recap';
-	import type { User } from '$lib/API/Models/Users';
+	import type { SearchUser, User } from '$lib/API/Models/Users';
 	import { GetRoomRecap, GetUserRecap } from '$lib/API/Recap';
 	import { myUser } from '$lib/stores/userStore';
 	import { onMount } from 'svelte';
 	import LoadingIndicator from '../../../components/LoadingIndicator.svelte';
 	import { goto } from '$app/navigation';
+	import UserSearch from '../../../components/users/UserSearch.svelte';
+	import { GetUserPage } from '$lib/API/Users';
+	import { confirmationDialog } from '$lib/stores/modalStore';
 
 	let user: User | null = null;
+	let viewUser: User | null = null;
 	let userRecap: Recap | null = null;
 	let roomRecap: RoomRecap | null = null;
 
@@ -18,19 +22,7 @@
 	myUser.subscribe((value) => {
 		if (value) user = value;
 		if (value && window) {
-			GetUserRecap(value.id).then((recap) => {
-				userRecap = recap;
-				console.log('User Recap:', userRecap);
-
-				isLoading = false;
-			});
-			if (Object.keys(value.roomIds).length > 0 && Object.keys(value.roomIds).includes('TWITCH')) {
-				const roomId = value.roomIds['TWITCH'];
-				GetRoomRecap(roomId).then((recap) => {
-					roomRecap = recap;
-					console.log('Room Recap:', roomRecap);
-				});
-			}
+			getRecaps(value);
 		}
 	});
 
@@ -44,18 +36,61 @@
 
 		isLoading = false;
 	});
+
+	function getRecaps(user: User) {
+		GetUserRecap(user.id).then((recap) => {
+			userRecap = recap;
+			console.log('User Recap:', userRecap);
+
+			isLoading = false;
+		});
+		if (Object.keys(user.roomIds).length > 0 && Object.keys(user.roomIds).includes('TWITCH')) {
+			const roomId = user.roomIds['TWITCH'];
+			GetRoomRecap(roomId).then((recap) => {
+				roomRecap = recap;
+				console.log('Room Recap:', roomRecap);
+			});
+		}
+	}
+
+	async function getRecapsBySearch(suser: SearchUser | null) {
+		category = -1;
+		if (!suser) {
+			viewUser = null;
+			
+			if(user)
+				getRecaps(user);
+			
+			return;
+		}
+		let userPage = await GetUserPage(suser.ID + '');
+		if (userPage && userPage.user) {
+			viewUser = userPage.user;
+			getRecaps(userPage.user);
+		} else {
+			confirmationDialog.set({
+				text: 'The selected user did not login to this website yet, so no Recap is available.',
+				visible: true
+			});
+			userRecap = null;
+			roomRecap = null;
+		}
+	}
 </script>
 
 <section class="recap">
 	<section class="fake-background"></section>
 
 	<section class="wall-of-text welcome">
-		{#if user}
+		{#if user && !viewUser}
 			<h2>Welcome back, <span style="color:{user?.role.color}">{user?.display_name}</span></h2>
+		{:else if viewUser}
+			<h2 style="color: #6b6b6b">Viewing Recap for <span style="color:{viewUser?.role.color}">{viewUser?.display_name}</span></h2>
 		{/if}
 		<h1>TurtegBot Recap 2025</h1>
 		<p>Let's dive into your year with TurtegBot</p>
 	</section>
+	<UserSearch onSelect={(u) => {getRecapsBySearch(u)}} />
 	<section class="categories">
 		<button
 			on:click={() => (category = 0)}
@@ -65,7 +100,7 @@
 		<button
 			on:click={() => (category = 1)}
 			style="background-color: {category === 1 ? 'red' : ''}"
-			disabled={!user}>User</button
+			disabled={!userRecap}>User</button
 		>
 		<button on:click={() => (category = 2)} style="background-color: {category === 2 ? 'red' : ''}"
 			>Community</button
