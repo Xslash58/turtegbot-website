@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { PostReload } from '$lib/API/Admin';
+	import { PostReload, PostScript } from '$lib/API/Admin';
 	import { onMount } from 'svelte';
 	import LoadingIndicator from '../../../components/LoadingIndicator.svelte';
 
@@ -24,6 +24,21 @@
 		}
 		isLoading = false;
 	}
+
+	async function runScript(script: string) {
+		let success = false;
+		isLoading = true;
+
+		try {
+			success = await PostScript(script);
+			if (success)
+				error = `Script executed. Please wait a moment for changes to take effect.`;
+		} catch (err) {
+			console.error(`Error running script ${script}:`, error);
+			error = err instanceof Error ? err.message : String(err).replace('Error: ', '');
+		}
+		isLoading = false;
+	}
 </script>
 
 <section class="maintenance">
@@ -36,6 +51,7 @@
                 <button onclick={() => reload('translationmanager')}>Reload Translations</button>
                 <br>
 				<button class="danger" onclick={() => reload('bot')}>Restart Bot</button>
+				<button class="danger" onclick={() => runScript('killbotscreens')}>Kill Bot</button>
 			</nav>
 		</section>
 	{:else if isLoading}
@@ -45,6 +61,11 @@
 	{:else}
 		<section class="panel">
 			<h1>{error}</h1>
+			{#if !error.includes('Script executed')}
+			<nav>
+				<button class="danger" onclick={() => runScript('restartbot')}>Restart Bot</button>
+			</nav>
+			{/if}
 		</section>
 	{/if}
 </section>
