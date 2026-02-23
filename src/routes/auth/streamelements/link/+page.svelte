@@ -25,7 +25,7 @@
             return;
         }
 
-        if(code == null || state == null) {
+        if(code == null) {
             console.error("Missing code or state in query parameters");
 
             location.href = import.meta.env.VITE_AUTH_STREAMELEMENTS_URL;
