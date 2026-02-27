@@ -54,6 +54,7 @@
 	<nav>
 		{#if user}
 		<button on:click={() => gotoCategory(``)}>User Page</button>
+		<button on:click={() => gotoCategory(`activity`)}>Activity</button>
 		{/if}
 		{#if user?.flags?.includes('experiment-streamelements')
 		&& (user?.id === me?.id || (userPage?.myPowers?.["TWITCH"] ?? 0) > 5 || (me?.role.power ?? 0) > 10)}
@@ -62,7 +63,6 @@
 		{#if me && user && (me?.id === user?.id || me.role.power >= 5)}
 			{#if Object.keys(user?.roomIds).length > 0}
 				<button on:click={() => gotoCategory(`settings`)}>Bot Settings</button>
-				<button on:click={() => gotoCategory(`activity`)}>Bot Activity</button>
 			{/if}
 			<button on:click={() => gotoCategory(`tickets`)}>Tickets</button>
 			<button on:click={() => gotoCategory(`reminders`)}>Reminders</button>
