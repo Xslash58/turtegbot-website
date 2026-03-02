@@ -50,14 +50,15 @@
 			</section>
 		</section>
 	</section>
-	
+
 	<nav>
 		{#if user}
-		<button on:click={() => gotoCategory(``)}>User Page</button>
-		<button on:click={() => gotoCategory(`activity`)}>Activity</button>
+			<button on:click={() => gotoCategory(``)}>User Page</button>
+			{#if Object.keys(user?.roomIds).length > 0}
+				<button on:click={() => gotoCategory(`activity`)}>Activity</button>
+			{/if}
 		{/if}
-		{#if user?.flags?.includes('experiment-streamelements')
-		&& (user?.id === me?.id || (userPage?.myPowers?.["TWITCH"] ?? 0) > 5 || (me?.role.power ?? 0) > 10)}
+		{#if user?.flags?.includes('experiment-streamelements') && (user?.id === me?.id || (userPage?.myPowers?.['TWITCH'] ?? 0) > 5 || (me?.role.power ?? 0) > 10)}
 			<button on:click={() => gotoCategory(`streamelements`)}>StreamElements</button>
 		{/if}
 		{#if me && user && (me?.id === user?.id || me.role.power >= 5)}
