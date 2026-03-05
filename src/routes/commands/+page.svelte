@@ -5,46 +5,75 @@
 	let selectedCategory = 'All Commands';
 
 	const categoryIcons: Record<string, { type: 'emoji' | 'img'; value: string }> = {
-		'All Commands': { type: 'img', value: 'https://camo.githubusercontent.com/f5a24856b4a54064f17fdaa9889af670a097a3eaa6f9f480bfb5ad7a25a4d837/68747470733a2f2f63646e2e3774762e6170702f656d6f74652f3630623031666335616563633131653836633432353032612f34782e77656270' },
-		'Economy': { type: 'img', value: 'https://cdn.7tv.app/emote/01FFZ7NS600004BM088TM6XC8Y/4x.avif' },
-		'Broadcaster': { type: 'img', value: 'https://camo.githubusercontent.com/4a329fe4b76dc574e162cc479a545b967372237f6b95661608cb6c97785dc8ba/68747470733a2f2f7374617469632d63646e2e6a74766e772e6e65742f6261646765732f76312f35353237633538632d666237642d343232642d623731622d6633303964636238356363312f33' },
-		'Moderation': { type: 'img', value: 'https://camo.githubusercontent.com/3949f5e722c86524c3752765157e99227f32f3ccd35d87c41ec6d6deabf921d5/68747470733a2f2f7374617469632d63646e2e6a74766e772e6e65742f6261646765732f76312f33323637363436642d333366302d346231372d623364662d6639323361343164623164302f33' },
-		'7TV': { type: 'img', value: 'https://camo.githubusercontent.com/581fb8db60005b468924c8e03d0d25981136747bc63171f81219d6a1fc87b8f7/68747470733a2f2f63646e2e3774762e6170702f656d6f74652f30314a545452314a3448544b33355330384832373256435756332f34782e77656270' },
-		'Support': { type: 'emoji', value: '❓' },
-		'Data Commands': { type: 'img', value: 'https://camo.githubusercontent.com/9efbf571fac99d494bbc7b00ee15de42c10abf9f830c97deb4dcbc70d540b61f/68747470733a2f2f63646e2e6672616e6b6572666163657a2e636f6d2f656d6f74652f3231383533302f34' },
-		'Bot Staff': { type: 'img', value: 'https://camo.githubusercontent.com/d7c868da31b592fcffc11345805e3c6cf6f839f799b89cb29abf3f83e41016c3/68747470733a2f2f63646e2e3774762e6170702f656d6f74652f3633663238643737663239313562343432636138306434322f34782e77656270' },
+		'All Commands': {
+			type: 'img',
+			value:
+				'https://camo.githubusercontent.com/f5a24856b4a54064f17fdaa9889af670a097a3eaa6f9f480bfb5ad7a25a4d837/68747470733a2f2f63646e2e3774762e6170702f656d6f74652f3630623031666335616563633131653836633432353032612f34782e77656270'
+		},
+		Economy: { type: 'img', value: 'https://cdn.7tv.app/emote/01FFZ7NS600004BM088TM6XC8Y/4x.avif' },
+		Broadcaster: {
+			type: 'img',
+			value:
+				'https://camo.githubusercontent.com/4a329fe4b76dc574e162cc479a545b967372237f6b95661608cb6c97785dc8ba/68747470733a2f2f7374617469632d63646e2e6a74766e772e6e65742f6261646765732f76312f35353237633538632d666237642d343232642d623731622d6633303964636238356363312f33'
+		},
+		Moderation: {
+			type: 'img',
+			value:
+				'https://camo.githubusercontent.com/3949f5e722c86524c3752765157e99227f32f3ccd35d87c41ec6d6deabf921d5/68747470733a2f2f7374617469632d63646e2e6a74766e772e6e65742f6261646765732f76312f33323637363436642d333366302d346231372d623364662d6639323361343164623164302f33'
+		},
+		'7TV': {
+			type: 'img',
+			value:
+				'https://camo.githubusercontent.com/581fb8db60005b468924c8e03d0d25981136747bc63171f81219d6a1fc87b8f7/68747470733a2f2f63646e2e3774762e6170702f656d6f74652f30314a545452314a3448544b33355330384832373256435756332f34782e77656270'
+		},
+		Support: { type: 'emoji', value: '❓' },
+		'Data Commands': {
+			type: 'img',
+			value:
+				'https://camo.githubusercontent.com/9efbf571fac99d494bbc7b00ee15de42c10abf9f830c97deb4dcbc70d540b61f/68747470733a2f2f63646e2e6672616e6b6572666163657a2e636f6d2f656d6f74652f3231383533302f34'
+		},
+		'Bot Staff': {
+			type: 'img',
+			value:
+				'https://camo.githubusercontent.com/d7c868da31b592fcffc11345805e3c6cf6f839f799b89cb29abf3f83e41016c3/68747470733a2f2f63646e2e3774762e6170702f656d6f74652f3633663238643737663239313562343432636138306434322f34782e77656270'
+		}
 	};
 
-	$: activeCategory = commandCategories.find(c => c.name === selectedCategory);
+	$: activeCategory = commandCategories.find((c) => c.name === selectedCategory);
 
-	$: filteredCommands = selectedCategory === 'All Commands'
-		? (search
-			? commandCategories.flatMap(cat => cat.commands.filter(cmd =>
-				cmd.name.toLowerCase().includes(search.toLowerCase()) ||
-				cmd.description.toLowerCase().includes(search.toLowerCase())
-			  ))
-			: null)
-		: (activeCategory?.commands ?? []).filter(cmd =>
-			cmd.name.toLowerCase().includes(search.toLowerCase()) ||
-			cmd.description.toLowerCase().includes(search.toLowerCase())
-		  );
+	$: filteredCommands =
+		selectedCategory === 'All Commands'
+			? search
+				? commandCategories.flatMap((cat) =>
+						cat.commands.filter(
+							(cmd) =>
+								cmd.name.toLowerCase().includes(search.toLowerCase()) ||
+								cmd.description.toLowerCase().includes(search.toLowerCase())
+						)
+					)
+				: null
+			: (activeCategory?.commands ?? []).filter(
+					(cmd) =>
+						cmd.name.toLowerCase().includes(search.toLowerCase()) ||
+						cmd.description.toLowerCase().includes(search.toLowerCase())
+				);
 
 	$: totalCount = commandCategories.reduce((sum, cat) => sum + cat.commands.length, 0);
 
-	$: filteredCount = selectedCategory === 'All Commands'
-		? (search ? (filteredCommands as any[])?.length ?? 0 : totalCount)
-		: (filteredCommands as any[])?.length ?? 0;
+	$: filteredCount =
+		selectedCategory === 'All Commands'
+			? search
+				? ((filteredCommands as any[])?.length ?? 0)
+				: totalCount
+			: ((filteredCommands as any[])?.length ?? 0);
 </script>
 
 <div class="page">
-	<header>
-		<h1>Commands</h1>
-		<p>Browse all available TurtegBot commands</p>
-
+	<div class="search-wrapper">
 		<div class="search-row">
 			<svg class="search-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-				<circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.5"/>
-				<path d="M13 13l3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+				<circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.5" />
+				<path d="M13 13l3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
 			</svg>
 			<input
 				type="text"
@@ -54,20 +83,22 @@
 				spellcheck="false"
 			/>
 			{#if search}
-				<button class="clear" on:click={() => search = ''} aria-label="Clear">✕</button>
+				<button class="clear" on:click={() => (search = '')} aria-label="Clear">✕</button>
 			{/if}
 		</div>
-	</header>
+	</div>
 
 	<div class="layout">
 		<nav class="sidebar">
-			<!-- All Commands button -->
 			{#each [{ name: 'All Commands', commands: { length: totalCount } }] as _}
 				{@const icon = categoryIcons['All Commands']}
 				<button
 					class="cat-btn"
 					class:active={selectedCategory === 'All Commands'}
-					on:click={() => { selectedCategory = 'All Commands'; search = ''; }}
+					on:click={() => {
+						selectedCategory = 'All Commands';
+						search = '';
+					}}
 				>
 					<span class="cat-icon">
 						{#if icon.type === 'emoji'}
@@ -86,7 +117,10 @@
 				<button
 					class="cat-btn"
 					class:active={selectedCategory === category.name}
-					on:click={() => { selectedCategory = category.name; search = ''; }}
+					on:click={() => {
+						selectedCategory = category.name;
+						search = '';
+					}}
 				>
 					<span class="cat-icon">
 						{#if icon?.type === 'emoji'}
@@ -156,7 +190,6 @@
 						</div>
 					</div>
 				{/each}
-
 			{:else if (filteredCommands as any[])?.length === 0}
 				<div class="empty">
 					<span class="empty-icon">⊘</span>
@@ -164,7 +197,7 @@
 				</div>
 			{:else}
 				<div class="commands-grid">
-					{#each (filteredCommands as any[]) as command, j}
+					{#each filteredCommands as any[] as command, j}
 						<div class="command" style="--j: {j}">
 							<div class="cmd-top">
 								<span class="hash">#</span>
@@ -181,87 +214,15 @@
 </div>
 
 <style lang="scss">
-	* { box-sizing: border-box; }
+	* {
+		box-sizing: border-box;
+	}
 
 	.page {
 		min-height: 100vh;
 		background: #101010;
 		color: #e0e0e0;
 		font-family: 'Inter', sans-serif;
-	}
-
-	header {
-		background: #33ca00;
-		color: white;
-		padding: 48px 32px 80px;
-		clip-path: polygon(0 0, 100% 0, 100% 80%, 0 100%);
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		text-align: center;
-
-		h1 {
-			margin: 0 0 6px;
-			font-size: 2.6rem;
-			font-weight: 700;
-			letter-spacing: -0.03em;
-		}
-
-		> p {
-			margin: 0 0 28px;
-			font-size: 1rem;
-			opacity: 0.85;
-		}
-	}
-
-	.search-row {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		background: rgba(0,0,0,0.2);
-		border: 1px solid rgba(255,255,255,0.25);
-		border-radius: 8px;
-		padding: 0 14px;
-		width: 100%;
-		max-width: 480px;
-		backdrop-filter: blur(4px);
-		transition: background 0.15s, border-color 0.15s;
-
-		&:focus-within {
-			background: rgba(0,0,0,0.3);
-			border-color: rgba(255,255,255,0.5);
-		}
-
-		.search-icon {
-			width: 16px;
-			height: 16px;
-			color: rgba(255,255,255,0.6);
-			flex-shrink: 0;
-		}
-
-		input {
-			flex: 1;
-			background: transparent;
-			border: none;
-			outline: none;
-			font-size: 0.9rem;
-			color: white;
-			padding: 13px 0;
-			&::placeholder { color: rgba(255,255,255,0.5); }
-		}
-
-		.clear {
-			background: none;
-			border: none;
-			color: rgba(255,255,255,0.5);
-			cursor: pointer;
-			font-size: 0.75rem;
-			padding: 4px;
-			line-height: 1;
-			transition: color 0.15s;
-			flex-shrink: 0;
-			&:hover { color: white; }
-		}
 	}
 
 	.layout {
@@ -271,6 +232,13 @@
 		padding: 32px 24px 80px;
 		gap: 28px;
 		align-items: flex-start;
+	}
+
+	/* Search wrapper mirrors the layout container so the bar lines up with the sidebar */
+	.search-wrapper {
+		max-width: 1100px;
+		margin: 0 auto;
+		padding: 24px 24px 0;
 	}
 
 	.sidebar {
@@ -333,17 +301,27 @@
 
 	.cat-btn:hover {
 		background: #181818;
-		.cat-label { color: #ccc; }
+		.cat-label {
+			color: #ccc;
+		}
 	}
 
 	.cat-btn.active {
 		background: rgba(51, 202, 0, 0.08);
 		border-color: rgba(51, 202, 0, 0.2);
-		.cat-label { color: #33ca00; font-weight: 500; }
-		.cat-count { color: #33ca00; }
+		.cat-label {
+			color: #33ca00;
+			font-weight: 500;
+		}
+		.cat-count {
+			color: #33ca00;
+		}
 	}
 
-	main { flex: 1; min-width: 0; }
+	main {
+		flex: 1;
+		min-width: 0;
+	}
 
 	.main-header {
 		display: flex;
@@ -384,7 +362,11 @@
 		color: #f0f0f0;
 	}
 
-	.cat-desc { margin: 0; font-size: 0.82rem; color: #555; }
+	.cat-desc {
+		margin: 0;
+		font-size: 0.82rem;
+		color: #555;
+	}
 
 	.result-count {
 		font-size: 0.78rem;
@@ -422,13 +404,88 @@
 		flex-shrink: 0;
 	}
 
-	.category-heading-name { font-size: 1rem; font-weight: 600; color: #33ca00; white-space: nowrap; }
-	.category-heading-desc { font-size: 0.78rem; color: #484848; flex: 1; }
-	.category-heading-count { font-size: 0.72rem; color: #444; flex-shrink: 0; }
+	.category-heading-name {
+		font-size: 1rem;
+		font-weight: 600;
+		color: #33ca00;
+		white-space: nowrap;
+	}
+	.category-heading-desc {
+		font-size: 0.78rem;
+		color: #484848;
+		flex: 1;
+	}
+	.category-heading-count {
+		font-size: 0.72rem;
+		color: #444;
+		flex-shrink: 0;
+	}
+
+	.search-row {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		background: rgba(0, 0, 0, 0.2);
+		border: 1px solid rgba(255, 255, 255, 0.25);
+		border-radius: 8px;
+		padding: 0 14px;
+		/* Match the sidebar width exactly */
+		width: 210px;
+		backdrop-filter: blur(4px);
+		transition:
+			background 0.15s,
+			border-color 0.15s;
+
+		&:focus-within {
+			background: rgba(0, 0, 0, 0.3);
+			border-color: rgba(255, 255, 255, 0.5);
+		}
+
+		.search-icon {
+			width: 16px;
+			height: 16px;
+			color: rgba(255, 255, 255, 0.6);
+			flex-shrink: 0;
+		}
+
+		input {
+			flex: 1;
+			background: transparent;
+			border: none;
+			outline: none;
+			font-size: 0.9rem;
+			color: white;
+			padding: 13px 0;
+			&::placeholder {
+				color: rgba(255, 255, 255, 0.5);
+			}
+		}
+
+		.clear {
+			background: none;
+			border: none;
+			color: rgba(255, 255, 255, 0.5);
+			cursor: pointer;
+			font-size: 0.75rem;
+			padding: 4px;
+			line-height: 1;
+			transition: color 0.15s;
+			flex-shrink: 0;
+			&:hover {
+				color: white;
+			}
+		}
+	}
 
 	@keyframes fadeIn {
-		from { opacity: 0; transform: translateY(8px); }
-		to   { opacity: 1; transform: translateY(0); }
+		from {
+			opacity: 0;
+			transform: translateY(8px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 
 	.commands-grid {
@@ -442,24 +499,41 @@
 		border: 1px solid #222;
 		border-radius: 8px;
 		padding: 14px 16px;
-		transition: border-color 0.15s, background 0.15s;
+		transition:
+			border-color 0.15s,
+			background 0.15s;
 		animation: cmdIn 0.2s ease both;
 		animation-delay: calc(var(--j) * 15ms);
 
 		&:hover {
 			border-color: #33ca00;
 			background: #1a1a1a;
-			.cmd-name { color: #33ca00; }
-			.hash { opacity: 1; }
+			.cmd-name {
+				color: #33ca00;
+			}
+			.hash {
+				opacity: 1;
+			}
 		}
 	}
 
 	@keyframes cmdIn {
-		from { opacity: 0; transform: translateY(6px); }
-		to   { opacity: 1; transform: translateY(0); }
+		from {
+			opacity: 0;
+			transform: translateY(6px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 
-	.cmd-top { display: flex; align-items: baseline; gap: 1px; margin-bottom: 6px; }
+	.cmd-top {
+		display: flex;
+		align-items: baseline;
+		gap: 1px;
+		margin-bottom: 6px;
+	}
 
 	.hash {
 		font-family: monospace;
@@ -478,7 +552,12 @@
 		transition: color 0.15s;
 	}
 
-	.cmd-desc { margin: 0 0 10px; font-size: 0.8rem; color: #555; line-height: 1.5; }
+	.cmd-desc {
+		margin: 0 0 10px;
+		font-size: 0.8rem;
+		color: #555;
+		line-height: 1.5;
+	}
 
 	.cmd-usage {
 		display: block;
@@ -503,15 +582,31 @@
 		gap: 12px;
 		color: #444;
 
-		.empty-icon { font-size: 2rem; }
-		p { margin: 0; font-size: 0.9rem; }
-		strong { color: #666; }
+		.empty-icon {
+			font-size: 2rem;
+		}
+		p {
+			margin: 0;
+			font-size: 0.9rem;
+		}
+		strong {
+			color: #666;
+		}
 	}
 
 	@media (max-width: 640px) {
-		header h1 { font-size: 2rem; }
+		.search-wrapper {
+			padding: 16px 16px 0;
+		}
 
-		.layout { flex-direction: column; padding: 20px 16px 60px; }
+		.search-row {
+			width: 100%;
+		}
+
+		.layout {
+			flex-direction: column;
+			padding: 20px 16px 60px;
+		}
 
 		.sidebar {
 			width: 100%;
@@ -524,10 +619,16 @@
 		.cat-btn {
 			width: auto;
 			padding: 6px 10px;
-			.cat-count { display: none; }
+			.cat-count {
+				display: none;
+			}
 		}
 
-		.commands-grid { grid-template-columns: 1fr; }
-		.category-heading-desc { display: none; }
+		.commands-grid {
+			grid-template-columns: 1fr;
+		}
+		.category-heading-desc {
+			display: none;
+		}
 	}
 </style>
