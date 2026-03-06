@@ -1,43 +1,187 @@
 <script lang="ts">
-	import { commandCategories } from '$lib/data/commands';
+	import { onMount } from 'svelte';
+
+	interface Command {
+		name: string;
+		category: string;
+		description: string | string[];
+		aliases: string[];
+		usage: string;
+		usage_examples: string[];
+		channel_cooldown: number;
+		user_cooldown: number;
+		required_global_power: number | null;
+		required_channel_power: number | null;
+	}
+
+	interface CommandCategory {
+		name: string;
+		description: string;
+		commands: {
+			name: string;
+			description: string;
+			usage: string;
+		}[];
+	}
+
+	const API_URL = 'https://corsproxy.io/?url=https://turteg-api.xslash.ovh/v1/bot/commands';
 
 	let search = '';
 	let selectedCategory = 'All Commands';
+	let commandCategories: CommandCategory[] = [];
+	let loading = true;
+	let error = '';
 
-	const categoryIcons: Record<string, { type: 'emoji' | 'img'; value: string }> = {
+	const categoryMeta: Record<
+		string,
+		{ description: string; icon: { type: 'emoji' | 'img'; value: string } }
+	> = {
 		'All Commands': {
-			type: 'img',
-			value:
-				'https://camo.githubusercontent.com/f5a24856b4a54064f17fdaa9889af670a097a3eaa6f9f480bfb5ad7a25a4d837/68747470733a2f2f63646e2e3774762e6170702f656d6f74652f3630623031666335616563633131653836633432353032612f34782e77656270'
+			description: 'All available TurtegBot commands, grouped by category',
+			icon: {
+				type: 'img',
+				value:
+					'https://camo.githubusercontent.com/f5a24856b4a54064f17fdaa9889af670a097a3eaa6f9f480bfb5ad7a25a4d837/68747470733a2f2f63646e2e3774762e6170702f656d6f74652f3630623031666335616563633131653836633432353032612f34782e77656270'
+			}
 		},
-		Economy: { type: 'img', value: 'https://cdn.7tv.app/emote/01FFZ7NS600004BM088TM6XC8Y/4x.avif' },
+		Economy: {
+			description: 'Turtle economy commands',
+			icon: { type: 'img', value: 'https://cdn.7tv.app/emote/01FFZ7NS600004BM088TM6XC8Y/4x.avif' }
+		},
+		Turtles: {
+			description: 'Turtle economy commands',
+			icon: { type: 'img', value: 'https://cdn.7tv.app/emote/01FFZ7NS600004BM088TM6XC8Y/4x.avif' }
+		},
 		Broadcaster: {
-			type: 'img',
-			value:
-				'https://camo.githubusercontent.com/4a329fe4b76dc574e162cc479a545b967372237f6b95661608cb6c97785dc8ba/68747470733a2f2f7374617469632d63646e2e6a74766e772e6e65742f6261646765732f76312f35353237633538632d666237642d343232642d623731622d6633303964636238356363312f33'
+			description: 'Broadcaster-level management commands',
+			icon: {
+				type: 'img',
+				value:
+					'https://camo.githubusercontent.com/4a329fe4b76dc574e162cc479a545b967372237f6b95661608cb6c97785dc8ba/68747470733a2f2f7374617469632d63646e2e6a74766e772e6e65742f6261646765732f76312f35353237633538632d666237642d343232642d623731622d6633303964636238356363312f33'
+			}
 		},
 		Moderation: {
-			type: 'img',
-			value:
-				'https://camo.githubusercontent.com/3949f5e722c86524c3752765157e99227f32f3ccd35d87c41ec6d6deabf921d5/68747470733a2f2f7374617469632d63646e2e6a74766e772e6e65742f6261646765732f76312f33323637363436642d333366302d346231372d623364662d6639323361343164623164302f33'
+			description: 'Channel moderation and configuration',
+			icon: {
+				type: 'img',
+				value:
+					'https://camo.githubusercontent.com/3949f5e722c86524c3752765157e99227f32f3ccd35d87c41ec6d6deabf921d5/68747470733a2f2f7374617469632d63646e2e6a74766e772e6e65742f6261646765732f76312f33323637363436642d333366302d346231372d623364662d6639323361343164623164302f33'
+			}
 		},
 		'7TV': {
-			type: 'img',
-			value:
-				'https://camo.githubusercontent.com/581fb8db60005b468924c8e03d0d25981136747bc63171f81219d6a1fc87b8f7/68747470733a2f2f63646e2e3774762e6170702f656d6f74652f30314a545452314a3448544b33355330384832373256435756332f34782e77656270'
+			description: '7TV emote management commands',
+			icon: {
+				type: 'img',
+				value:
+					'https://camo.githubusercontent.com/581fb8db60005b468924c8e03d0d25981136747bc63171f81219d6a1fc87b8f7/68747470733a2f2f63646e2e3774762e6170702f656d6f74652f30314a545452314a3448544b33355330384832373256435756332f34782e77656270'
+			}
 		},
-		Support: { type: 'emoji', value: '❓' },
+		Support: {
+			description: 'Support and help commands',
+			icon: { type: 'emoji', value: '❓' }
+		},
+		Spotify: {
+			description: 'Spotify integration commands',
+			icon: { type: 'emoji', value: '🎵' }
+		},
+		Special: {
+			description: 'Special feature commands',
+			icon: { type: 'emoji', value: '⭐' }
+		},
 		'Data Commands': {
-			type: 'img',
-			value:
-				'https://camo.githubusercontent.com/9efbf571fac99d494bbc7b00ee15de42c10abf9f830c97deb4dcbc70d540b61f/68747470733a2f2f63646e2e6672616e6b6572666163657a2e636f6d2f656d6f74652f3231383533302f34'
+			description: 'User and channel data lookup',
+			icon: {
+				type: 'img',
+				value:
+					'https://camo.githubusercontent.com/9efbf571fac99d494bbc7b00ee15de42c10abf9f830c97deb4dcbc70d540b61f/68747470733a2f2f63646e2e6672616e6b6572666163657a2e636f6d2f656d6f74652f3231383533302f34'
+			}
 		},
 		'Bot Staff': {
-			type: 'img',
-			value:
-				'https://camo.githubusercontent.com/d7c868da31b592fcffc11345805e3c6cf6f839f799b89cb29abf3f83e41016c3/68747470733a2f2f63646e2e3774762e6170702f656d6f74652f3633663238643737663239313562343432636138306434322f34782e77656270'
+			description: 'Bot staff and admin commands',
+			icon: {
+				type: 'img',
+				value:
+					'https://camo.githubusercontent.com/d7c868da31b592fcffc11345805e3c6cf6f839f799b89cb29abf3f83e41016c3/68747470733a2f2f63646e2e3774762e6170702f656d6f74652f3633663238643737663239313562343432636138306434322f34782e77656270'
+			}
+		},
+		Staff: {
+			description: 'Bot staff and admin commands',
+			icon: {
+				type: 'img',
+				value:
+					'https://camo.githubusercontent.com/d7c868da31b592fcffc11345805e3c6cf6f839f799b89cb29abf3f83e41016c3/68747470733a2f2f63646e2e3774762e6170702f656d6f74652f3633663238643737663239313562343432636138306434322f34782e77656270'
+			}
 		}
 	};
+
+	const UNCATEGORIZED_NAME = 'General';
+
+	function transformCommands(raw: Command[]): CommandCategory[] {
+		const map = new Map<string, CommandCategory>();
+
+		for (const cmd of raw) {
+			const catName = cmd.category?.trim() || UNCATEGORIZED_NAME;
+			if (!map.has(catName)) {
+				const meta = categoryMeta[catName];
+				map.set(catName, {
+					name: catName,
+					description: meta?.description ?? '',
+					commands: []
+				});
+			}
+			const descArr = Array.isArray(cmd.description) ? cmd.description : [cmd.description];
+			const descStr = descArr.filter(Boolean).join(' ') || '—';
+			const usageStr = cmd.usage || `!${cmd.name}`;
+			map.get(catName)!.commands.push({
+				name: cmd.name,
+				description: descStr,
+				usage: usageStr
+			});
+		}
+
+		const knownOrder = [
+			'Turtles',
+			'Economy',
+			'7TV',
+			'Spotify',
+			'Broadcaster',
+			'Moderation',
+			'Special',
+			'General',
+			'Staff',
+			'Bot Staff',
+			'Data Commands',
+			'Support'
+		];
+		return [...map.entries()]
+			.sort(([a], [b]) => {
+				const ai = knownOrder.indexOf(a);
+				const bi = knownOrder.indexOf(b);
+				if (ai === -1 && bi === -1) return a.localeCompare(b);
+				if (ai === -1) return 1;
+				if (bi === -1) return -1;
+				return ai - bi;
+			})
+			.map(([, v]) => v);
+	}
+
+	onMount(async () => {
+		try {
+			const res = await fetch(API_URL);
+			if (!res.ok) throw new Error(`HTTP ${res.status}`);
+			const data = await res.json();
+			const raw: Command[] = Array.isArray(data) ? data : (data.commands ?? []);
+			commandCategories = transformCommands(raw);
+		} catch (e: any) {
+			error = e?.message ?? 'Failed to load commands';
+		} finally {
+			loading = false;
+		}
+	});
+
+	function getIcon(name: string) {
+		return (categoryMeta[name] ?? categoryMeta['Support'])?.icon;
+	}
 
 	$: activeCategory = commandCategories.find((c) => c.name === selectedCategory);
 
@@ -81,6 +225,7 @@
 				bind:value={search}
 				autocomplete="off"
 				spellcheck="false"
+				disabled={loading}
 			/>
 			{#if search}
 				<button class="clear" on:click={() => (search = '')} aria-label="Clear">✕</button>
@@ -90,30 +235,28 @@
 
 	<div class="layout">
 		<nav class="sidebar">
-			{#each [{ name: 'All Commands', commands: { length: totalCount } }] as _}
-				{@const icon = categoryIcons['All Commands']}
-				<button
-					class="cat-btn"
-					class:active={selectedCategory === 'All Commands'}
-					on:click={() => {
-						selectedCategory = 'All Commands';
-						search = '';
-					}}
-				>
-					<span class="cat-icon">
-						{#if icon.type === 'emoji'}
-							{icon.value}
-						{:else}
-							<img src={icon.value} alt="" />
-						{/if}
-					</span>
-					<span class="cat-label">All Commands</span>
-					<span class="cat-count">{totalCount}</span>
-				</button>
-			{/each}
+			<!-- All Commands button -->
+			<button
+				class="cat-btn"
+				class:active={selectedCategory === 'All Commands'}
+				on:click={() => {
+					selectedCategory = 'All Commands';
+					search = '';
+				}}
+			>
+				<span class="cat-icon">
+					{#if getIcon('All Commands')?.type === 'emoji'}{getIcon('All Commands')
+							.value}{:else if getIcon('All Commands')?.type === 'img'}<img
+							src={getIcon('All Commands').value}
+							alt=""
+						/>{/if}
+				</span>
+				<span class="cat-label">All Commands</span>
+				<span class="cat-count">{totalCount}</span>
+			</button>
 
 			{#each commandCategories as category}
-				{@const icon = categoryIcons[category.name]}
+				{@const icon = getIcon(category.name)}
 				<button
 					class="cat-btn"
 					class:active={selectedCategory === category.name}
@@ -123,11 +266,10 @@
 					}}
 				>
 					<span class="cat-icon">
-						{#if icon?.type === 'emoji'}
-							{icon.value}
-						{:else if icon?.type === 'img'}
-							<img src={icon.value} alt="" />
-						{/if}
+						{#if icon?.type === 'emoji'}{icon.value}{:else if icon?.type === 'img'}<img
+								src={icon.value}
+								alt=""
+							/>{/if}
 					</span>
 					<span class="cat-label">{category.name}</span>
 					<span class="cat-count">{category.commands.length}</span>
@@ -136,78 +278,103 @@
 		</nav>
 
 		<main>
-			<div class="main-header">
-				<div class="main-title-row">
-					{#if categoryIcons[selectedCategory]}
-						{@const icon = categoryIcons[selectedCategory]}
-						<span class="main-icon">
-							{#if icon.type === 'emoji'}
-								{icon.value}
-							{:else}
-								<img src={icon.value} alt="" />
-							{/if}
-						</span>
-					{/if}
-					<div>
-						<h2>{selectedCategory}</h2>
-						<p class="cat-desc">
-							{selectedCategory === 'All Commands'
-								? 'All available TurtegBot commands, grouped by category'
-								: (activeCategory?.description ?? '')}
-						</p>
-					</div>
+			{#if loading}
+				<div class="state-msg">
+					<span class="spinner"></span>
+					<p>Loading commands…</p>
 				</div>
-				<span class="result-count">
-					{filteredCount} command{filteredCount !== 1 ? 's' : ''}
-				</span>
-			</div>
-
-			{#if selectedCategory === 'All Commands' && !search}
-				{#each commandCategories as category, i}
-					{@const icon = categoryIcons[category.name]}
-					<div class="category-section" style="--i: {i}">
-						<div class="category-heading">
-							{#if icon?.type === 'emoji'}
-								<span class="cat-heading-icon">{icon.value}</span>
-							{:else if icon?.type === 'img'}
-								<img class="cat-heading-icon-img" src={icon.value} alt="" />
-							{/if}
-							<span class="category-heading-name">{category.name}</span>
-							<span class="category-heading-desc">{category.description}</span>
-							<span class="category-heading-count">{category.commands.length}</span>
-						</div>
-						<div class="commands-grid">
-							{#each category.commands as command, j}
-								<div class="command" style="--j: {j}">
-									<div class="cmd-top">
-										<span class="hash">#</span>
-										<span class="cmd-name">{command.name}</span>
-									</div>
-									<p class="cmd-desc">{command.description}</p>
-									<code class="cmd-usage">{command.usage}</code>
-								</div>
-							{/each}
-						</div>
-					</div>
-				{/each}
-			{:else if (filteredCommands as any[])?.length === 0}
-				<div class="empty">
-					<span class="empty-icon">⊘</span>
-					<p>No commands match "<strong>{search}</strong>"</p>
+			{:else if error}
+				<div class="state-msg error">
+					<span class="state-icon">⚠</span>
+					<p>Could not load commands: <strong>{error}</strong></p>
+					<button
+						class="retry-btn"
+						on:click={() => {
+							loading = true;
+							error = '';
+							fetch(API_URL)
+								.then((r) => (r.ok ? r.json() : Promise.reject(`HTTP ${r.status}`)))
+								.then((data) => {
+									const raw: any[] = Array.isArray(data) ? data : (data.commands ?? []);
+									commandCategories = transformCommands(raw);
+								})
+								.catch((e) => {
+									error = String(e);
+								})
+								.finally(() => {
+									loading = false;
+								});
+						}}>Retry</button
+					>
 				</div>
 			{:else}
-				<div class="commands-grid">
-					{#each filteredCommands as any[] as command, j}
-						<div class="command" style="--j: {j}">
-							<div class="cmd-top">
-								<span class="hash">#</span>
-								<span class="cmd-name">{command.name}</span>
+				<div class="main-header">
+					<div class="main-title-row">
+						{#if getIcon(selectedCategory)}
+							<span class="main-icon">
+								{#if getIcon(selectedCategory).type === 'emoji'}{getIcon(selectedCategory)
+										.value}{:else}<img src={getIcon(selectedCategory).value} alt="" />{/if}
+							</span>
+						{/if}
+						<div>
+							<h2>{selectedCategory}</h2>
+							<p class="cat-desc">
+								{selectedCategory === 'All Commands'
+									? 'All available TurtegBot commands, grouped by category'
+									: (activeCategory?.description ?? '')}
+							</p>
+						</div>
+					</div>
+					<span class="result-count">
+						{filteredCount} command{filteredCount !== 1 ? 's' : ''}
+					</span>
+				</div>
+
+				{#if selectedCategory === 'All Commands' && !search}
+					{#each commandCategories as category, i}
+						{@const icon = getIcon(category.name)}
+						<div class="category-section" style="--i: {i}">
+							<div class="category-heading">
+								{#if icon?.type === 'emoji'}
+									<span class="cat-heading-icon">{icon.value}</span>
+								{:else if icon?.type === 'img'}
+									<img class="cat-heading-icon-img" src={icon.value} alt="" />
+								{/if}
+								<span class="category-heading-name">{category.name}</span>
+								<span class="category-heading-desc">{category.description}</span>
+								<span class="category-heading-count">{category.commands.length}</span>
 							</div>
-							<p class="cmd-desc">{command.description}</p>
-							<code class="cmd-usage">{command.usage}</code>
+							<div class="commands-grid">
+								{#each category.commands as command, j}
+									<div class="command" style="--j: {j}">
+										<div class="cmd-top">
+											<span class="hash">#</span>
+											<span class="cmd-name">{command.name}</span>
+										</div>
+										<code class="cmd-usage">{command.usage}</code>
+									</div>
+								{/each}
+							</div>
 						</div>
 					{/each}
-				</div>
+				{:else if (filteredCommands as any[])?.length === 0}
+					<div class="empty">
+						<span class="empty-icon">⊘</span>
+						<p>No commands match "<strong>{search}</strong>"</p>
+					</div>
+				{:else}
+					<div class="commands-grid">
+						{#each filteredCommands as any[] as command, j}
+							<div class="command" style="--j: {j}">
+								<div class="cmd-top">
+									<span class="hash">#</span>
+									<span class="cmd-name">{command.name}</span>
+								</div>
+								<code class="cmd-usage">{command.usage}</code>
+							</div>
+						{/each}
+					</div>
+				{/if}
 			{/if}
 		</main>
 	</div>
@@ -234,7 +401,6 @@
 		align-items: flex-start;
 	}
 
-	/* Search wrapper mirrors the layout container so the bar lines up with the sidebar */
 	.search-wrapper {
 		max-width: 1100px;
 		margin: 0 auto;
@@ -274,7 +440,6 @@
 		flex-shrink: 0;
 		font-size: 14px;
 		line-height: 1;
-
 		img {
 			width: 20px;
 			height: 20px;
@@ -305,7 +470,6 @@
 			color: #ccc;
 		}
 	}
-
 	.cat-btn.active {
 		background: rgba(51, 202, 0, 0.08);
 		border-color: rgba(51, 202, 0, 0.2);
@@ -346,7 +510,6 @@
 		height: 36px;
 		font-size: 22px;
 		flex-shrink: 0;
-
 		img {
 			width: 36px;
 			height: 36px;
@@ -361,18 +524,66 @@
 		font-weight: 600;
 		color: #f0f0f0;
 	}
-
 	.cat-desc {
 		margin: 0;
 		font-size: 0.82rem;
 		color: #555;
 	}
-
 	.result-count {
 		font-size: 0.78rem;
 		color: #444;
 		white-space: nowrap;
 		padding-top: 4px;
+	}
+
+	/* Loading / error states */
+	.state-msg {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 14px;
+		padding: 80px 20px;
+		color: #555;
+		font-size: 0.9rem;
+		p {
+			margin: 0;
+		}
+	}
+	.state-msg.error {
+		color: #888;
+	}
+	.state-icon {
+		font-size: 2rem;
+	}
+
+	.spinner {
+		width: 28px;
+		height: 28px;
+		border: 2px solid #222;
+		border-top-color: #33ca00;
+		border-radius: 50%;
+		animation: spin 0.7s linear infinite;
+	}
+	@keyframes spin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
+	.retry-btn {
+		margin-top: 4px;
+		padding: 6px 16px;
+		background: rgba(51, 202, 0, 0.1);
+		border: 1px solid rgba(51, 202, 0, 0.25);
+		border-radius: 6px;
+		color: #33ca00;
+		font-size: 0.82rem;
+		cursor: pointer;
+		transition: background 0.15s;
+		&:hover {
+			background: rgba(51, 202, 0, 0.18);
+		}
 	}
 
 	.category-section {
@@ -395,7 +606,6 @@
 		line-height: 1;
 		flex-shrink: 0;
 	}
-
 	.cat-heading-icon-img {
 		width: 18px;
 		height: 18px;
@@ -403,7 +613,6 @@
 		border-radius: 3px;
 		flex-shrink: 0;
 	}
-
 	.category-heading-name {
 		font-size: 1rem;
 		font-weight: 600;
@@ -429,7 +638,6 @@
 		border: 1px solid rgba(255, 255, 255, 0.25);
 		border-radius: 8px;
 		padding: 0 14px;
-		/* Match the sidebar width exactly */
 		width: 210px;
 		backdrop-filter: blur(4px);
 		transition:
@@ -447,7 +655,6 @@
 			color: rgba(255, 255, 255, 0.6);
 			flex-shrink: 0;
 		}
-
 		input {
 			flex: 1;
 			background: transparent;
@@ -459,8 +666,11 @@
 			&::placeholder {
 				color: rgba(255, 255, 255, 0.5);
 			}
+			&:disabled {
+				opacity: 0.4;
+				cursor: not-allowed;
+			}
 		}
-
 		.clear {
 			background: none;
 			border: none;
@@ -534,7 +744,6 @@
 		gap: 1px;
 		margin-bottom: 6px;
 	}
-
 	.hash {
 		font-family: monospace;
 		font-size: 0.9rem;
@@ -543,7 +752,6 @@
 		transition: opacity 0.15s;
 		flex-shrink: 0;
 	}
-
 	.cmd-name {
 		font-family: monospace;
 		font-size: 0.88rem;
@@ -551,14 +759,6 @@
 		color: #c0c0c0;
 		transition: color 0.15s;
 	}
-
-	.cmd-desc {
-		margin: 0 0 10px;
-		font-size: 0.8rem;
-		color: #555;
-		line-height: 1.5;
-	}
-
 	.cmd-usage {
 		display: block;
 		font-family: monospace;
@@ -581,7 +781,6 @@
 		align-items: center;
 		gap: 12px;
 		color: #444;
-
 		.empty-icon {
 			font-size: 2rem;
 		}
@@ -598,16 +797,13 @@
 		.search-wrapper {
 			padding: 16px 16px 0;
 		}
-
 		.search-row {
 			width: 100%;
 		}
-
 		.layout {
 			flex-direction: column;
 			padding: 20px 16px 60px;
 		}
-
 		.sidebar {
 			width: 100%;
 			position: static;
@@ -615,7 +811,6 @@
 			flex-wrap: wrap;
 			gap: 6px;
 		}
-
 		.cat-btn {
 			width: auto;
 			padding: 6px 10px;
@@ -623,7 +818,6 @@
 				display: none;
 			}
 		}
-
 		.commands-grid {
 			grid-template-columns: 1fr;
 		}
