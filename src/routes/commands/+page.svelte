@@ -24,7 +24,7 @@
 		}[];
 	}
 
-	const API_URL = 'https://corsproxy.io/?url=https://turteg-api.xslash.ovh/v1/bot/commands';
+	const API_URL = 'https://turteg-api.xslash.ovh/v1/bot/commands';
 
 	let search = '';
 	let selectedCategory = 'All Commands';
