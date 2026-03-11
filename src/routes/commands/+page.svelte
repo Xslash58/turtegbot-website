@@ -1,36 +1,36 @@
 <script lang="ts">
+	import { GetCommands } from '$lib/API/Bot';
+	import type { User } from '$lib/API/Models/Users';
+	import { myUser } from '$lib/stores/userStore';
 	import { onMount } from 'svelte';
-
-	interface Command {
-		name: string;
-		category: string;
-		description: string | string[];
-		aliases: string[];
-		usage: string;
-		usage_examples: string[];
-		channel_cooldown: number;
-		user_cooldown: number;
-		required_global_power: number | null;
-		required_channel_power: number | null;
-	}
+	import {
+		DankFixEmote,
+		StvLogo,
+		BroadcasterIcon,
+		ModeratorIcon,
+		PepegaReadingEmote,
+		TurtegEmote
+	} from '$lib/assets';
+	import { Empty, MagnifyingGlass, Warning, X } from 'phosphor-svelte';
+	import { goto } from '$app/navigation';
 
 	interface CommandCategory {
 		name: string;
 		description: string;
-		commands: {
-			name: string;
-			description: string;
-			usage: string;
-		}[];
+		commands: Command[];
 	}
 
-	const API_URL = 'https://turteg-api.xslash.ovh/v1/bot/commands';
+	let search = $state('');
+	let selectedCategory = $state('All Commands');
+	let commandCategories: CommandCategory[] = $state([]);
+	let isLoading = $state(true);
+	let error = $state('');
 
-	let search = '';
-	let selectedCategory = 'All Commands';
-	let commandCategories: CommandCategory[] = [];
-	let loading = true;
-	let error = '';
+	let me: User | null = $state(null);
+
+	myUser.subscribe((value) => {
+		if (value) me = value;
+	});
 
 	const categoryMeta: Record<
 		string,
@@ -38,43 +38,27 @@
 	> = {
 		'All Commands': {
 			description: 'All available TurtegBot commands, grouped by category',
-			icon: {
-				type: 'img',
-				value:
-					'https://camo.githubusercontent.com/f5a24856b4a54064f17fdaa9889af670a097a3eaa6f9f480bfb5ad7a25a4d837/68747470733a2f2f63646e2e3774762e6170702f656d6f74652f3630623031666335616563633131653836633432353032612f34782e77656270'
-			}
+			icon: { type: 'emoji', value: '♾️' }
 		},
-		Economy: {
-			description: 'Turtle economy commands',
-			icon: { type: 'img', value: 'https://cdn.7tv.app/emote/01FFZ7NS600004BM088TM6XC8Y/4x.avif' }
-		},
-		Turtles: {
-			description: 'Turtle economy commands',
-			icon: { type: 'img', value: 'https://cdn.7tv.app/emote/01FFZ7NS600004BM088TM6XC8Y/4x.avif' }
+		Staff: {
+			description: 'Bot staff and admin commands',
+			icon: { type: 'img', value: DankFixEmote }
 		},
 		Broadcaster: {
 			description: 'Broadcaster-level management commands',
-			icon: {
-				type: 'img',
-				value:
-					'https://camo.githubusercontent.com/4a329fe4b76dc574e162cc479a545b967372237f6b95661608cb6c97785dc8ba/68747470733a2f2f7374617469632d63646e2e6a74766e772e6e65742f6261646765732f76312f35353237633538632d666237642d343232642d623731622d6633303964636238356363312f33'
-			}
+			icon: { type: 'img', value: BroadcasterIcon }
 		},
 		Moderation: {
 			description: 'Channel moderation and configuration',
-			icon: {
-				type: 'img',
-				value:
-					'https://camo.githubusercontent.com/3949f5e722c86524c3752765157e99227f32f3ccd35d87c41ec6d6deabf921d5/68747470733a2f2f7374617469632d63646e2e6a74766e772e6e65742f6261646765732f76312f33323637363436642d333366302d346231372d623364662d6639323361343164623164302f33'
-			}
+			icon: { type: 'img', value: ModeratorIcon }
+		},
+		Turtles: {
+			description: 'Turtle economy commands',
+			icon: { type: 'img', value: TurtegEmote }
 		},
 		'7TV': {
 			description: '7TV emote management commands',
-			icon: {
-				type: 'img',
-				value:
-					'https://camo.githubusercontent.com/581fb8db60005b468924c8e03d0d25981136747bc63171f81219d6a1fc87b8f7/68747470733a2f2f63646e2e3774762e6170702f656d6f74652f30314a545452314a3448544b33355330384832373256435756332f34782e77656270'
-			}
+			icon: { type: 'img', value: StvLogo }
 		},
 		Support: {
 			description: 'Support and help commands',
@@ -82,153 +66,98 @@
 		},
 		Spotify: {
 			description: 'Spotify integration commands',
-			icon: { type: 'emoji', value: '🎵' }
+			icon: { type: 'img', value: 'https://cdn.brandfetch.io/spotify.com/symbol' }
 		},
-		Special: {
-			description: 'Special feature commands',
-			icon: { type: 'emoji', value: '⭐' }
+		Miscellaneous: {
+			description: 'General purpose commands',
+			icon: { type: 'img', value: PepegaReadingEmote }
 		},
-		'Data Commands': {
-			description: 'User and channel data lookup',
-			icon: {
-				type: 'img',
-				value:
-					'https://camo.githubusercontent.com/9efbf571fac99d494bbc7b00ee15de42c10abf9f830c97deb4dcbc70d540b61f/68747470733a2f2f63646e2e6672616e6b6572666163657a2e636f6d2f656d6f74652f3231383533302f34'
-			}
-		},
-		'Bot Staff': {
-			description: 'Bot staff and admin commands',
-			icon: {
-				type: 'img',
-				value:
-					'https://camo.githubusercontent.com/d7c868da31b592fcffc11345805e3c6cf6f839f799b89cb29abf3f83e41016c3/68747470733a2f2f63646e2e3774762e6170702f656d6f74652f3633663238643737663239313562343432636138306434322f34782e77656270'
-			}
-		},
-		Staff: {
-			description: 'Bot staff and admin commands',
-			icon: {
-				type: 'img',
-				value:
-					'https://camo.githubusercontent.com/d7c868da31b592fcffc11345805e3c6cf6f839f799b89cb29abf3f83e41016c3/68747470733a2f2f63646e2e3774762e6170702f656d6f74652f3633663238643737663239313562343432636138306434322f34782e77656270'
-			}
-		}
 	};
 
-	const UNCATEGORIZED_NAME = 'General';
+	async function loadCommands() {
+		error = '';
+		isLoading = true;
+		try {
+			let commands = await GetCommands();
+			if (commands) commandCategories = transformCommands(commands);
+			else error = 'No commands found';
+		} catch (e: any) {
+			error = e?.message ?? 'Failed to load commands';
+		} finally {
+			isLoading = false;
+		}
+	}
 
 	function transformCommands(raw: Command[]): CommandCategory[] {
-		const map = new Map<string, CommandCategory>();
+		const categories: CommandCategory[] = [];
 
 		for (const cmd of raw) {
-			const catName = cmd.category?.trim() || UNCATEGORIZED_NAME;
-			if (!map.has(catName)) {
+			if (cmd.category === 'Special') continue;
+			if(cmd.required_channel_power == null && cmd.required_global_power != null && (!me?.role.power || 
+				cmd.required_global_power > me?.role.power)) continue;
+			const catName = cmd.category || 'Miscellaneous';
+			const existingCategory = categories.find((c) => c.name === catName);
+			if (!existingCategory) {
 				const meta = categoryMeta[catName];
-				map.set(catName, {
+				categories.push({
 					name: catName,
 					description: meta?.description ?? '',
 					commands: []
 				});
 			}
-			const descArr = Array.isArray(cmd.description) ? cmd.description : [cmd.description];
-			const descStr = descArr.filter(Boolean).join(' ') || '—';
-			const usageStr = cmd.usage || `!${cmd.name}`;
-			map.get(catName)!.commands.push({
-				name: cmd.name,
-				description: descStr,
-				usage: usageStr
-			});
+			categories.find((c) => c.name === catName)!.commands.push(cmd);
 		}
 
-		const knownOrder = [
-			'Turtles',
-			'Economy',
-			'7TV',
-			'Spotify',
-			'Broadcaster',
-			'Moderation',
-			'Special',
-			'General',
-			'Staff',
-			'Bot Staff',
-			'Data Commands',
-			'Support'
-		];
-		return [...map.entries()]
-			.sort(([a], [b]) => {
-				const ai = knownOrder.indexOf(a);
-				const bi = knownOrder.indexOf(b);
-				if (ai === -1 && bi === -1) return a.localeCompare(b);
-				if (ai === -1) return 1;
-				if (bi === -1) return -1;
-				return ai - bi;
-			})
-			.map(([, v]) => v);
+		return categories;
 	}
-
-	onMount(async () => {
-		try {
-			const res = await fetch(API_URL);
-			if (!res.ok) throw new Error(`HTTP ${res.status}`);
-			const data = await res.json();
-			const raw: Command[] = Array.isArray(data) ? data : (data.commands ?? []);
-			commandCategories = transformCommands(raw);
-		} catch (e: any) {
-			error = e?.message ?? 'Failed to load commands';
-		} finally {
-			loading = false;
-		}
-	});
 
 	function getIcon(name: string) {
-		return (categoryMeta[name] ?? categoryMeta['Support'])?.icon;
+		return categoryMeta[name]?.icon ?? { type: 'img', value: PepegaReadingEmote };
 	}
 
-	$: activeCategory = commandCategories.find((c) => c.name === selectedCategory);
+	let activeCategory = $derived(commandCategories.find((c) => c.name === selectedCategory));
 
-	$: filteredCommands =
+	let filteredCommands = $derived(
 		selectedCategory === 'All Commands'
 			? search
 				? commandCategories.flatMap((cat) =>
 						cat.commands.filter(
 							(cmd) =>
 								cmd.name.toLowerCase().includes(search.toLowerCase()) ||
-								cmd.description.toLowerCase().includes(search.toLowerCase())
+								cmd.description.some((x) => x.includes(search.toLowerCase()))
 						)
 					)
 				: null
 			: (activeCategory?.commands ?? []).filter(
 					(cmd) =>
 						cmd.name.toLowerCase().includes(search.toLowerCase()) ||
-						cmd.description.toLowerCase().includes(search.toLowerCase())
-				);
+						cmd.description.some((x) => x.includes(search.toLowerCase()))
+				)
+	);
 
-	$: totalCount = commandCategories.reduce((sum, cat) => sum + cat.commands.length, 0);
+	let totalCount = $derived(commandCategories.reduce((sum, cat) => sum + cat.commands.length, 0));
 
-	$: filteredCount =
-		selectedCategory === 'All Commands'
-			? search
-				? ((filteredCommands as any[])?.length ?? 0)
-				: totalCount
-			: ((filteredCommands as any[])?.length ?? 0);
+	onMount(async () => {
+		await loadCommands();
+	});
 </script>
 
 <div class="page">
 	<div class="search-wrapper">
 		<div class="search-row">
-			<svg class="search-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-				<circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.5" />
-				<path d="M13 13l3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-			</svg>
+			<div class="search-icon">
+				<MagnifyingGlass />
+			</div>
 			<input
 				type="text"
 				placeholder="Search commands..."
 				bind:value={search}
 				autocomplete="off"
 				spellcheck="false"
-				disabled={loading}
+				disabled={isLoading}
 			/>
 			{#if search}
-				<button class="clear" on:click={() => (search = '')} aria-label="Clear">✕</button>
+				<button class="clear" onclick={() => (search = '')} aria-label="Clear"><X weight="bold" /></button>
 			{/if}
 		</div>
 	</div>
@@ -239,7 +168,7 @@
 			<button
 				class="cat-btn"
 				class:active={selectedCategory === 'All Commands'}
-				on:click={() => {
+				onclick={() => {
 					selectedCategory = 'All Commands';
 					search = '';
 				}}
@@ -260,7 +189,7 @@
 				<button
 					class="cat-btn"
 					class:active={selectedCategory === category.name}
-					on:click={() => {
+					onclick={() => {
 						selectedCategory = category.name;
 						search = '';
 					}}
@@ -278,34 +207,16 @@
 		</nav>
 
 		<main>
-			{#if loading}
+			{#if isLoading}
 				<div class="state-msg">
 					<span class="spinner"></span>
 					<p>Loading commands…</p>
 				</div>
 			{:else if error}
 				<div class="state-msg error">
-					<span class="state-icon">⚠</span>
+					<span class="state-icon"><Warning /></span>
 					<p>Could not load commands: <strong>{error}</strong></p>
-					<button
-						class="retry-btn"
-						on:click={() => {
-							loading = true;
-							error = '';
-							fetch(API_URL)
-								.then((r) => (r.ok ? r.json() : Promise.reject(`HTTP ${r.status}`)))
-								.then((data) => {
-									const raw: any[] = Array.isArray(data) ? data : (data.commands ?? []);
-									commandCategories = transformCommands(raw);
-								})
-								.catch((e) => {
-									error = String(e);
-								})
-								.finally(() => {
-									loading = false;
-								});
-						}}>Retry</button
-					>
+					<button class="retry-btn" onclick={loadCommands}>Retry</button>
 				</div>
 			{:else}
 				<div class="main-header">
@@ -326,7 +237,10 @@
 						</div>
 					</div>
 					<span class="result-count">
-						{filteredCount} command{filteredCount !== 1 ? 's' : ''}
+						{activeCategory?.commands.length ?? totalCount} command{(activeCategory?.commands
+							.length ?? totalCount !== 1)
+							? 's'
+							: ''}
 					</span>
 				</div>
 
@@ -346,35 +260,45 @@
 							</div>
 							<div class="commands-grid">
 								{#each category.commands as command, j}
-									<div class="command" style="--j: {j}">
+									<button class="command" style="--j: {j}" onclick={() => goto(`/commands/${command.name}`)}>
 										<div class="cmd-top">
 											<span class="hash">#</span>
 											<span class="cmd-name">{command.name}</span>
 										</div>
-										<code class="cmd-usage">{command.usage}</code>
-									</div>
+										{#if command.description.length > 0}
+											<p class="cmd-desc">{command.description[0]}</p>
+										{/if}
+										{#if command.usage}
+											<code class="cmd-usage">{command.usage}</code>
+										{/if}
+									</button>
 								{/each}
 							</div>
 						</div>
 					{/each}
 				{:else if (filteredCommands as any[])?.length === 0}
 					<div class="empty">
-						<span class="empty-icon">⊘</span>
+						<span class="empty-icon"><Empty /></span>
 						<p>No commands match "<strong>{search}</strong>"</p>
 					</div>
 				{:else}
 					<div class="commands-grid">
 						{#each filteredCommands as any[] as command, j}
-							<div class="command" style="--j: {j}">
+							<button class="command" style="--j: {j}" onclick={() => goto(`/commands/${command.name}`)}>
 								<div class="cmd-top">
 									<span class="hash">#</span>
 									<span class="cmd-name">{command.name}</span>
 								</div>
-								<code class="cmd-usage">{command.usage}</code>
-							</div>
+								{#if command.description.length > 0}
+									<p class="cmd-desc">{command.description[0]}</p>
+								{/if}
+								{#if command.usage}
+									<code class="cmd-usage">{command.usage}</code>
+								{/if}
+							</button>
 						{/each}
 					</div>
-				{/if}
+				{/if}	
 			{/if}
 		</main>
 	</div>
@@ -386,9 +310,6 @@
 	}
 
 	.page {
-		min-height: 100vh;
-		background: #101010;
-		color: #e0e0e0;
 		font-family: 'Inter', sans-serif;
 	}
 
@@ -709,15 +630,21 @@
 		border: 1px solid #222;
 		border-radius: 8px;
 		padding: 14px 16px;
+		display: flex;
+		flex-direction: column;
 		transition:
 			border-color 0.15s,
 			background 0.15s;
 		animation: cmdIn 0.2s ease both;
 		animation-delay: calc(var(--j) * 15ms);
 
+		min-width: 0;
+		text-align: left;
+
 		&:hover {
 			border-color: #33ca00;
 			background: #1a1a1a;
+			cursor: pointer;
 			.cmd-name {
 				color: #33ca00;
 			}
@@ -759,8 +686,15 @@
 		color: #c0c0c0;
 		transition: color 0.15s;
 	}
+	.cmd-desc {
+		margin: 0 0 10px;
+		font-size: 0.8rem;
+		color: #555;
+		line-height: 1.5;
+	}
 	.cmd-usage {
 		display: block;
+		margin-top: auto;
 		font-family: monospace;
 		font-size: 0.78rem;
 		color: #33ca00;
@@ -802,14 +736,21 @@
 		}
 		.layout {
 			flex-direction: column;
+			align-items: stretch;
 			padding: 20px 16px 60px;
 		}
 		.sidebar {
 			width: 100%;
 			position: static;
 			flex-direction: row;
-			flex-wrap: wrap;
 			gap: 6px;
+
+			overflow-x: scroll;
+			scrollbar-width: initial;
+
+			&::-webkit-scrollbar {
+				height: 6px;
+			}
 		}
 		.cat-btn {
 			width: auto;
