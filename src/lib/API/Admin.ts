@@ -1,5 +1,5 @@
 import type { TurtleCode, TurtleData } from "./Models/Turtles";
-import type { Reminder, Ticket, User } from "./Models/Users";
+import type { AFK, Reminder, Ticket, User } from "./Models/Users";
 
 export async function GetTickets(showAll: boolean = false): Promise<Ticket[]> {
     const API_URL = import.meta.env.VITE_API_URL;
@@ -114,6 +114,72 @@ export async function PatchReminder(reminderId: number, isViewed: boolean): Prom
         },
         body: JSON.stringify({
             isViewed: isViewed
+        })
+    });
+
+    const data = await response.json();
+    if (data.error) throw new Error(data.error);
+    if (!response.ok) throw new Error(`API request failed: ${response.statusText}`);
+
+    return data.success;
+}
+
+export async function GetAFKs(searchReason?: string | null, searchUserId?: number | null): Promise<AFK[]> {
+    const API_URL = import.meta.env.VITE_API_URL;
+    if (!API_URL) throw new Error("API_URL is not defined in environment variables.");
+
+    const params = new URLSearchParams();
+    if (searchReason) params.append('searchReason', searchReason);
+    if (searchUserId) params.append('searchUserId', searchUserId.toString());
+
+    const url = `${API_URL}/v1/admin/afks${params.toString() ? '?' + params.toString() : ''}`;
+    const response = await fetch(url, {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('turteg-token') || ''}`
+        }
+    });
+
+    const data = await response.json();
+    if (data.error) throw new Error(data.error);
+    if (!response.ok) throw new Error(`API request failed: ${response.statusText}`);
+
+    return data.afks;
+}
+
+export async function DeleteAFK(afkId: number): Promise<boolean> {
+    const API_URL = import.meta.env.VITE_API_URL;
+    if (!API_URL) throw new Error("API_URL is not defined in environment variables.");
+    const url = `${API_URL}/v1/admin/afks/${afkId}`;
+    const response = await fetch(url, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('turteg-token') || ''}`
+        }
+    });
+
+    const data = await response.json();
+    if (data.error) throw new Error(data.error);
+    if (!response.ok) throw new Error(`API request failed: ${response.statusText}`);
+
+    return data.success;
+}
+
+export async function PatchAFK(afkId: number, isActive?: boolean | null, reason?: string | null, date?: string | null, endDate?: string | null, type?: number | null): Promise<boolean> {
+    const API_URL = import.meta.env.VITE_API_URL;
+    if (!API_URL) throw new Error("API_URL is not defined in environment variables.");
+    const url = `${API_URL}/v1/admin/afks/${afkId}`;
+    const response = await fetch(url, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('turteg-token') || ''}`
+        },
+        body: JSON.stringify({
+            isActive: isActive,
+            reason: reason,
+            date: date,
+            endDate: endDate,
+            type: type
         })
     });
 

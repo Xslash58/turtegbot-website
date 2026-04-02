@@ -60,6 +60,17 @@ export interface Reminder {
     authorId: number;
 }
 
+export interface AFK {
+    ID: number;
+    userId: number;
+    username: string;
+    date: string;
+    endDate: string | null;
+    reason: string;
+    type: number;
+    isActive: boolean;
+}
+
 export interface Ticket {
     ID: number;
     username: string;

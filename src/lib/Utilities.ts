@@ -1,4 +1,5 @@
-export function formatDate(dateStr: Date) {
+export function formatDate(dateStr: string | Date) {
+		if(dateStr instanceof Date) dateStr = dateStr.toISOString();
 		const date = new Date(dateStr);
 		const pad = (n: number) => n.toString().padStart(2, '0');
 		return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}`;

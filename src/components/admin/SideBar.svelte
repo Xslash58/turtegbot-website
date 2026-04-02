@@ -20,7 +20,7 @@
         {#if me && me.role.power >= 5}
 		    <button on:click={() => gotoCategory(`tickets`)}>Tickets</button>
 		    <button on:click={() => gotoCategory(`reminders`)}>Reminders</button>
-		    <button disabled on:click={() => gotoCategory(`afks`)}>AFKs</button>
+		    <button on:click={() => gotoCategory(`afks`)}>AFKs</button>
 			<button on:click={() => gotoCategory(`turtles`)}>Turtles</button>
         {/if}
         {#if me && me.role.power >= 10}
