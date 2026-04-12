@@ -6,8 +6,9 @@
 	import { onMount } from 'svelte';
 	import loadingImage from '$lib/assets/loading_texture.webp';
 	import LoadingIndicator from '../../../../components/LoadingIndicator.svelte';
+	import { X } from 'phosphor-svelte';
 
-	let channelName = page.params.channel;
+	let channelName = $state(page.params.channel);
 
 	let mods: RoleUser[] = $state([]);
 	let profilePictures: Record<string, string> = $state({});
@@ -22,9 +23,13 @@
 			return;
 		}
 
+		let channel = await GetTwitchUsersBulk([channelName]);
+		if (channel && channel.length > 0) channelName = channel[0].displayName || channelName;
+		else channelName = '';
+
 		mods = (await GetModVIPList(channelName))?.mods || [];
 
-        isLoading = false;
+		isLoading = false;
 
 		if (mods.length > 0) {
 			let users: IVRTwitchUser[] = [];
@@ -53,33 +58,40 @@
 </script>
 
 <section class="mods">
-	<h1>Twitch Moderators for {channelName}</h1>
+	{#if channelName}
+		<h1>Twitch Moderators for {channelName}</h1>
 
-	<section class="list">
-		{#if isLoading}
-            <LoadingIndicator />
-        {:else if mods.length === 0}
-			<p>No moderators found.</p>
-		{:else}
-			{#each mods as mod}
-				<button
-					class="mod"
-					onclick={() => window.open(`https://www.twitch.tv/${mod.login}`, '_blank')}
-				>
-					<img src={profilePictures[mod.login] || loadingImage} alt="Moderator Twitch Avatar" />
-					<h2>{mod.displayName}</h2>
-					<p>{formatDate(mod.grantedAt)}</p>
-					{#if Math.floor((new Date(Date.now()).getTime() - new Date(mod.grantedAt).getTime()) / 1000) < 3600}
-						<p>{formatTimeSpan(mod.grantedAt, Date.now(), { shorthand: true })} ago</p>
-					{:else}
-						<p>
-							{formatTimeSpan(mod.grantedAt, Date.now(), { shorthand: true, minUnit: 'hour' })} ago
-						</p>
-					{/if}
-				</button>
-			{/each}
-		{/if}
-	</section>
+		<section class="list">
+			{#if isLoading}
+				<LoadingIndicator />
+			{:else if mods.length === 0}
+				<p>No moderators found.</p>
+			{:else}
+				{#each mods as mod}
+					<button
+						class="mod"
+						onclick={() => window.open(`https://www.twitch.tv/${mod.login}`, '_blank')}
+					>
+						<img src={profilePictures[mod.login] || loadingImage} alt="Moderator Twitch Avatar" />
+						<section class="user-data">
+							<h2>{mod.displayName}</h2>
+							<p>{formatDate(mod.grantedAt)}</p>
+							{#if Math.floor((new Date(Date.now()).getTime() - new Date(mod.grantedAt).getTime()) / 1000) < 3600}
+								<p>{formatTimeSpan(mod.grantedAt, Date.now(), { shorthand: true })} ago</p>
+							{:else}
+								<p>
+									{formatTimeSpan(mod.grantedAt, Date.now(), { shorthand: true, minUnit: 'hour' })} ago
+								</p>
+							{/if}
+						</section>
+					</button>
+				{/each}
+			{/if}
+		</section>
+	{:else}
+		<p style="font-size: 1.25rem;">Channel not found.</p>
+		<X size="40px" weight="bold" color="white" />
+	{/if}
 </section>
 
 <style lang="scss">
@@ -128,6 +140,40 @@
 				margin: 5px 0 0 0;
 				color: #888;
 				font-size: 0.9em;
+			}
+		}
+	}
+
+	@media (max-width: 425px) {
+		h1 {
+			font-size: 1.65rem;
+			margin-bottom: 0;
+		}
+
+		.list {
+			gap: 5px;
+
+			.mod {
+				width: 100%;
+
+				border-radius: 0;
+
+				img {
+					height: 100%;
+					width: auto;
+					margin-bottom: 0;
+				}
+
+				.user-data {
+					text-align: center;
+					width: 100%;
+				}
+
+				height: 100px;
+
+				display: flex;
+				flex-direction: row;
+				align-items: center;
 			}
 		}
 	}
