@@ -24,3 +24,15 @@ export interface IVRTwitchUser {
     updatedAt: string;
     emotePrefix: string | null;
 }
+
+export interface FoundersList {
+    founders: FounderUser[];
+}
+
+export interface FounderUser {
+    isSubscribed: boolean;
+    entitlementStart: string;
+    id: string;
+    login: string;
+    displayName: string;
+}
