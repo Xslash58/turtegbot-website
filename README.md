@@ -35,6 +35,6 @@ You can preview the production build with `pnpm run preview`.
 
 ## Licensing Notice
 Third-party assets included for reference only:
-- Twitch, Kick and Github logos are trademarks of their respective companies.
+- Twitch, Kick, 7TV and Github logos are trademarks of their respective companies.
 
 These assets are not licensed for reuse under MIT or any other license.
