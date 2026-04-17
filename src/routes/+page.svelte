@@ -28,7 +28,7 @@
 					<hr />
 				</section>
 				<p>A global economy system where you can earn and spend points, gamble, and more.</p>
-				<button on:click={() => checkItOut('economy')}>Check it out!</button>
+				<button on:click={() => checkItOut('turtles')}>Check it out!</button>
 			</section>
 			<section class="module">
 				<section class="title">
@@ -47,7 +47,7 @@
 					<hr />
 				</section>
 				<p>Allow your viewers to set reminders for themselves/others and track their AFK status.</p>
-				<button on:click={() => checkItOut('misc')}>Check it out!</button>
+				<button on:click={() => checkItOut('miscellaneous')}>Check it out!</button>
 			</section>
 			<section class="module">
 				<section class="title">
@@ -67,7 +67,7 @@
 					Tons of fun, engaging and data-driven commands. Making your chat more active even when
 					offline!
 				</p>
-				<button on:click={() => checkItOut('fun')}>Check it out!</button>
+				<button on:click={() => checkItOut('')}>Check it out!</button>
 			</section>
 		</section>
 	</section>

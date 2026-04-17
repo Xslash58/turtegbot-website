@@ -13,6 +13,7 @@
 	} from '$lib/assets';
 	import { Empty, MagnifyingGlass, Warning, X } from 'phosphor-svelte';
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 
 	interface CommandCategory {
 		name: string;
@@ -25,6 +26,8 @@
 	let commandCategories: CommandCategory[] = $state([]);
 	let isLoading = $state(true);
 	let error = $state('');
+
+	let currentHash = $page.url.hash;
 
 	let me: User | null = $state(null);
 
@@ -139,6 +142,14 @@
 
 	onMount(async () => {
 		await loadCommands();
+
+		if(currentHash) {
+			const categoryName = currentHash.substring(1);
+			const key = Object.keys(categoryMeta).find(
+				x => x.toLowerCase() === categoryName.toLowerCase()
+			);
+			if(key) selectedCategory = key;
+		}
 	});
 </script>
 
