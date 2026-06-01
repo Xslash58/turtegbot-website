@@ -32,6 +32,8 @@
 		isLoading = false;
 
 		if (founders.length > 0) {
+			founders.reverse();
+
 			let users: IVRTwitchUser[] = [];
 
 			let usersToFetch = founders.map((founder) => founder.login);

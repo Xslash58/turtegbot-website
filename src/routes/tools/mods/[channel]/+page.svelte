@@ -32,6 +32,8 @@
 		isLoading = false;
 
 		if (mods.length > 0) {
+			mods.reverse();
+
 			let users: IVRTwitchUser[] = [];
 
 			let usersToFetch = mods.map((mod) => mod.login);

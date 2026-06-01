@@ -32,6 +32,8 @@
 		isLoading = false;
 
 		if (vips.length > 0) {
+			vips.reverse();
+
 			let users: IVRTwitchUser[] = [];
 
 			let usersToFetch = vips.map((vip) => vip.login);
