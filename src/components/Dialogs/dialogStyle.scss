@@ -96,4 +96,44 @@ dialog {
             }
         }
     }
+
+    &.feedback-dialog {
+        width: 500px;
+        height: auto;
+
+        .content {
+            width: 100%;
+
+            h2 {
+                margin: 0;
+            }
+
+            hr {
+                margin: 10px 0;
+                border: none;
+                border-top: 1px solid #333;
+                width: 100%;
+            }
+
+            .text {
+                p {
+                    margin: 2px;
+                    font-weight: bold;
+                }
+            }
+
+            button {
+                margin-top: 10px;
+                background-color: #4caf50;
+				color: white;
+				padding: 10px 20px;
+				border: none;
+				border-radius: 5px;
+				cursor: pointer;
+            }
+            button.cancel {
+                background-color: #f44336;
+            }
+        }
+    }
 }
