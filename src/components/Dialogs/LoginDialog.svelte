@@ -23,11 +23,13 @@
 	}
 
     function loginWithTwitch() {
+		localStorage.setItem('turteg-auth-return-to', window.location.pathname);
         location.href = import.meta.env.VITE_AUTH_TWITCH_URL;
         close();
     }
 
 	async function loginWithKick() {
+		localStorage.setItem('turteg-auth-return-to', window.location.pathname);
 		const { codeVerifier, codeChallenge } = await generatePKCE();
 		localStorage.setItem('turteg-kick-verifier', codeVerifier);
 

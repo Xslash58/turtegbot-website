@@ -30,7 +30,8 @@
 
 		localStorage.setItem('turteg-token', token);
 
-		location.href = '/';
+		location.href = localStorage.getItem('turteg-auth-return-to') || '/';
+		localStorage.removeItem('turteg-auth-return-to');
 	});
 </script>
 
