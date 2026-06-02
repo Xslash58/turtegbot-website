@@ -6,3 +6,9 @@ export const confirmationDialog = writable<{
     text?: string;
     onConfirm?: () => void;
 }>({ visible: false });
+export const feedbackDialog = writable<{
+    visible: boolean;
+    title?: string;
+    content?: string;
+    onClose?: () => void;
+}>({ visible: false });
