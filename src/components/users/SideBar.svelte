@@ -109,7 +109,8 @@
 				.role {
 					background-color: rgba($color: #fff, $alpha: 0.4);
 					border-radius: 10px;
-					width: 70px;
+					min-width: 70px;
+					width: auto;
 					padding: 0 10px;
 					p {
 						font-size: 0.9rem;
