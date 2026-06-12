@@ -53,9 +53,7 @@
 
 <section class="users">
     <section class="settings">
-        <label>
-            User: <UserSearch onSelect={user => GetProperUser(user)} />
-        </label>
+            <UserSearch onSelect={user => GetProperUser(user)} selectionMode={true} />
     </section>
 
     {#if selectedUser}

@@ -87,6 +87,7 @@ export interface SearchUser {
     ID: number;
     twitchUsername: string;
     kickUsername: string;
+    profile: User;
 }
 
 export interface Webhook {

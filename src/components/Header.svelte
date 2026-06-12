@@ -3,7 +3,7 @@
 	import type { User } from '$lib/API/Models/Users';
 	import { GetMe } from '$lib/API/Users';
 	import christmasBg from '$lib/assets/header-xmas.png';
-	import christmasLights from '$lib/assets/header-xmas-lights.avif'
+	import christmasLights from '$lib/assets/header-xmas-lights.avif';
 	import turtegLogo from '$lib/assets/favicon.png';
 
 	import { loginModalVisible } from '$lib/stores/modalStore';
@@ -11,10 +11,14 @@
 	import LoadingIndicator from './LoadingIndicator.svelte';
 	import { page } from '$app/state';
 	import { myUser } from '$lib/stores/userStore';
+	import UserSearch from './users/UserSearch.svelte';
+	import { UserList } from 'phosphor-svelte';
 
 	let user: User | null = null;
 
 	let isLoaded: boolean = false;
+
+	let searchVisible: boolean = false;
 
 	onMount(async () => {
 		console.log('Header component mounted');
@@ -36,7 +40,7 @@
 	}
 </script>
 
-<header style="{import.meta.env.VITE_CHRISTMAS == '1' ? `background: url(${christmasBg});` : ''}">
+<header style={import.meta.env.VITE_CHRISTMAS == '1' ? `background: url(${christmasBg});` : ''}>
 	<section class="branding">
 		<img
 			src={turtegLogo}
@@ -59,24 +63,44 @@
 		</ul>
 	</nav>
 
-	{#if user && isLoaded}
-		<section class="profile">
-			<button on:click={() => goto(`/users/${user?.id}`)}>
-				<p>{user.display_name}</p>
-				<img src={user.profile_image_url} alt="profile" />
-			</button>
-		</section>
-	{:else if !isLoaded}
-		<section class="profile">
-			<LoadingIndicator />
-		</section>
-	{:else}
-		<section class="login-wrapper">
-			<button class="login-button" on:click={openLoginModal}>
-				<span>Login</span>
-			</button>
-		</section>
-	{/if}
+	<section class="right">
+		{#if searchVisible}
+			<section class="search">
+				<UserSearch
+					onSelect={(selectedUser) => {
+						if (selectedUser) goto(`/users/${selectedUser.ID}`);
+					}}
+					onFocusOut={() => (searchVisible = false)}
+					autoFocus={true}
+				/>
+			</section>
+		{:else}
+			<UserList
+				size={24}
+				weight="bold"
+				onclick={() => (searchVisible = true)}
+				style="cursor: pointer;"
+			/>
+		{/if}
+		{#if user && isLoaded}
+			<section class="profile">
+				<button on:click={() => goto(`/users/${user?.id}`)}>
+					<p>{user.display_name}</p>
+					<img src={user.profile_image_url} alt="profile" />
+				</button>
+			</section>
+		{:else if !isLoaded}
+			<section class="profile">
+				<LoadingIndicator />
+			</section>
+		{:else}
+			<section class="login-wrapper">
+				<button class="login-button" on:click={openLoginModal}>
+					<span>Login</span>
+				</button>
+			</section>
+		{/if}
+	</section>
 
 	{#if import.meta.env.VITE_CHRISTMAS == '1'}
 		<section class="seasonal-xmas">
@@ -86,11 +110,7 @@
 				class="corner left"
 				style="display: none;"
 			/>
-			<img
-				src={christmasLights}
-				alt="christmas left corner lights"
-				class="corner right"
-			/>
+			<img src={christmasLights} alt="christmas left corner lights" class="corner right" />
 		</section>
 	{/if}
 </header>
@@ -106,6 +126,12 @@
 		background-color: #101010;
 		color: white;
 		height: 45px;
+
+		.right {
+			display: flex;
+			gap: 10px;
+			align-items: center;
+		}
 	}
 
 	.branding {
@@ -271,6 +297,15 @@
 			}
 			img {
 				margin-left: 0;
+			}
+		}
+
+		section.right {
+			.search {
+				position: absolute;
+				top: 45px;
+				right: 0;
+				z-index: 10;
 			}
 		}
 
