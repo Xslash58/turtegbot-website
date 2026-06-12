@@ -3,16 +3,31 @@
 	import type { Loyalty } from '$lib/API/Models/StreamElements';
 	import type { TurtleCode } from '$lib/API/Models/Turtles';
 	import type { User } from '$lib/API/Models/Users';
-	import { DeleteStreamElementsCode, GetStreamElementsCodes, GetStreamElementsLoyalty, PostStreamElementsCode, PutStreamElementsCode } from '$lib/API/StreamElements';
+	import {
+		DeleteStreamElementsCode,
+		GetStreamElementsCodes,
+		GetStreamElementsLoyalty,
+		PostStreamElementsCode,
+		PostStreamElementsCodesBulk,
+		PutStreamElementsCode
+	} from '$lib/API/StreamElements';
 	import { profileUser } from '$lib/stores/userStore';
+	import { generateRandomString } from '$lib/Utilities';
 	import { Eye, EyeClosed, Trash } from 'phosphor-svelte';
 	import { onMount } from 'svelte';
+	import LoadingIndicator from '../../../../../components/LoadingIndicator.svelte';
+	import SearchBar from '../../../../../components/SearchBar.svelte';
 
 	let codes: TurtleCode[] = [];
-	let userId: string = page.params.id + "";
+	let userId: string = page.params.id + '';
 	let user: User | null = $profileUser;
 	let loyalty: Loyalty | null = null;
-	let errorMessage: string = "";
+	let errorMessage: string = '';
+
+	let searchPhrase = '';
+
+	let isBulk: boolean = false;
+	let isLoading: boolean = false;
 
 	onMount(async () => {
 		await fetchCodes();
@@ -22,18 +37,20 @@
 	async function changeVisibility(codeId: string, isVisible: boolean) {
 		let success = false;
 		if (isVisible)
-			success = await PutStreamElementsCode(userId, codeId, { codeName: `SE;${user?.twitchLogin.toLowerCase()};${loyalty?.loyalty.name};public` });
+			success = await PutStreamElementsCode(userId, codeId, {
+				codeName: `SE;${user?.twitchLogin.toLowerCase()};${loyalty?.loyalty.name};public`
+			});
 		else
-			success = await PutStreamElementsCode(userId, codeId, { codeName: `SE;${user?.twitchLogin.toLowerCase()};${loyalty?.loyalty.name}` });
+			success = await PutStreamElementsCode(userId, codeId, {
+				codeName: `SE;${user?.twitchLogin.toLowerCase()};${loyalty?.loyalty.name}`
+			});
 
-		if (success)
-			fetchCodes();
+		if (success) fetchCodes();
 	}
 
 	async function deleteCode(codeId: string) {
 		const success = await DeleteStreamElementsCode(userId, codeId);
-		if (success)
-			fetchCodes();
+		if (success) fetchCodes();
 	}
 
 	async function fetchCodes() {
@@ -41,48 +58,105 @@
 	}
 
 	async function handleSubmit(event: Event) {
-		errorMessage = "";
+		isLoading = true;
+		errorMessage = '';
 
 		const form = event.target as HTMLFormElement;
 		const formData = new FormData(form);
-		const newCode: Partial<TurtleCode> = {
-			code: formData.get('name') as string,
-			turtles: Number(formData.get('points')),
-			uses: Number(formData.get('uses')),
-			codeName: `SE;${user?.twitchLogin.toLowerCase()};${loyalty?.loyalty.name}`,
-		};
 
 		let success = false;
+		let amount = 1;
 
-		try {
-			success = await PostStreamElementsCode(userId, newCode);
-		} catch(err) {
-			errorMessage = err instanceof Error ? err.message : String(err).replace("Error: ", "");
+		const newCode: Partial<TurtleCode> = {
+			code: (formData.get('name') as string) || '',
+			turtles: Number(formData.get('points')),
+			uses: Number(formData.get('uses')),
+			codeName: `SE;${user?.twitchLogin.toLowerCase()};${loyalty?.loyalty.name}`
+		};
+
+		if (isBulk) {
+			const requestedAmount = Number(formData.get('mass-amount'));
+			if (isNaN(requestedAmount) || requestedAmount < 1) {
+				errorMessage = 'Invalid bulk amount';
+				isLoading = false;
+				return;
+			}
+			amount = requestedAmount;
+
+			let bulkCodes: TurtleCode[] = [];
+			try {
+				bulkCodes = await PostStreamElementsCodesBulk(userId, newCode, amount);
+			} catch (err) {
+				errorMessage = err instanceof Error ? err.message : String(err).replace('Error: ', '');
+			}
+			if (bulkCodes.length > 0) {
+				success = true;
+				const blob = new Blob([bulkCodes.map((c) => c.code).join('\n')], { type: 'text/plain' });
+				const url = URL.createObjectURL(blob);
+				const link = document.createElement('a');
+				link.href = url;
+				link.download = 'generated_codes.txt';
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+				URL.revokeObjectURL(url);
+			}
+		} else {
+			try {
+				success = await PostStreamElementsCode(userId, newCode);
+			} catch (err) {
+				errorMessage = err instanceof Error ? err.message : String(err).replace('Error: ', '');
+			}
 		}
-		
 		if (success) {
 			fetchCodes();
 			form.reset();
-		}
-		else if (errorMessage == "")
-			errorMessage = "Failed to generate code";
-	}
+		} else if (errorMessage == '') errorMessage = 'Failed to generate codes';
 
+		isLoading = false;
+	}
 </script>
 
 <section class="codes">
 	<section class="code-creation">
 		<form on:submit|preventDefault={handleSubmit}>
-			<label>name: <input type="text" name="name" autocomplete="off" /></label>
+			<label
+				>code: <input
+					type="text"
+					name="name"
+					autocomplete="off"
+					placeholder="Empty for random..."
+					disabled={isBulk}
+				/></label
+			>
 			<label>points: <input type="number" name="points" /></label>
 			<label>uses: <input type="number" name="uses" /></label>
+			<label for="mass-generate"
+				><input type="checkbox" name="mass-generate" id="mass-generate" bind:checked={isBulk} />Mass
+				Generate</label
+			>
+			{#if isBulk}
+				<label
+					>bulk: <input
+						type="number"
+						name="mass-amount"
+						placeholder="Amount to generate..."
+						value="1"
+					/></label
+				>
+			{/if}
 
-			<button>Generate</button>
+			{#if !isLoading}
+				<button>Generate</button>
+			{:else}
+				<button disabled style="padding: 2px"> <LoadingIndicator size={24} /> </button>
+			{/if}
 		</form>
 		<small>{errorMessage}</small>
 	</section>
 	<section class="code-list">
 		<h1>Codes List</h1>
+		<SearchBar bind:searchTerm={searchPhrase} placeholder="Search codes..." />
 		<table>
 			<thead>
 				<tr>
@@ -94,22 +168,24 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each codes as code}
+				{#each codes.filter((x) => x.code
+						.toLowerCase()
+						.includes(searchPhrase.toLowerCase())) as code}
 					<tr>
 						<td id="action-buttons">
-						<button on:click={() => deleteCode(code.ID)}>
-							<Trash size="16" weight="bold" fill="red" />
-						</button>
-						{#if code.codeName.split(';')[3] == 'public'}
-							<button on:click={() => changeVisibility(code.ID, false)}>
-								<Eye size="16" weight="bold" fill="lime" />
+							<button on:click={() => deleteCode(code.ID)}>
+								<Trash size="16" weight="bold" fill="red" />
 							</button>
-						{:else}
-							<button on:click={() => changeVisibility(code.ID, true)}>
-								<EyeClosed size="16" weight="bold" fill="lime" />
-							</button>
-						{/if}
-					</td>
+							{#if code.codeName.split(';')[3] == 'public'}
+								<button on:click={() => changeVisibility(code.ID, false)}>
+									<Eye size="16" weight="bold" fill="lime" />
+								</button>
+							{:else}
+								<button on:click={() => changeVisibility(code.ID, true)}>
+									<EyeClosed size="16" weight="bold" fill="lime" />
+								</button>
+							{/if}
+						</td>
 						<td>{code.ID}</td>
 						<td>{code.code}</td>
 						<td>{code.turtles}</td>
@@ -158,6 +234,17 @@
 				border: none;
 				margin: 2px 2px;
 				border-radius: 5px;
+
+				&:disabled {
+					background-color: #202020;
+					cursor: not-allowed;
+				}
+			}
+			input[type='checkbox'] {
+				width: auto;
+			}
+			label[for='mass-generate'] {
+				justify-content: left;
 			}
 
 			button {
@@ -167,7 +254,12 @@
 				border: none;
 				border-radius: 5px;
 				margin: 5px 0;
-                width: 100%;
+				width: 100%;
+
+				&:disabled {
+					background-color: #202020;
+					cursor: not-allowed;
+				}
 			}
 			small {
 				text-align: center;

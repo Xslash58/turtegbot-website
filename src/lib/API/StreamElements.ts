@@ -65,6 +65,37 @@ export async function PostStreamElementsCode(userId: string, newCode: Partial<Tu
     return true;
 }
 
+export async function PostStreamElementsCodesBulk(userId: string, codesData: Partial<TurtleCode>, amount: number): Promise<TurtleCode[]> {
+    const API_URL = import.meta.env.VITE_API_URL;
+    if (!API_URL) throw new Error("API_URL is not defined in environment variables.");
+
+    const response = await fetch(`${API_URL}/v1/users/${userId}/streamelements/bulk-codes`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('turteg-token') || ''}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            count: amount,
+            turtles: codesData.turtles,
+            uses: codesData.uses,
+            tip: codesData.tip,
+            codeName: codesData.codeName
+        })
+    });
+
+    if (!response.ok) {
+        console.log(`API request failed: ${response.statusText}`);
+        let json = await response.json();
+        if(json.error)
+            throw new Error(json.error);
+        return [];
+    }
+
+    const responseData = await response.json();
+    return responseData.codes;
+}
+
 export async function PutStreamElementsCode(userId: string, codeId: string, updatedData: Partial<TurtleCode>): Promise<boolean> {
     const API_URL = import.meta.env.VITE_API_URL;
     if (!API_URL) throw new Error("API_URL is not defined in environment variables.");
