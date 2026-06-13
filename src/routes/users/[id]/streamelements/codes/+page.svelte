@@ -12,13 +12,12 @@
 		PutStreamElementsCode
 	} from '$lib/API/StreamElements';
 	import { profileUser } from '$lib/stores/userStore';
-	import { generateRandomString } from '$lib/Utilities';
-	import { Eye, EyeClosed, Trash } from 'phosphor-svelte';
+	import { ArrowsClockwise, Eye, EyeClosed, Trash } from 'phosphor-svelte';
 	import { onMount } from 'svelte';
 	import LoadingIndicator from '../../../../../components/LoadingIndicator.svelte';
 	import SearchBar from '../../../../../components/SearchBar.svelte';
 
-	let codes: TurtleCode[] = [];
+	let codes: (TurtleCode & { deleted?: boolean })[] = [];
 	let userId: string = page.params.id + '';
 	let user: User | null = $profileUser;
 	let loyalty: Loyalty | null = null;
@@ -28,6 +27,7 @@
 
 	let isBulk: boolean = false;
 	let isLoading: boolean = false;
+	let isLoadingCodes: boolean = false;
 
 	onMount(async () => {
 		await fetchCodes();
@@ -45,16 +45,28 @@
 				codeName: `SE;${user?.twitchLogin.toLowerCase()};${loyalty?.loyalty.name}`
 			});
 
-		if (success) fetchCodes();
+		if (success)
+			codes = codes.map((c) =>
+				c.ID === codeId
+					? {
+							...c,
+							codeName: isVisible
+								? `SE;${user?.twitchLogin.toLowerCase()};${loyalty?.loyalty.name};public`
+								: `SE;${user?.twitchLogin.toLowerCase()};${loyalty?.loyalty.name}`
+						}
+					: c
+			);
 	}
 
 	async function deleteCode(codeId: string) {
 		const success = await DeleteStreamElementsCode(userId, codeId);
-		if (success) fetchCodes();
+		if (success) codes = codes.map((c) => (c.ID === codeId ? { ...c, deleted: true } : c));
 	}
 
 	async function fetchCodes() {
+		isLoadingCodes = true;
 		codes = await GetStreamElementsCodes(userId);
+		isLoadingCodes = false;
 	}
 
 	async function handleSubmit(event: Event) {
@@ -73,6 +85,7 @@
 			uses: Number(formData.get('uses')),
 			codeName: `SE;${user?.twitchLogin.toLowerCase()};${loyalty?.loyalty.name}`
 		};
+		let bulkCodes: TurtleCode[] = [];
 
 		if (isBulk) {
 			const requestedAmount = Number(formData.get('mass-amount'));
@@ -83,7 +96,6 @@
 			}
 			amount = requestedAmount;
 
-			let bulkCodes: TurtleCode[] = [];
 			try {
 				bulkCodes = await PostStreamElementsCodesBulk(userId, newCode, amount);
 			} catch (err) {
@@ -109,8 +121,8 @@
 			}
 		}
 		if (success) {
-			fetchCodes();
 			form.reset();
+			fetchCodes();
 		} else if (errorMessage == '') errorMessage = 'Failed to generate codes';
 
 		isLoading = false;
@@ -156,7 +168,16 @@
 	</section>
 	<section class="code-list">
 		<h1>Codes List</h1>
-		<SearchBar bind:searchTerm={searchPhrase} placeholder="Search codes..." />
+		<nav>
+			<SearchBar
+				bind:searchTerm={searchPhrase}
+				placeholder="Search codes..."
+				isLoading={isLoadingCodes}
+			/>
+			<button on:click={() => fetchCodes()} disabled={isLoadingCodes}
+				><ArrowsClockwise color="white" weight="bold" size={16} /></button
+			>
+		</nav>
 		<table>
 			<thead>
 				<tr>
@@ -171,17 +192,17 @@
 				{#each codes.filter((x) => x.code
 						.toLowerCase()
 						.includes(searchPhrase.toLowerCase())) as code}
-					<tr>
+					<tr class:deleted={code.deleted}>
 						<td id="action-buttons">
-							<button on:click={() => deleteCode(code.ID)}>
+							<button on:click={() => deleteCode(code.ID)} disabled={code.deleted}>
 								<Trash size="16" weight="bold" fill="red" />
 							</button>
 							{#if code.codeName.split(';')[3] == 'public'}
-								<button on:click={() => changeVisibility(code.ID, false)}>
+								<button on:click={() => changeVisibility(code.ID, false)} disabled={code.deleted}>
 									<Eye size="16" weight="bold" fill="lime" />
 								</button>
 							{:else}
-								<button on:click={() => changeVisibility(code.ID, true)}>
+								<button on:click={() => changeVisibility(code.ID, true)} disabled={code.deleted}>
 									<EyeClosed size="16" weight="bold" fill="lime" />
 								</button>
 							{/if}
@@ -274,6 +295,7 @@
 
 			table {
 				width: auto;
+				border-collapse: collapse;
 
 				th,
 				td {
@@ -281,17 +303,46 @@
 					padding: 0 0.5rem;
 				}
 
-				button {
-					background-color: transparent;
-					border: none;
-					cursor: pointer;
-					padding: 0 4px;
+				tr {
+					&.deleted {
+						opacity: 0.5;
 
-					&:hover {
-						transform: scale(1.15);
-						transition: transform 0.1s;
+						td:not(#action-buttons) {
+							text-decoration: line-through;
+						}
+					}
+
+					&:nth-child(even) {
+						background-color: rgba($color: #ffffff, $alpha: 0.1);
 					}
 				}
+			}
+			button {
+				background-color: transparent;
+				border: none;
+				cursor: pointer;
+				padding: 0 4px;
+
+				&:hover {
+					transform: scale(1.15);
+					transition: transform 0.1s;
+				}
+
+				&:disabled {
+					cursor: not-allowed;
+					opacity: 0.5;
+					&:hover {
+						transform: none;
+						transition: none;
+					}
+				}
+			}
+			nav {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				justify-content: center;
+				gap: 5px;
 			}
 		}
 	}
