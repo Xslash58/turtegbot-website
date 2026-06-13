@@ -2,7 +2,7 @@
 	import { page } from '$app/state';
 	import { LinkTwitchAccount } from '$lib/API/Auth';
 	import { onMount } from 'svelte';
-	import LoadingIndicator from '../../../../components/LoadingIndicator.svelte';
+	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import { GetMe } from '$lib/API/Users';
 	import type { User } from '$lib/API/Models/Users';
 	import { Check, X } from 'phosphor-svelte';

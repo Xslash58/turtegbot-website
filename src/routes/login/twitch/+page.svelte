@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import LoadingIndicator from '../../../components/LoadingIndicator.svelte';
+	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 
 	onMount(() => {
 		location.href = import.meta.env.VITE_AUTH_TWITCH_URL;

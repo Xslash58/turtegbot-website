@@ -5,7 +5,7 @@
 	import { formatDate, formatTimeSpan } from '$lib/Utilities';
 	import { onMount } from 'svelte';
 	import loadingImage from '$lib/assets/loading_texture.webp';
-	import LoadingIndicator from '../../../../components/LoadingIndicator.svelte';
+	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import { X } from 'phosphor-svelte';
 
 	let channelName = $state(page.params.channel);

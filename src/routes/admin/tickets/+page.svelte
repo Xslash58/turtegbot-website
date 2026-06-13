@@ -10,10 +10,10 @@
 		X
 	} from 'phosphor-svelte';
 	import type { Ticket } from '$lib/API/Models/Users';
-	import LoadingIndicator from '../../../components/LoadingIndicator.svelte';
+	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import { formatDate } from '$lib/Utilities';
 	import { DeleteTicket, GetTickets, PatchTicket } from '$lib/API/Admin';
-	import UserComponent from '../../../components/users/UserComponent.svelte';
+	import UserComponent from '$components/users/UserComponent.svelte';
 	import { confirmationDialog } from '$lib/stores/modalStore';
 
 	let isLoaded: boolean = $state(false);

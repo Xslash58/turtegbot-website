@@ -14,8 +14,8 @@
 	import { profileUser } from '$lib/stores/userStore';
 	import { ArrowsClockwise, Eye, EyeClosed, Trash } from 'phosphor-svelte';
 	import { onMount } from 'svelte';
-	import LoadingIndicator from '../../../../../components/LoadingIndicator.svelte';
-	import SearchBar from '../../../../../components/SearchBar.svelte';
+	import LoadingIndicator from '$components/LoadingIndicator.svelte';
+	import SearchBar from '$components/SearchBar.svelte';
 
 	let codes: (TurtleCode & { deleted?: boolean })[] = [];
 	let userId: string = page.params.id + '';

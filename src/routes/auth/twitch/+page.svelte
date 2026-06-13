@@ -3,7 +3,7 @@
 	import { ExchangeCodeForToken } from '$lib/API/Auth';
 	import { onMount } from 'svelte';
 	import { Check, X } from 'phosphor-svelte';
-	import LoadingIndicator from '../../../components/LoadingIndicator.svelte';
+	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 
 	let token: string = '';
 	let error: string = "";

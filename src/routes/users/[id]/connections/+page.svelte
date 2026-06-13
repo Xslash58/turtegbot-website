@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
-	import LoadingIndicator from '../../../../components/LoadingIndicator.svelte';
+	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import kickLogo from '$lib/assets/KickLogo.svg';
 	import twitchLogo from '$lib/assets/glitch_flat_white.svg';
 	import { DeleteUserConnection, GetUserConnections } from '$lib/API/Users';

@@ -2,13 +2,13 @@
 	import { onMount } from 'svelte';
 	import { Trash } from 'phosphor-svelte';
 	import type { SearchUser } from '$lib/API/Models/Users';
-	import LoadingIndicator from '../../../components/LoadingIndicator.svelte';
+	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import { formatDate } from '$lib/Utilities';
 	import {
 		GetTurtles,
 	} from '$lib/API/Admin';
-	import UserComponent from '../../../components/users/UserComponent.svelte';
-	import UserSearch from '../../../components/users/UserSearch.svelte';
+	import UserComponent from '$components/users/UserComponent.svelte';
+	import UserSearch from '$components/users/UserSearch.svelte';
 	import type { TurtleData, TurtleDataRank } from '$lib/API/Models/Turtles';
 
 	let isLoaded: boolean = $state(false);

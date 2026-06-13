@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import StoreSideBar from '../../components/store/StoreSideBar.svelte';
+	import StoreSideBar from '$components/store/StoreSideBar.svelte';
 
 	let { data, children } = $props();
 

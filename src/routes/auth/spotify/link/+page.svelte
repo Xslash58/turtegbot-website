@@ -4,7 +4,7 @@
 	import { onMount } from 'svelte';
 	import type { User } from '$lib/API/Models/Users';
 	import { GetMe } from '$lib/API/Users';
-	import LoadingIndicator from '../../../../components/LoadingIndicator.svelte';
+	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import { Check, X } from 'phosphor-svelte';
 
     let success: boolean = false;

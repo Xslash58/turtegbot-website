@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { PostReload, PostScript } from '$lib/API/Admin';
 	import { onMount } from 'svelte';
-	import LoadingIndicator from '../../../components/LoadingIndicator.svelte';
+	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 
 	let error: string = '';
 	let isLoading: boolean = false;
