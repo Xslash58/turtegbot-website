@@ -15,12 +15,12 @@
 		Trash
 	} from 'phosphor-svelte';
 	import type { AFK, Reminder, User } from '$lib/API/Models/Users';
-	import LoadingIndicator from '../../../components/LoadingIndicator.svelte';
+	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import { formatDate } from '$lib/Utilities';
 	import { DeleteAFK, GetAFKs, PatchAFK } from '$lib/API/Admin';
-	import UserComponent from '../../../components/users/UserComponent.svelte';
+	import UserComponent from '$components/users/UserComponent.svelte';
 	import { confirmationDialog } from '$lib/stores/modalStore';
-	import UserSearch from '../../../components/users/UserSearch.svelte';
+	import UserSearch from '$components/users/UserSearch.svelte';
 	import { myUser } from '$lib/stores/userStore';
 	import { AFKType } from '$lib/API/Models/Admin';
 

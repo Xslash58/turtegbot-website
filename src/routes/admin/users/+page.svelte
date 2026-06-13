@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import UserSearch from '../../../components/users/UserSearch.svelte';
+	import UserSearch from '$components/users/UserSearch.svelte';
 	import type { SearchUser, User } from '$lib/API/Models/Users';
 	import { GetUserPage } from '$lib/API/Users';
     import KickLogo from '$lib/assets/KickLogo.svg';

@@ -2,7 +2,7 @@
 	import type { User } from '$lib/API/Models/Users';
 	import { onMount } from 'svelte';
 	import { myUser } from '$lib/stores/userStore';
-	import SideBar from '../../components/admin/SideBar.svelte';
+	import SideBar from '$components/admin/SideBar.svelte';
 	import { error } from '@sveltejs/kit';
 
 	let { data, children } = $props();

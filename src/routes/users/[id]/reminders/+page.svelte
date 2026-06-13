@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
-	import LoadingIndicator from '../../../../components/LoadingIndicator.svelte';
+	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import type { Reminder } from '$lib/API/Models/Users';
 	import { DeleteReminder, GetReminders } from '$lib/API/Users';
 

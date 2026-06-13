@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
-	import LoadingIndicator from '../../../../components/LoadingIndicator.svelte';
+	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import { Check, DotsThree, Lightbulb, Trash, Warning, X } from 'phosphor-svelte';
 	import { DeleteTicket, GetTickets } from '$lib/API/Users';
 	import type { Ticket } from '$lib/API/Models/Users';

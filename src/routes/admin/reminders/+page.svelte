@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { Clock, Eye, EyeClosed, Lightning, Trash } from 'phosphor-svelte';
 	import type { Reminder, User } from '$lib/API/Models/Users';
-	import LoadingIndicator from '../../../components/LoadingIndicator.svelte';
+	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import { formatDate } from '$lib/Utilities';
 	import {
 		DeleteReminder,
@@ -12,9 +12,9 @@
 		PatchReminder,
 		PatchTicket
 	} from '$lib/API/Admin';
-	import UserComponent from '../../../components/users/UserComponent.svelte';
+	import UserComponent from '$components/users/UserComponent.svelte';
 	import { confirmationDialog } from '$lib/stores/modalStore';
-	import UserSearch from '../../../components/users/UserSearch.svelte';
+	import UserSearch from '$components/users/UserSearch.svelte';
 	import { myUser } from '$lib/stores/userStore';
 
 	let me: User | null = $myUser;

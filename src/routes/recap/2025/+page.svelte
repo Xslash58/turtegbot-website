@@ -4,9 +4,9 @@
 	import { GetRoomRecap, GetUserRecap } from '$lib/API/Recap';
 	import { myUser } from '$lib/stores/userStore';
 	import { onMount } from 'svelte';
-	import LoadingIndicator from '../../../components/LoadingIndicator.svelte';
+	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import { goto } from '$app/navigation';
-	import UserSearch from '../../../components/users/UserSearch.svelte';
+	import UserSearch from '$components/users/UserSearch.svelte';
 	import { GetUserPage } from '$lib/API/Users';
 	import { confirmationDialog } from '$lib/stores/modalStore';
 

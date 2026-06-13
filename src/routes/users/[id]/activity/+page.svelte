@@ -4,7 +4,7 @@
 	import { GetRecentActivityLogs } from '$lib/API/Room';
 	import { profileUser } from '$lib/stores/userStore';
 	import { onMount } from 'svelte';
-	import LoadingIndicator from '../../../../components/LoadingIndicator.svelte';
+	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 
 	let user: User | null = $profileUser;
 

@@ -1,12 +1,12 @@
 <script lang="ts">
 	import type { User } from '$lib/API/Models/Users';
 	import { onMount } from 'svelte';
-	import SideBar from '../../../..//components/users/SideBar.svelte';
+	import SideBar from '$components/users/SideBar.svelte';
 	import { GetMe, GetUserPage } from '$lib/API/Users';
 	import { page } from '$app/state';
-	import LoadingIndicator from '../../../../components/LoadingIndicator.svelte';
+	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import { myUser, profileUser } from '$lib/stores/userStore';
-	import StreamElementsBar from '../../../../components/users/StreamElementsBar.svelte';
+	import StreamElementsBar from '$components/users/StreamElementsBar.svelte';
 
 	let { data, children } = $props();
 

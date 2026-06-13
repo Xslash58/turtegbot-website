@@ -3,7 +3,7 @@
 	import { page } from '$app/state';
 	import { GetCommands } from '$lib/API/Bot';
 	import { onMount } from 'svelte';
-	import LoadingIndicator from '../../../components/LoadingIndicator.svelte';
+	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import { X } from 'phosphor-svelte';
 	import type { User } from '$lib/API/Models/Users';
 	import { myUser } from '$lib/stores/userStore';

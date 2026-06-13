@@ -1,10 +1,10 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.png';
-	import ConfirmationDialog from '../components/Dialogs/ConfirmationDialog.svelte';
-	import FeedbackDialog from '../components/Dialogs/FeedbackDialog.svelte';
-	import LoginDialog from '../components/Dialogs/LoginDialog.svelte';
-	import Footer from '../components/Footer.svelte';
-	import Header from '../components/Header.svelte';
+	import ConfirmationDialog from '$components/Dialogs/ConfirmationDialog.svelte';
+	import FeedbackDialog from '$components/Dialogs/FeedbackDialog.svelte';
+	import LoginDialog from '$components/Dialogs/LoginDialog.svelte';
+	import Footer from '$components/Footer.svelte';
+	import Header from '$components/Header.svelte';
 
 	let { data, children } = $props();
 </script>

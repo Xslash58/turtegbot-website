@@ -2,7 +2,7 @@
 	import type { User } from '$lib/API/Models/Users';
 	import { myUser } from '$lib/stores/userStore';
 	import { onMount } from 'svelte';
-	import LoadingIndicator from '../../../components/LoadingIndicator.svelte';
+	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import { feedbackDialog } from '$lib/stores/modalStore';
 	import { PostRedeemCode } from '$lib/API/Store';
 	import { page } from '$app/stores';

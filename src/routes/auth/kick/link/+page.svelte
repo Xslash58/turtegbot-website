@@ -3,7 +3,7 @@
 	import { generatePKCE, LinkKickAccount } from '$lib/API/Auth';
 	import { onMount } from 'svelte';
 	import { Check, X } from 'phosphor-svelte';
-	import LoadingIndicator from '../../../../components/LoadingIndicator.svelte';
+	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import { GetMe } from '$lib/API/Users';
 	import type { User } from '$lib/API/Models/Users';
 	import Error from '../../../+error.svelte';
