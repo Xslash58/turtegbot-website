@@ -1,21 +1,19 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { Clock, Eye, EyeClosed, Lightning, Trash } from 'phosphor-svelte';
+	import { Clock, Eye, EyeClosed, Lightning, ListMagnifyingGlass, Trash } from 'phosphor-svelte';
 	import type { Reminder, User } from '$lib/API/Models/Users';
 	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import { formatDate } from '$lib/Utilities';
 	import {
 		DeleteReminder,
-		DeleteTicket,
 		GetReminders,
-		GetTickets,
 		PatchReminder,
-		PatchTicket
 	} from '$lib/API/Admin';
 	import UserComponent from '$components/users/UserComponent.svelte';
 	import { confirmationDialog } from '$lib/stores/modalStore';
 	import UserSearch from '$components/users/UserSearch.svelte';
 	import { myUser } from '$lib/stores/userStore';
+	import SearchBar from '$components/SearchBar.svelte';
 
 	let me: User | null = $myUser;
 
@@ -28,13 +26,14 @@
 	onMount(async () => {
 		console.log('Reminders page mounted');
 		await fetchReminders();
-		isLoaded = true;
 	});
 
 	async function fetchReminders(searchContent?: string, searchUserId?: number | null) {
+		isLoaded = false;
 		reminders = await GetReminders(searchContent, searchUserId);
 
 		reminders = [...reminders];
+		isLoaded = true;
 	}
 
 	async function deleteReminder(id: number, force: boolean = false) {
@@ -71,12 +70,12 @@
 <section class="tickets">
 	<section class="settings">
 		<label>
-			User: <UserSearch onSelect={(user) => (searchUserId = user?.ID ?? null)} />
+			<UserSearch onSelect={(user) => (searchUserId = user?.ID ?? null)} selectionMode={true} />
 		</label>
 		<label>
-			Search: <input type="text" placeholder="Search..." bind:value={searchContent} />
+			<SearchBar placeholder="Search..." bind:searchTerm={searchContent} isLoading={!isLoaded} />
 		</label>
-		<button onclick={() => fetchReminders(searchContent, searchUserId)}> Search </button>
+		<button onclick={() => fetchReminders(searchContent, searchUserId)} disabled={!isLoaded}> <ListMagnifyingGlass weight="bold" size={20} /> </button>
 	</section>
 	{#if isLoaded}
 		<table>
@@ -136,8 +135,6 @@
 				{/each}
 			</tbody>
 		</table>
-	{:else}
-		<LoadingIndicator />
 	{/if}
 </section>
 
@@ -146,6 +143,29 @@
 		section.settings {
 			background-color: #0a0a0a;
 			padding: 5px 10px;
+
+			display: flex;
+			flex-direction: row;
+			gap: 5px;
+			align-items: center;
+
+			button {
+				color: white;
+				background: none;
+				border: none;
+				cursor: pointer;
+				padding: 0;
+				margin-left: 5px;
+				transition: transform 0.1s;
+				&:hover {
+					transform: scale(1.15);
+				}
+				&:disabled {
+					cursor: not-allowed;
+					opacity: 0.25;
+					transform: scale(1);
+				}
+			}
 		}
 
 		display: flex;

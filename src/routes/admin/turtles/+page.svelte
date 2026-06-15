@@ -47,7 +47,7 @@
 <section class="tickets">
 	<section class="settings">
 		<label>
-			User: <UserSearch onSelect={(user) => searchByUser(user)} />
+			<UserSearch onSelect={(user) => searchByUser(user)} selectionMode={true} />
 		</label>
 	</section>
 	{#if isLoaded}

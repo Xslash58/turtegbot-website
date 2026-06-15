@@ -18,7 +18,12 @@
 	});
 
     async function GetProperUser(suser: SearchUser | null) {
-        if(!suser) return;
+        if(!suser) {
+            selectedUser = null;
+            userKickId = 0;
+            userTwitchId = 0;
+            return;
+        }
 
         let user = await GetUserPage(suser.ID + "");
         if(user) {

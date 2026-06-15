@@ -9,6 +9,7 @@
 		Exam,
 		Lightning,
 		LightningSlash,
+		ListMagnifyingGlass,
 		Moon,
 		NotePencil,
 		Shower,
@@ -23,6 +24,7 @@
 	import UserSearch from '$components/users/UserSearch.svelte';
 	import { myUser } from '$lib/stores/userStore';
 	import { AFKType } from '$lib/API/Models/Admin';
+	import SearchBar from '$components/SearchBar.svelte';
 
 	let me: User | null = $myUser;
 
@@ -55,9 +57,11 @@
 	});
 
 	async function fetchAFKs(searchReason?: string, searchUserId?: number | null) {
+		isLoaded = false;
 		afks = await GetAFKs(searchReason, searchUserId);
 
 		afks = [...afks];
+		isLoaded = true;
 	}
 
 	async function deleteAFK(id: number, force: boolean = false) {
@@ -133,12 +137,12 @@
 <section class="tickets">
 	<section class="settings">
 		<label>
-			User: <UserSearch onSelect={(user) => (searchUserId = user?.ID ?? null)} />
+			<UserSearch onSelect={(user) => (searchUserId = user?.ID ?? null)} selectionMode={true} />
 		</label>
 		<label>
-			Search: <input type="text" placeholder="Search..." bind:value={searchContent} />
+			<SearchBar placeholder="Search..." bind:searchTerm={searchContent} isLoading={!isLoaded} />
 		</label>
-		<button onclick={() => fetchAFKs(searchContent, searchUserId)}> Search / Refetch </button>
+		<button onclick={() => fetchAFKs(searchContent, searchUserId)} disabled={!isLoaded}> <ListMagnifyingGlass weight="bold" size={20} /> </button>
 	</section>
 	{#if isLoaded}
 		<table>
@@ -226,8 +230,6 @@
 				{/each}
 			</tbody>
 		</table>
-	{:else}
-		<LoadingIndicator />
 	{/if}
 </section>
 
@@ -236,6 +238,29 @@
 		section.settings {
 			background-color: #0a0a0a;
 			padding: 5px 10px;
+
+			display: flex;
+			flex-direction: row;
+			gap: 5px;
+			align-items: center;
+
+			button {
+				color: white;
+				background: none;
+				border: none;
+				cursor: pointer;
+				padding: 0;
+				margin-left: 5px;
+				transition: transform 0.1s;
+				&:hover {
+					transform: scale(1.15);
+				}
+				&:disabled {
+					cursor: not-allowed;
+					opacity: 0.25;
+					transform: scale(1);
+				}
+			}
 		}
 
 		display: flex;
