@@ -146,8 +146,9 @@
 
 			display: flex;
 			flex-direction: row;
-			gap: 5px;
 			align-items: center;
+			flex-wrap: wrap;
+			gap: 5px;
 
 			button {
 				color: white;
