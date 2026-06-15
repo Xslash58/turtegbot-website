@@ -116,6 +116,7 @@
 </section>
 
 <style lang="scss">
+	@use "sass:color";
 	.search-bar {
 		display: flex;
 		align-items: center;
@@ -147,11 +148,6 @@
 			&:focus {
 				outline: none;
 			}
-		}
-
-		p {
-			margin: 0;
-			width: 200px;
 		}
 
 		button {
@@ -212,7 +208,7 @@
 		}
 
 		&:hover {
-			background: darken(#222, 5%);
+			background: color.adjust(#222, $lightness: -5%);
 		}
 	}
 </style>
