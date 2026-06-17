@@ -41,14 +41,14 @@
 </script>
 
 <header style={import.meta.env.VITE_CHRISTMAS == '1' ? `background: url(${christmasBg});` : ''}>
-	<section class="branding">
+	<a href="/" class="branding">
 		<img
 			src={turtegLogo}
 			alt="logo"
 			style="filter: invert(54%) sepia(98%) saturate(749%) hue-rotate(75deg) brightness(100%);"
 		/>
 		<h1>TurtegBot</h1>
-	</section>
+	</a>
 
 	<nav>
 		<ul>
@@ -139,6 +139,7 @@
 		align-items: center;
 		gap: 10px;
 		color: #40ff00;
+		text-decoration: none;
 
 		img {
 			display: none;
