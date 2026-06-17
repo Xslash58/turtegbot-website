@@ -54,6 +54,9 @@
 		<ul>
 			<li><a href="/">Home</a></li>
 			<li><a href="/commands">Commands</a></li>
+			{#if user && isLoaded}
+				<li><a href="/store/redeem">Store</a></li>
+			{/if}
 			{#if import.meta.env.VITE_RECAPS == '1'}
 				<li><a href="/recap/2025" class="special-event">RECAP 2025</a></li>
 			{/if}
