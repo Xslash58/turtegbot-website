@@ -12,13 +12,15 @@
 	import { page } from '$app/state';
 	import { myUser } from '$lib/stores/userStore';
 	import UserSearch from './users/UserSearch.svelte';
-	import { UserList } from 'phosphor-svelte';
+	import { List, UserList } from 'phosphor-svelte';
+	import MobileNav from './MobileNav.svelte';
 
 	let user: User | null = null;
 
 	let isLoaded: boolean = false;
 
 	let searchVisible: boolean = false;
+	let mobileNavVisible: boolean = false;
 
 	onMount(async () => {
 		console.log('Header component mounted');
@@ -100,7 +102,14 @@
 				</button>
 			</section>
 		{/if}
+		<button class="mobile-view" on:click={() => (mobileNavVisible = !mobileNavVisible)}>
+			<List size={24} weight="bold" />
+		</button>
 	</section>
+
+	{#if mobileNavVisible}
+		<MobileNav {user} onAction={() => (mobileNavVisible = false)} />
+	{/if}
 
 	{#if import.meta.env.VITE_CHRISTMAS == '1'}
 		<section class="seasonal-xmas">
@@ -117,7 +126,9 @@
 
 <style lang="scss">
 	header {
-		position: relative;
+		position: sticky;
+		top: 0;
+		z-index: 99;
 
 		display: flex;
 		justify-content: space-between;
@@ -131,6 +142,20 @@
 			display: flex;
 			gap: 10px;
 			align-items: center;
+
+			button {
+				background: none;
+				border: none;
+				cursor: pointer;
+				color: white;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+
+			button.mobile-view {
+				display: none;
+			}
 		}
 	}
 
@@ -292,21 +317,25 @@
 			}
 		}
 
+		nav {
+			display: none;
+		}
+
 		section.profile {
-			p {
-				display: none;
-			}
-			img {
-				margin-left: 0;
-			}
+			display: none;
 		}
 
 		section.right {
 			.search {
 				position: absolute;
-				top: 45px;
-				right: 0;
+				top: 50%;
+				right: 50%;
+				transform: translateX(50%) translateY(-50%);
 				z-index: 10;
+			}
+
+			button.mobile-view {
+				display: unset;
 			}
 		}
 

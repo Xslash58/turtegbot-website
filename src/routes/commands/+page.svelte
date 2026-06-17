@@ -346,7 +346,7 @@
 		flex-direction: column;
 		gap: 2px;
 		position: sticky;
-		top: 24px;
+		top: 69px;
 	}
 
 	.cat-btn {
