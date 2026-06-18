@@ -67,6 +67,7 @@
 	{#if logs && Object.keys(logs).length > 0 && isLoaded}
 		<ul>
 			{#each logs as log}
+				{@const details = log.details ? JSON.parse(log.details) : {}}
 				<li>
 					<section class="user">
 						<p>
@@ -79,143 +80,145 @@
 						</p>
 					</section>
 					{#if log.actionType == 'power_set'}
-						Changed power of <strong>{JSON.parse(log.details).username}</strong> to
-						<strong>{JSON.parse(log.details).power}</strong>
+						Changed power of <strong>{details.username}</strong> to
+						<strong>{details.power}</strong>
 					{:else if log.actionType == 'power_remove'}
-						Removed power of <strong>{JSON.parse(log.details).username}</strong>
+						Removed power of <strong>{details.username}</strong>
 					{:else if log.actionType == 'prefix_set'}
-						Changed bot prefix to <strong>{JSON.parse(log.details).prefix}</strong>
+						Changed bot prefix to <strong>{details.prefix}</strong>
 					{:else if log.actionType == 'language_set'}
-						Changed bot language to <strong>{JSON.parse(log.details).lang}</strong>
+						Changed bot language to <strong>{details.lang}</strong>
 					{:else if log.actionType == 'cmd_add'}
-						Added command <strong>{JSON.parse(log.details).commandText}</strong>
+						Added command <strong>{details.commandText}</strong>
 					{:else if log.actionType == 'cmd_modify'}
-						Modified command <strong>{JSON.parse(log.details).commandText}</strong>
+						Modified command <strong>{details.commandText}</strong>
 					{:else if log.actionType == 'cmd_remove'}
-						Removed command <strong>{JSON.parse(log.details).commandText}</strong>
+						Removed command <strong>{details.commandText}</strong>
 					{:else if log.actionType == 'config_set'}
-						Changed <strong>{JSON.parse(log.details).key}</strong> to
-						<strong>{JSON.parse(log.details).value}</strong>
+						Changed <strong>{details.key}</strong> to
+						<strong>{details.value}</strong>
 					{:else if log.actionType == 'config_experiment'}
-						Changed status of <strong>{JSON.parse(log.details).key}</strong> experiment to
-						<strong>{JSON.parse(log.details).value}</strong>
+						Changed status of <strong>{details.key}</strong> experiment to
+						<strong>{details.value}</strong>
 					{:else if log.actionType == 'gcmd_disable'}
-						Disabled global command <strong>{JSON.parse(log.details).cmd}</strong>
+						Disabled global command <strong>{details.cmd}</strong>
 					{:else if log.actionType == 'gcmd_enable'}
-						Enabled global command <strong>{JSON.parse(log.details).cmd}</strong>
+						Enabled global command <strong>{details.cmd}</strong>
 					{:else if log.actionType == 'gcmd_ignore'}
-						Ignored global command <strong>{JSON.parse(log.details).cmd}</strong>
+						Ignored global command <strong>{details.cmd}</strong>
 					{:else if log.actionType == 'gcmd_unignore'}
-						Unignored global command <strong>{JSON.parse(log.details).cmd}</strong>
+						Unignored global command <strong>{details.cmd}</strong>
 					{:else if log.actionType == 'mod_add'}
-						{#if JSON.parse(log.details).isTimed}
-							Added <strong>{JSON.parse(log.details).username}</strong> as {log.platform} moderator for
-							<strong>{formatDuration(JSON.parse(log.details).timeSpan)}</strong>
-							(Expires <strong>{formatDate(JSON.parse(log.details).revokeDate)}</strong>)
+						{#if details.isTimed}
+							Added <strong>{details.username}</strong> as {log.platform} moderator for
+							<strong>{formatDuration(details.timeSpan)}</strong>
+							(Expires <strong>{formatDate(details.revokeDate)}</strong>)
 						{:else}
-							Added <strong>{JSON.parse(log.details).username}</strong> as {log.platform} moderator
+							Added <strong>{details.username}</strong> as {log.platform} moderator
 						{/if}
 					{:else if log.actionType == 'mod_remove'}
-						{#if JSON.parse(log.details).isTimed}
-							Removed <strong>{JSON.parse(log.details).username}</strong> from being {log.platform} moderator
-							after <strong>{formatDuration(JSON.parse(log.details).lasted)}</strong>
+						{#if details.isTimed}
+							Removed <strong>{details.username}</strong> from being {log.platform} moderator
+							after <strong>{formatDuration(details.lasted)}</strong>
 						{:else}
-							Removed <strong>{JSON.parse(log.details).username}</strong> from being {log.platform} moderator
+							Removed <strong>{details.username}</strong> from being {log.platform} moderator
 						{/if}
 					{:else if log.actionType == 'vip_add'}
-						{#if JSON.parse(log.details).isTimed}
-							Added <strong>{JSON.parse(log.details).username}</strong> as {log.platform} VIP for
-							<strong>{formatDuration(JSON.parse(log.details).timeSpan)}</strong>
-							(Expires <strong>{formatDate(JSON.parse(log.details).revokeDate)}</strong>)
+						{#if details.isTimed}
+							Added <strong>{details.username}</strong> as {log.platform} VIP for
+							<strong>{formatDuration(details.timeSpan)}</strong>
+							(Expires <strong>{formatDate(details.revokeDate)}</strong>)
 						{:else}
-							Added <strong>{JSON.parse(log.details).username}</strong> as {log.platform} VIP
+							Added <strong>{details.username}</strong> as {log.platform} VIP
 						{/if}
 					{:else if log.actionType == 'vip_remove'}
-						{#if JSON.parse(log.details).isTimed}
-							Removed <strong>{JSON.parse(log.details).username}</strong> from being {log.platform} VIP
-							after <strong>{formatDuration(JSON.parse(log.details).lasted)}</strong>
+						{#if details.isTimed}
+							Removed <strong>{details.username}</strong> from being {log.platform} VIP
+							after <strong>{formatDuration(details.lasted)}</strong>
 						{:else}
-							Removed <strong>{JSON.parse(log.details).username}</strong> from being {log.platform} VIP
+							Removed <strong>{details.username}</strong> from being {log.platform} VIP
 						{/if}
 					{:else if log.actionType == 'twitch_ban'}
 						Banned <strong>{log.targetUsername}</strong> from {log.platform}
-						{JSON.parse(log.details).ends
-							? `until ${formatDate(JSON.parse(log.details).ends)}`
+						{details.ends
+							? `until ${formatDate(details.ends)}`
 							: ''}
 					{:else if log.actionType == 'twitch_unban'}
 						Unbanned <strong>{log.targetUsername}</strong> from {log.platform}
 					{:else if log.actionType == 'twitch_setgame'}
-						Changed game on {log.platform} to <strong>{JSON.parse(log.details).gameName}</strong>
+						Changed game on {log.platform} to <strong>{details.gameName}</strong>
 					{:else if log.actionType == 'twitch_settitle'}
-						Changed title on {log.platform} to <strong>{JSON.parse(log.details).title}</strong>
+						Changed title on {log.platform} to <strong>{details.title}</strong>
 					{:else if log.actionType == 'webhook_create'}
 						Created {log.platform} chat webhook
+					{:else if log.actionType == 'webhook_delete'}
+						Deleted all {log.platform} chat webhooks
 					{:else if log.actionType == '7tv_add'}
-						{#if !JSON.parse(log.details).isTimed}
-							Added 7TV emote <a href={`https://7tv.app/emotes/${JSON.parse(log.details).emote.Id}`}
-								target="_blank">{JSON.parse(log.details).emote.Alias}</a
+						{#if !details.isTimed}
+							Added 7TV emote <a href={`https://7tv.app/emotes/${details.emote.Id}`}
+								target="_blank">{details.emote.Alias}</a
 							>
 							to
-							<a href={`https://7tv.app/emote-sets/${JSON.parse(log.details).emoteSet?.id}`}
-								target="_blank">{JSON.parse(log.details).emoteSet?.name}</a
+							<a href={`https://7tv.app/emote-sets/${details.emoteSet?.id}`}
+								target="_blank">{details.emoteSet?.name}</a
 							>
 						{:else}
-							Added 7TV emote <a href={`https://7tv.app/emotes/${JSON.parse(log.details).emote.Id}`}
-								target="_blank">{JSON.parse(log.details).emote.Alias}</a
+							Added 7TV emote <a href={`https://7tv.app/emotes/${details.emote.Id}`}
+								target="_blank">{details.emote.Alias}</a
 							>
 							to
-							<a href={`https://7tv.app/emote-sets/${JSON.parse(log.details).emoteSet?.id}`}
-								target="_blank">{JSON.parse(log.details).emoteSet?.name}</a
+							<a href={`https://7tv.app/emote-sets/${details.emoteSet?.id}`}
+								target="_blank">{details.emoteSet?.name}</a
 							>
 							for
-							<strong>{formatDuration(JSON.parse(log.details).timeSpan)}</strong>
-							(Expires <strong>{formatDate(JSON.parse(log.details).expires)}</strong>)
+							<strong>{formatDuration(details.timeSpan)}</strong>
+							(Expires <strong>{formatDate(details.revokeDate)}</strong>)
 						{/if}
 					{:else if log.actionType == '7tv_remove'}
 						Removed 7TV emote <a
-							href={`https://7tv.app/emotes/${JSON.parse(log.details).emote?.id}`}
-							target="_blank">{JSON.parse(log.details).emote?.name}</a
+							href={`https://7tv.app/emotes/${details.emote?.id}`}
+							target="_blank">{details.emote?.name}</a
 						>
 						from
-						<a href={`https://7tv.app/emote-sets/${JSON.parse(log.details).emoteSet?.id}`}
-							target="_blank">{JSON.parse(log.details).emoteSet?.name}</a
+						<a href={`https://7tv.app/emote-sets/${details.emoteSet?.id}`}
+							target="_blank">{details.emoteSet?.name}</a
 						>
 					{:else if log.actionType == '7tv_alias'}
 						Aliased 7TV emote from <a
-							href={`https://7tv.app/emotes/${JSON.parse(log.details).emote?.id}`}
-							target="_blank">{JSON.parse(log.details).from}</a
+							href={`https://7tv.app/emotes/${details.emote?.id ?? details.emote?.Id}`}
+							target="_blank">{details.from}</a
 						>
 						to
-						<a href={`https://7tv.app/emote-sets/${JSON.parse(log.details).emoteSet?.id}`}
-							target="_blank">{JSON.parse(log.details).to}</a
+						<a href={`https://7tv.app/emotes/${details.emote?.id ?? details.emote?.Id}`}
+							target="_blank">{details.to}</a
 						>
 						in
-						<a href={`https://7tv.app/emote-sets/${JSON.parse(log.details).emoteSet?.id}`}
-							target="_blank">{JSON.parse(log.details).emoteSet?.name}</a
+						<a href={`https://7tv.app/emote-sets/${details.emoteSet?.id}`}
+							target="_blank">{details.emoteSet?.name}</a
 						>
 					{:else if log.actionType == '7tv_yoink'}
 						Yoinked 7TV emote <a
-							href={`https://7tv.app/emotes/${JSON.parse(log.details).emote?.Id}`}
-							target="_blank">{JSON.parse(log.details).emote?.Alias}</a
+							href={`https://7tv.app/emotes/${details.emote?.Id}`}
+							target="_blank">{details.emote?.Alias}</a
 						>
 						from
-						<a href={`https://7tv.app/emote-sets/${JSON.parse(log.details).fromEmoteSet?.id}`}
-							target="_blank">{JSON.parse(log.details).fromEmoteSet?.name}</a
+						<a href={`https://7tv.app/emote-sets/${details.fromEmoteSet?.id}`}
+							target="_blank">{details.fromEmoteSet?.name}</a
 						>
 						to
-						<a href={`https://7tv.app/emote-sets/${JSON.parse(log.details).toEmoteSet?.id}`}
-							target="_blank">{JSON.parse(log.details).toEmoteSet?.name}</a
+						<a href={`https://7tv.app/emote-sets/${details.toEmoteSet?.id}`}
+							target="_blank">{details.toEmoteSet?.name}</a
 						>
 					{:else if log.actionType == '7tv_replace'}
 						Replaced 7TV emote
-						<a href={`https://7tv.app/emotes/${JSON.parse(log.details).oldEmote?.id}`}
-							target="_blank">{JSON.parse(log.details).oldEmote?.name}</a>
+						<a href={`https://7tv.app/emotes/${details.oldEmote?.id}`}
+							target="_blank">{details.oldEmote?.name}</a>
 						to
-						<a href={`https://7tv.app/emotes/${JSON.parse(log.details).newEmote?.id}`}
-							target="_blank">{JSON.parse(log.details).newEmote?.name}</a>
+						<a href={`https://7tv.app/emotes/${details.newEmote?.id}`}
+							target="_blank">{details.newEmote?.name}</a>
 						in
-						<a href={`https://7tv.app/emote-sets/${JSON.parse(log.details).emoteSet?.id}`}
-							target="_blank">{JSON.parse(log.details).emoteSet?.name}</a>
+						<a href={`https://7tv.app/emote-sets/${details.emoteSet?.id}`}
+							target="_blank">{details.emoteSet?.name}</a>
 					{:else}
 						{log.actionType}
 					{/if}
