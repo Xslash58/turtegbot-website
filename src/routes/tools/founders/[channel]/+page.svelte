@@ -6,7 +6,7 @@
 	import { onMount } from 'svelte';
 	import loadingImage from '$lib/assets/loading_texture.webp';
 	import LoadingIndicator from '$components/LoadingIndicator.svelte';
-	import { Star, X } from 'phosphor-svelte';
+	import { Star, User, X } from 'phosphor-svelte';
 
 	let channelName = $state(page.params.channel);
 
@@ -58,6 +58,10 @@
 		}
 	});
 </script>
+
+<svelte:head>
+	<title>{channelName ? `Founders in ${channelName} | TurtegBot` : 'Founders | TurtegBot'}</title>
+</svelte:head>
 
 <section class="founders">
 	{#if channelName}
