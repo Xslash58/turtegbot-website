@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import egLogo from '$lib/assets/eg-branding.png';
-	import ghLogo from '$lib/assets/github-mark-white.png';
+	import ghLogo from '$lib/assets/github_invertocat_white.svg';
 
 	function checkItOut(category: string) {
 		goto(`/commands#${category}`);
