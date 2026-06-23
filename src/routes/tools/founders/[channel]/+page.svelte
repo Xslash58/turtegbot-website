@@ -59,6 +59,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>{channelName ? `Founders in ${channelName} | TurtegBot` : 'Founders | TurtegBot'}</title>
+</svelte:head>
+
 <section class="founders">
 	{#if channelName}
 		<h1>Twitch Founders for {channelName}</h1>

@@ -153,6 +153,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Commands | TurtegBot</title>
+</svelte:head>
+
 <div class="page">
 	<div class="search-wrapper">
 		<div class="search-row">

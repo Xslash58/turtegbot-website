@@ -17,6 +17,10 @@
     }
 </script>
 
+<svelte:head>
+	<title>Legacy Channels | TurtegBot</title>
+</svelte:head>
+
 <section class="howtoadd">
 	<button on:click={() => history.back()}>
 		<ArrowUUpLeft size={24} color="white" weight="bold" />
