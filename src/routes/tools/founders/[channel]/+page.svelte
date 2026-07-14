@@ -5,10 +5,12 @@
 	import { formatDate, formatTimeSpan } from '$lib/Utilities';
 	import { onMount } from 'svelte';
 	import loadingImage from '$lib/assets/loading_texture.webp';
+	import twitchLogo from '$lib/assets/glitch_flat_white.svg';
 	import LoadingIndicator from '$components/LoadingIndicator.svelte';
-	import { Star, X } from 'phosphor-svelte';
+	import { ExclamationMarkIcon, Star, X } from 'phosphor-svelte';
 
 	let channelName = $state(page.params.channel);
+	let founderSlots = $state(0);
 
 	let founders: FounderUser[] = $state([]);
 	let profilePictures: Record<string, string> = $state({});
@@ -24,15 +26,22 @@
 		}
 
 		let channel = await GetTwitchUsersBulk([channelName]);
-		if (channel && channel.length > 0) channelName = channel[0].displayName || channelName;
-		else channelName = '';
+		if (channel && channel.length > 0) {
+			channelName = channel[0].displayName || channelName;
+
+			if (channel[0].roles.isPreAffiliate || channel[0].roles.isAffiliate) {
+				founderSlots = 10;
+			} else if (channel[0].roles.isPartner) {
+				founderSlots = 25;
+			}
+		} else channelName = '';
 
 		founders = (await GetFounders(channelName))?.founders || [];
 
 		isLoading = false;
 
 		if (founders.length > 0) {
-			founders.reverse();
+			founders.sort((a, b) => b.entitlementStart.localeCompare(a.entitlementStart));
 
 			let users: IVRTwitchUser[] = [];
 
@@ -76,20 +85,37 @@
 					>
 						<img src={profilePictures[founder.login] || loadingImage} alt="Founder Twitch Avatar" />
 						<section class="user-data">
-                        {#if founder.isSubscribed}
-                            <section class="sub-indicator" title="Active Subscriber">
-                                <Star size="32px" weight="fill" color="yellow" />
-                            </section>
-                        {/if}
+							{#if founder.isSubscribed}
+								<section class="sub-indicator" title="Active Subscriber">
+									<Star size="32px" weight="fill" color="yellow" />
+								</section>
+							{/if}
 							<h2>{founder.displayName}</h2>
 							<p>{formatDate(founder.entitlementStart)}</p>
 							{#if Math.floor((new Date(Date.now()).getTime() - new Date(founder.entitlementStart).getTime()) / 1000) < 3600}
-								<p>{formatTimeSpan(founder.entitlementStart, Date.now(), { shorthand: true })} ago</p>
+								<p>
+									{formatTimeSpan(founder.entitlementStart, Date.now(), { shorthand: true })} ago
+								</p>
 							{:else}
 								<p>
-									{formatTimeSpan(founder.entitlementStart, Date.now(), { shorthand: true, minUnit: 'hour' })} ago
+									{formatTimeSpan(founder.entitlementStart, Date.now(), {
+										shorthand: true,
+										minUnit: 'hour'
+									})} ago
 								</p>
 							{/if}
+						</section>
+					</button>
+				{/each}
+				{#each Array(Math.max(0, founderSlots - founders.length)) as _}
+					<button class="founder empty" disabled>
+						<img src={twitchLogo} alt="Empty Founder Slot" />
+						<section class="user-data">
+							<section class="sub-indicator" title="Empty Slot">
+								<ExclamationMarkIcon size="32px" weight="fill" color="red" />
+							</section>
+							<h2>Empty Slot</h2>
+							<p>Available</p>
 						</section>
 					</button>
 				{/each}
@@ -118,7 +144,7 @@
 		justify-content: center;
 
 		.founder {
-            position: relative;
+			position: relative;
 			border: none;
 			color: white;
 			background-color: #202020;
@@ -150,11 +176,20 @@
 				font-size: 0.9em;
 			}
 
-            .sub-indicator {
-                position: absolute;
-                top: 10px;
-                right: 10px;
-            }
+			.sub-indicator {
+				position: absolute;
+				top: 10px;
+				right: 10px;
+			}
+
+			&.empty {
+				img {
+					object-fit: contain;
+					box-sizing: border-box;
+					padding: 15px;
+					border-radius: 0;
+				}
+			}
 		}
 	}
 

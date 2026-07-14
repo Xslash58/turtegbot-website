@@ -23,6 +23,14 @@ export interface IVRTwitchUser {
     createdAt: string;
     updatedAt: string;
     emotePrefix: string | null;
+    roles: IVRTwitchUserRoles;
+}
+
+export interface IVRTwitchUserRoles {
+    isPreAffiliate: boolean;
+    isAffiliate: boolean;
+    isPartner: boolean;
+    isStaff: boolean;
 }
 
 export interface FoundersList {
