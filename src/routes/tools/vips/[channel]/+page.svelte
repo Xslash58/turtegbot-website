@@ -32,7 +32,7 @@
 		isLoading = false;
 
 		if (vips.length > 0) {
-			vips.reverse();
+			vips.sort((a, b) => b.grantedAt.localeCompare(a.grantedAt));
 
 			let users: IVRTwitchUser[] = [];
 
