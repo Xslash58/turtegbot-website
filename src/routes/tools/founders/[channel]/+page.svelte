@@ -7,7 +7,7 @@
 	import loadingImage from '$lib/assets/loading_texture.webp';
 	import twitchLogo from '$lib/assets/glitch_flat_white.svg';
 	import LoadingIndicator from '$components/LoadingIndicator.svelte';
-	import { ExclamationMarkIcon, Star, X } from 'phosphor-svelte';
+	import { ExclamationMark, Star, X } from 'phosphor-svelte';
 
 	let channelName = $state(page.params.channel);
 	let founderSlots = $state(0);
@@ -112,7 +112,7 @@
 						<img src={twitchLogo} alt="Empty Founder Slot" />
 						<section class="user-data">
 							<section class="sub-indicator" title="Empty Slot">
-								<ExclamationMarkIcon size="32px" weight="fill" color="red" />
+								<ExclamationMark size="32px" weight="fill" color="red" />
 							</section>
 							<h2>Empty Slot</h2>
 							<p>Available</p>
