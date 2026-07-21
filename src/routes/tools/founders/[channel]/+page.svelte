@@ -41,7 +41,7 @@
 		isLoading = false;
 
 		if (founders.length > 0) {
-			founders.sort((a, b) => b.entitlementStart.localeCompare(a.entitlementStart));
+			founders.sort((a, b) => a.entitlementStart.localeCompare(b.entitlementStart));
 
 			let users: IVRTwitchUser[] = [];
 
