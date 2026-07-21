@@ -31,6 +31,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>{commandName ? `#${commandName} | TurtegBot` : 'Commands | TurtegBot'}</title>
+</svelte:head>
+
 <section class="command">
 	{#if command}
 		<button onclick={() => history.back()}>
