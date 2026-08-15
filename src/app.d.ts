@@ -8,6 +8,11 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 	}
+	
+	interface Window {
+		YT: any;
+		onYouTubeIframeAPIReady: () => void;
+	}
 }
 
 export {};
