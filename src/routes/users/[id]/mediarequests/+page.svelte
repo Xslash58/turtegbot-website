@@ -252,6 +252,10 @@ import YoutubePlayer from '$components/YoutubePlayer.svelte';
 		section.player {
 			width: 500px;
 
+			h1 {
+				text-align: center;
+			}
+
 			section.controls {
 				display: flex;
 				justify-content: center;
