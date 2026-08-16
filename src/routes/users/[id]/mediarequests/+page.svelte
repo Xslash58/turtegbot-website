@@ -1,9 +1,10 @@
 <script lang="ts">
+	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import VolumeSlider from '$components/users/media-requests/VolumeSlider.svelte';
-import YoutubePlayer from '$components/YoutubePlayer.svelte';
+	import YoutubePlayer from '$components/YoutubePlayer.svelte';
 	import { confirmationDialog, feedbackDialog } from '$lib/stores/modalStore';
 	import { profileUser } from '$lib/stores/userStore';
-	import { Play, SkipBack, SkipForward, Trash } from 'phosphor-svelte';
+	import { Play, SkipBack, SkipForward, Trash, X } from 'phosphor-svelte';
 	import { onMount } from 'svelte';
 
 	let user = $profileUser;
@@ -16,6 +17,7 @@ import YoutubePlayer from '$components/YoutubePlayer.svelte';
 	let isSongMissing: boolean = false;
 	let currentCategory: number = 0;
 	let volume: number = 10;
+	let wsState: number = WebSocket.CONNECTING;
 
 	onMount(() => {
 		if (user == null) return;
@@ -23,6 +25,7 @@ import YoutubePlayer from '$components/YoutubePlayer.svelte';
 		const ws = new WebSocket(import.meta.env.VITE_WEBSOCKET_URL);
 		ws.onopen = () => {
 			console.log('WebSocket connection established');
+			wsState = WebSocket.OPEN;
 
 			for (const [_, roomId] of Object.entries(user.roomIds)) {
 				ws.send(JSON.stringify({ action: 'subscribe', room: `room:${roomId}` }));
@@ -45,7 +48,18 @@ import YoutubePlayer from '$components/YoutubePlayer.svelte';
 			}
 		};
 
-		if(window.localStorage) {
+		ws.onclose = () => {
+			console.log('WebSocket connection closed');
+			wsState = WebSocket.CLOSED;
+			feedbackDialog.set({
+				title: 'WebSocket Connection Closed',
+				content:
+					'The connection to the server has been closed. Please refresh the page to reconnect.',
+				visible: true
+			});
+		};
+
+		if (window.localStorage) {
 			const storedQueue = localStorage.getItem(`turteg-mediarequests-songQueue-${user?.id}`);
 			const storedHistory = localStorage.getItem(`turteg-mediarequests-songHistory-${user?.id}`);
 
@@ -115,14 +129,13 @@ import YoutubePlayer from '$components/YoutubePlayer.svelte';
 		if (index >= 0 && index < songHistory.length) {
 			const selectedSong = songHistory[index];
 			console.log('Selected song from history:', selectedSong);
-			if(currentSong) {
+			if (currentSong) {
 				songQueue.unshift(currentSong);
 			}
-			if(selectedSong) {
+			if (selectedSong) {
 				console.log('Selected song:', selectedSong);
 				songQueue.unshift(selectedSong);
-				if(!isSongMissing)
-					handleSongEnded();
+				if (!isSongMissing) handleSongEnded();
 				isSongMissing = false;
 			}
 			triggerReactivity();
@@ -130,7 +143,7 @@ import YoutubePlayer from '$components/YoutubePlayer.svelte';
 	}
 
 	function handleClearAll(confirmed: boolean = false) {
-		if(!confirmed) {
+		if (!confirmed) {
 			confirmationDialog.set({
 				text: `Are you sure you want to clear all media from the queue and history?
 				This action is irreversible.`,
@@ -159,11 +172,19 @@ import YoutubePlayer from '$components/YoutubePlayer.svelte';
 		updateLocalStorage();
 	}
 	function updateLocalStorage() {
-		if(currentSong)
-			localStorage.setItem(`turteg-mediarequests-songQueue-${user?.id}`, JSON.stringify([currentSong, ...songQueue]));
-		else 
-		localStorage.setItem(`turteg-mediarequests-songQueue-${user?.id}`, JSON.stringify(songQueue));
-		localStorage.setItem(`turteg-mediarequests-songHistory-${user?.id}`, JSON.stringify(songHistory));
+		if (currentSong) {
+			localStorage.setItem(
+				`turteg-mediarequests-songQueue-${user?.id}`,
+				JSON.stringify([currentSong, ...songQueue])
+			);
+		} else {
+			localStorage.setItem(`turteg-mediarequests-songQueue-${user?.id}`, JSON.stringify(songQueue));
+		}
+		
+		localStorage.setItem(
+			`turteg-mediarequests-songHistory-${user?.id}`,
+			JSON.stringify(songHistory)
+		);
 	}
 </script>
 
@@ -183,7 +204,7 @@ import YoutubePlayer from '$components/YoutubePlayer.svelte';
 				<button class="skip" on:click={handleSongEnded}>
 					<SkipForward size={24} />
 				</button>
-				<VolumeSlider onVolumeChange={handleVolumeChange} bind:volume={volume} />
+				<VolumeSlider onVolumeChange={handleVolumeChange} bind:volume />
 				<button class="clear-all" on:click={() => handleClearAll(false)}>
 					<Trash size={24} />
 				</button>
@@ -192,20 +213,28 @@ import YoutubePlayer from '$components/YoutubePlayer.svelte';
 			<h1>No more media in the queue.</h1>
 		{/if}
 	</section>
+
+	{#if wsState !== WebSocket.OPEN}
+		<section class="ws-info" class:closed={wsState === WebSocket.CLOSED}>
+			{#if wsState === WebSocket.CONNECTING}
+				<LoadingIndicator size={24} />
+				<p>Connecting to the WebSocket...</p>
+			{:else if wsState === WebSocket.CLOSED}
+				<X size={24} />
+				<p>Connection lost. Please refresh the page...</p>
+			{/if}
+		</section>
+	{/if}
+
 	<section class="categories">
-		<button
-			class:active={currentCategory === 0}
-			on:click={() => (currentCategory = 0)}
-		>
+		<button class:active={currentCategory === 0} on:click={() => (currentCategory = 0)}>
 			Queue
 		</button>
-		<button
-			class:active={currentCategory === 1}
-			on:click={() => (currentCategory = 1)}
-		>
+		<button class:active={currentCategory === 1} on:click={() => (currentCategory = 1)}>
 			History
 		</button>
 	</section>
+
 	<section class="queue">
 		{#if currentCategory === 0}
 			{#each songQueue as songData, index}
@@ -350,6 +379,29 @@ import YoutubePlayer from '$components/YoutubePlayer.svelte';
 						}
 					}
 				}
+			}
+		}
+
+		section.ws-info {
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			align-items: center;
+			gap: 10px;
+
+			min-width: 350px;
+			width: 50%;
+			margin: 10px;
+			padding: 5px 10px;
+
+			border-radius: 5px;
+
+			&.closed {
+				background-color: #ff000090;
+			}
+
+			* {
+				margin: 0;
 			}
 		}
 	}
