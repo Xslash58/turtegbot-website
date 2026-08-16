@@ -6,6 +6,7 @@
 	import { page } from '$app/state';
 	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import { myUser, profileUser } from '$lib/stores/userStore';
+	import { goto } from '$app/navigation';
 
 	let { data, children } = $props();
 
@@ -28,6 +29,10 @@
 	});
 	$effect(() => {
 		const currentId = page.params.id ?? '';
+		if(Number.isNaN(Number(currentId))) {
+			let path = window.location.pathname.substring(6);
+			goto(`/users/${me?.id}${path}`);
+		}
 		if (currentId !== prevUserId) {
 			prevUserId = currentId;
 			(async () => {
