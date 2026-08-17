@@ -64,6 +64,9 @@
 		{#if me && user && (me?.id === user?.id || me.role.power >= 5)}
 			{#if Object.keys(user?.roomIds).length > 0}
 				<button on:click={() => gotoCategory(`settings`)}>Bot Settings</button>
+				{#if me?.id === user?.id}
+					<button on:click={() => gotoCategory(`mediarequests`)}>Media Requests</button>
+				{/if}
 			{/if}
 			<button on:click={() => gotoCategory(`tickets`)}>Tickets</button>
 			<button on:click={() => gotoCategory(`reminders`)}>Reminders</button>
