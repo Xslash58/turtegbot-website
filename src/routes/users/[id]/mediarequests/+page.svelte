@@ -1,28 +1,42 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import VolumeSlider from '$components/users/media-requests/VolumeSlider.svelte';
 	import YoutubePlayer from '$components/YoutubePlayer.svelte';
+	import type { MediaSettings } from '$lib/API/Models/Media';
 	import { confirmationDialog, feedbackDialog } from '$lib/stores/modalStore';
 	import { profileUser } from '$lib/stores/userStore';
-	import { Play, SkipBack, SkipForward, Trash, X } from 'phosphor-svelte';
+	import { Gear, Play, SkipBack, SkipForward, Trash, X } from 'phosphor-svelte';
 	import { onMount } from 'svelte';
 
 	let user = $profileUser;
 
 	let playerRef: YoutubePlayer;
 
+	let mediaSettings: MediaSettings;
 	let songQueue: any[] = [];
 	let songHistory: any[] = [];
 	let currentSong: any = null;
 	let isSongMissing: boolean = false;
+	let isBackupPlaylistPlaying: boolean = false;
 	let currentCategory: number = 0;
 	let volume: number = 10;
 	let wsState: number = WebSocket.CONNECTING;
+	const ws = new WebSocket(import.meta.env.VITE_WEBSOCKET_URL);
 
 	onMount(() => {
 		if (user == null) return;
 
-		const ws = new WebSocket(import.meta.env.VITE_WEBSOCKET_URL);
+		if (user.roomIds == null || Object.keys(user.roomIds).length === 0) {
+			feedbackDialog.set({
+				title: 'No Room Found',
+				content: 'Add bot to your channel first. If you have already done so, please login again.',
+				visible: true
+			});
+			goto(`/users/${user.id}`);
+			return;
+		}
+
 		ws.onopen = () => {
 			console.log('WebSocket connection established');
 			wsState = WebSocket.OPEN;
@@ -37,6 +51,10 @@
 			if (msg.event === 'media_request') {
 				songQueue.push(msg.data);
 				triggerReactivity();
+				if (isBackupPlaylistPlaying) {
+					isBackupPlaylistPlaying = false;
+					handleSongEnded();
+				}
 				isSongMissing = false; // Reset the missing song flag
 			} else if (msg.event == 'media_skip') {
 				handleSongEnded();
@@ -59,9 +77,14 @@
 			});
 		};
 
+		if (window) {
+			window.setInterval(webSocketPing, 30000);
+		}
+
 		if (window.localStorage) {
 			const storedQueue = localStorage.getItem(`turteg-mediarequests-songQueue-${user?.id}`);
 			const storedHistory = localStorage.getItem(`turteg-mediarequests-songHistory-${user?.id}`);
+			const storedSettings = localStorage.getItem(`turteg-mediarequests-settings`);
 
 			if (storedQueue) {
 				songQueue = JSON.parse(storedQueue);
@@ -69,6 +92,10 @@
 
 			if (storedHistory) {
 				songHistory = JSON.parse(storedHistory);
+			}
+
+			if (storedSettings) {
+				mediaSettings = JSON.parse(storedSettings);
 			}
 		}
 
@@ -79,6 +106,12 @@
 			visible: true
 		});
 	});
+
+	function webSocketPing() {
+		if (wsState === WebSocket.OPEN) {
+			ws.send(JSON.stringify({ action: 'ping' }));
+		}
+	}
 
 	function handlePlayerReady(event: any) {
 		console.log('Player is ready:', event);
@@ -99,7 +132,11 @@
 				currentSong = nextSong;
 			}
 			triggerReactivity();
-		} else isSongMissing = true; // No more songs in the queue
+		} else {
+			isSongMissing = true;
+			playerRef.loadPlaylist(mediaSettings?.queue_backup_playlist_url ?? '');
+			isBackupPlaylistPlaying = true;
+		}
 	}
 
 	function handleSongError(errorCode: number) {
@@ -113,22 +150,24 @@
 
 	function handlePrevSong() {
 		if (songHistory.length > 0) {
-			songQueue.unshift(currentSong);
+			if (currentSong) {
+				songQueue.unshift(currentSong);
+			}
 			const prevSong = songHistory.pop();
 			if (prevSong) {
 				playerRef.setVideoById(prevSong.video_id);
 				currentSong = prevSong;
 			}
 			triggerReactivity();
+			isSongMissing = false;
+			isBackupPlaylistPlaying = false;
 		}
 	}
 
 	function playSongFromHistory(index: number) {
-		console.log('Playing song from history at index:', index);
-		console.log('Current song history:', songHistory);
 		if (index >= 0 && index < songHistory.length) {
 			const selectedSong = songHistory[index];
-			console.log('Selected song from history:', selectedSong);
+
 			if (currentSong) {
 				songQueue.unshift(currentSong);
 			}
@@ -137,6 +176,7 @@
 				songQueue.unshift(selectedSong);
 				if (!isSongMissing) handleSongEnded();
 				isSongMissing = false;
+				isBackupPlaylistPlaying = false;
 			}
 			triggerReactivity();
 		}
@@ -180,7 +220,7 @@
 		} else {
 			localStorage.setItem(`turteg-mediarequests-songQueue-${user?.id}`, JSON.stringify(songQueue));
 		}
-		
+
 		localStorage.setItem(
 			`turteg-mediarequests-songHistory-${user?.id}`,
 			JSON.stringify(songHistory)
@@ -190,7 +230,7 @@
 
 <section class="media-requests">
 	<section class="player">
-		{#if !isSongMissing}
+		{#if !isSongMissing || mediaSettings?.queue_backup_playlist_url}
 			<YoutubePlayer
 				bind:this={playerRef}
 				onPlayerReady={handlePlayerReady}
@@ -201,15 +241,18 @@
 				<button class="prev" on:click={handlePrevSong}>
 					<SkipBack size={24} />
 				</button>
-				<button class="skip" on:click={handleSongEnded}>
+				<button class="skip" on:click={handleSongEnded} disabled={isSongMissing}>
 					<SkipForward size={24} />
 				</button>
 				<VolumeSlider onVolumeChange={handleVolumeChange} bind:volume />
 				<button class="clear-all" on:click={() => handleClearAll(false)}>
 					<Trash size={24} />
 				</button>
+				<button class="settings" on:click={() => goto(`mediarequests/settings`)}>
+					<Gear size={24} />
+				</button>
 			</section>
-		{:else}
+		{:else if !mediaSettings?.queue_backup_playlist_url}
 			<h1>No more media in the queue.</h1>
 		{/if}
 	</section>
@@ -237,20 +280,24 @@
 
 	<section class="queue">
 		{#if currentCategory === 0}
-			{#each songQueue as songData, index}
-				<section class="request">
-					<img src={songData.thumbnail_url} alt="" />
-					<section class="metadata">
-						<p>{songData.title}</p>
-						<p class="requested-by">Requested by: {songData.requested_by}</p>
+			{#if !isSongMissing}
+				{#each songQueue as songData, index}
+					<section class="request">
+						<img src={songData.thumbnail_url} alt="" />
+						<section class="metadata">
+							<p>{songData.title}</p>
+							<p class="requested-by">Requested by: {songData.requested_by}</p>
+						</section>
+						<section class="actions">
+							<button class="delete" on:click={() => deleteSong(index)}>
+								<Trash size={24} weight="fill" />
+							</button>
+						</section>
 					</section>
-					<section class="actions">
-						<button class="delete" on:click={() => deleteSong(index)}>
-							<Trash size={24} weight="fill" />
-						</button>
-					</section>
-				</section>
-			{/each}
+				{/each}
+			{:else if isBackupPlaylistPlaying}
+				<p>Playing backup playlist</p>
+			{/if}
 		{:else if currentCategory === 1}
 			{#each songHistory.toReversed() as songData, index}
 				{@const actualIndex = songHistory.length - 1 - index}
@@ -280,6 +327,9 @@
 
 		section.player {
 			width: 500px;
+			display: flex;
+			flex-direction: column;
+			gap: 5px;
 
 			h1 {
 				text-align: center;
@@ -297,6 +347,10 @@
 
 					&:hover {
 						color: #1ed760;
+					}
+					&:disabled {
+						cursor: not-allowed;
+						color: #555;
 					}
 				}
 			}
@@ -324,6 +378,11 @@
 			width: 100%;
 			display: flex;
 			flex-direction: column;
+
+			> p {
+				text-align: center;
+				margin: 0;
+			}
 
 			section.request {
 				display: flex;

@@ -16,7 +16,7 @@
 
 	let {
 		currentSong = $bindable<Song | null>(null),
-        onPlayerReady = () => {},
+		onPlayerReady = () => {},
 		onSongEnded = () => {},
 		onSongError = (errorCode: number) => {}
 	} = $props();
@@ -56,7 +56,7 @@
 					if (currentSong?.sourceId) {
 						event.target.loadVideoById(currentSong.sourceId);
 					}
-                    onPlayerReady(event);
+					onPlayerReady(event);
 				},
 				onStateChange: handleStateChange,
 				onError: handleError
@@ -107,6 +107,20 @@
 			player.loadVideoById(videoId);
 		}
 	}
+	export function loadPlaylist(playlistId: string) {
+		if (player) {
+			player.loadPlaylist({
+				list: playlistId,
+				listType: 'playlist',
+				index: 0,
+				startSeconds: 0
+			});
+			setTimeout(() => {
+				player.setShuffle({ shufflePlaylist: true });
+				player.playVideoAt(0);
+			}, 500);
+		}
+	}
 
 	onDestroy(() => {
 		player?.destroy();
@@ -130,10 +144,10 @@
 		border-radius: 12px;
 		overflow: hidden;
 
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
 	}
 
 	.loading-overlay {
