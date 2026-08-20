@@ -105,6 +105,11 @@
 			If you encounter any issues or have feedback, please let us know!`,
 			visible: true
 		});
+
+		return () => {
+			ws.onclose = null;
+			ws.close();
+		};
 	});
 
 	function webSocketPing() {
