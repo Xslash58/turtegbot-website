@@ -11,7 +11,6 @@
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
-	<title>TurtegBot</title>
 </svelte:head>
 
 <div class="dialog-wrapper">
