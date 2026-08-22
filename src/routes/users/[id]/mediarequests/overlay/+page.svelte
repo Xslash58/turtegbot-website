@@ -218,7 +218,7 @@
 
 		text-align: center;
 		color: white;
-		background-color: #00000064;
+		background-color: #000000e2;
 		border: #44ff00 2px solid;
 		border-radius: 10px;
 
@@ -256,13 +256,13 @@
 
 	@keyframes pulse_error {
 		0% {
-			background-color: #ff0000b5;
+			background-color: #ff0000e9;
 		}
 		50% {
-			background-color: #00000064;
+			background-color: #000000e2;
 		}
 		100% {
-			background-color: #ff0000b5;
+			background-color: #ff0000e9;
 		}
 	}
 </style>
