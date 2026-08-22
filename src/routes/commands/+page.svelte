@@ -71,6 +71,10 @@
 			description: 'Spotify integration commands',
 			icon: { type: 'img', value: 'https://cdn.brandfetch.io/spotify.com/symbol' }
 		},
+		'Media Requests': {
+			description: 'Media request commands',
+			icon: { type: 'emoji', value: '🎵' }
+		},
 		Miscellaneous: {
 			description: 'General purpose commands',
 			icon: { type: 'img', value: PepegaReadingEmote }
