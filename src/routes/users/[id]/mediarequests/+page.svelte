@@ -63,6 +63,7 @@
 		}
 
 		// Beta disclaimer
+		clearLegacyData();
 		feedbackDialog.set({
 			title: 'Media Requests are in Public Beta',
 			content: `Some features might not be fully functional yet.
@@ -320,6 +321,14 @@
 
 	async function deleteSong(media: MediaRequest) {
 		await SkipMedia(media.room_id, media.id);
+	}
+
+	function clearLegacyData() {
+		if (window.localStorage) {
+			localStorage.removeItem(`turteg-mediarequests-songQueue-${user?.id}`);
+			localStorage.removeItem(`turteg-mediarequests-songHistory-${user?.id}`);
+			localStorage.removeItem(`turteg-mediarequests-settings`);
+		}
 	}
 </script>
 
