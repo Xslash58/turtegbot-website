@@ -62,15 +62,11 @@ export async function SkipMedia(roomId: string, mediaId: string): Promise<boolea
 	const API_URL = import.meta.env.VITE_API_URL;
 	if (!API_URL) throw new Error('API_URL is not defined in environment variables.');
 
-	const formData = new FormData();
-	formData.append('mediaId', mediaId);
-
-	const response = await fetch(`${API_URL}/v1/room/${roomId}/media/skip`, {
+	const response = await fetch(`${API_URL}/v1/room/${roomId}/media/skip?mediaId=${mediaId}`, {
 		method: 'POST',
 		headers: {
 			Authorization: `Bearer ${localStorage.getItem('turteg-token') || ''}`
 		},
-		body: formData
 	});
 	if (!response.ok) {
 		console.log(`API request failed: ${response.statusText}`);
