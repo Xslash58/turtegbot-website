@@ -3,18 +3,16 @@
 	export let username: string | null;
 </script>
 
-<section class="user">
-	<p><a href="/users/{userId}">{username}</a></p>
-</section>
+<span class="user">
+	<a href="/users/{userId}">{username}</a>
+</span>
 
 <style lang="scss">
-	section.user {
-		p {
-			margin: 0;
-			a {
-				text-decoration: none;
-				color: inherit;
-			}
+	span.user {
+		margin: 0;
+		a {
+			text-decoration: none;
+			color: inherit;
 		}
 	}
 </style>
