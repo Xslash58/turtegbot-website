@@ -334,7 +334,6 @@
 
 <section class="media-requests">
 	<section class="player">
-		{#if !isSongMissing || mediaSettings?.queue_backup_playlist_id}
 			<YoutubePlayer
 				bind:this={playerRef}
 				bind:customLoadingMessage={playerCustomLoadMessage}
@@ -342,34 +341,30 @@
 				onSongEnded={handleSongEnded}
 				onSongError={handleSongError}
 			/>
-			<section class="current-metadata">
-				{#if currentSong}
-					<p>
-						Requested by:
-						<UserComponent
-							userId={Number(currentSong.user_id)}
-							username={currentSong.requested_by}
-						/>
-					</p>
-				{:else if isBackupPlaylistPlaying}
-					<p>Playing backup playlist</p>
-				{/if}
-			</section>
-			<section class="controls">
-				<button class="prev" onclick={handlePrevSong}>
-					<SkipBack size={24} />
-				</button>
-				<button class="skip" onclick={handleSongEnded} disabled={isSongMissing}>
-					<SkipForward size={24} />
-				</button>
-				<VolumeSlider onVolumeChange={handleVolumeChange} bind:volume />
-				<button class="settings" onclick={() => goto(`mediarequests/settings`)}>
-					<Gear size={24} />
-				</button>
-			</section>
-		{:else if !mediaSettings?.queue_backup_playlist_id}
-			<h1>No more media in the queue.</h1>
-		{/if}
+		<section class="current-metadata">
+			{#if currentSong}
+				<p>
+					Requested by:
+					<UserComponent userId={Number(currentSong.user_id)} username={currentSong.requested_by} />
+				</p>
+			{:else if isBackupPlaylistPlaying}
+				<p>Playing backup playlist</p>
+			{:else}
+				<p>No more media in the queue.</p>
+			{/if}
+		</section>
+		<section class="controls">
+			<button class="prev" onclick={handlePrevSong}>
+				<SkipBack size={24} />
+			</button>
+			<button class="skip" onclick={handleSongEnded} disabled={isSongMissing}>
+				<SkipForward size={24} />
+			</button>
+			<VolumeSlider onVolumeChange={handleVolumeChange} bind:volume />
+			<button class="settings" onclick={() => goto(`mediarequests/settings`)}>
+				<Gear size={24} />
+			</button>
+		</section>
 	</section>
 
 	{#if wsState !== WebSocket.OPEN}
