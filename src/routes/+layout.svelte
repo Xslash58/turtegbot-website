@@ -5,6 +5,7 @@
 	import LoginDialog from '$components/Dialogs/LoginDialog.svelte';
 	import Footer from '$components/Footer.svelte';
 	import Header from '$components/Header.svelte';
+	import AlertBar from '$components/AlertBar.svelte';
 
 	let { data, children } = $props();
 </script>
@@ -22,6 +23,7 @@
 
 <div class="layout-wrapper">
 	<Header />
+	<AlertBar />
 
 	<div class="main-content">
 		{@render children?.()}
