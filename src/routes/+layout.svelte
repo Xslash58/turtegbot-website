@@ -6,6 +6,7 @@
 	import Footer from '$components/Footer.svelte';
 	import Header from '$components/Header.svelte';
 	import { page } from '$app/state';
+	import AlertBar from '$components/AlertBar.svelte';
 
 	let { data, children } = $props();
 
@@ -28,7 +29,8 @@
 
 	<div class="layout-wrapper">
 		<Header />
-
+    <AlertBar />
+    
 		<div class="main-content">
 			{@render children?.()}
 		</div>
