@@ -467,10 +467,6 @@
 			flex-direction: column;
 			gap: 5px;
 
-			h1 {
-				text-align: center;
-			}
-
 			section.controls {
 				display: flex;
 				justify-content: center;
