@@ -5,9 +5,12 @@
 	import LoginDialog from '$components/Dialogs/LoginDialog.svelte';
 	import Footer from '$components/Footer.svelte';
 	import Header from '$components/Header.svelte';
+	import { page } from '$app/state';
 	import AlertBar from '$components/AlertBar.svelte';
 
 	let { data, children } = $props();
+
+	let isOverlay = $derived(page.url.pathname.includes('overlay'));
 </script>
 
 <svelte:head>
@@ -15,22 +18,26 @@
 	<title>TurtegBot</title>
 </svelte:head>
 
-<div class="dialog-wrapper">
-	<LoginDialog />
-	<ConfirmationDialog />
-	<FeedbackDialog />
-</div>
-
-<div class="layout-wrapper">
-	<Header />
-	<AlertBar />
-
-	<div class="main-content">
-		{@render children?.()}
+{#if isOverlay}
+	{@render children?.()}
+{:else}
+	<div class="dialog-wrapper">
+		<LoginDialog />
+		<ConfirmationDialog />
+		<FeedbackDialog />
 	</div>
 
-	<Footer />
-</div>
+	<div class="layout-wrapper">
+		<Header />
+    <AlertBar />
+    
+		<div class="main-content">
+			{@render children?.()}
+		</div>
+
+		<Footer />
+	</div>
+{/if}
 
 <style lang="scss">
 	@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');

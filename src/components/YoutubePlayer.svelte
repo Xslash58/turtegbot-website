@@ -11,6 +11,7 @@
 	let playerContainer: HTMLElement;
 	let player: any = $state(null);
 	let isApiReady: boolean = $state(false);
+	let isPlayerReady: boolean = $state(false);
 	let isPlaying: boolean = $state(false);
 	let volume: number = $state(50);
 
@@ -18,7 +19,8 @@
 		currentSong = $bindable<Song | null>(null),
 		onPlayerReady = () => {},
 		onSongEnded = () => {},
-		onSongError = (errorCode: number) => {}
+		onSongError = (errorCode: number) => {},
+		customLoadingMessage = $bindable<string | null>(null)
 	} = $props();
 
 	onMount(async () => {
@@ -41,7 +43,7 @@
 		player = new window.YT.Player(playerContainer, {
 			height: '100%',
 			width: '100%',
-			videoId: 'oxzEdm29JLw',
+			videoId: '',
 			playerVars: {
 				autoplay: 1,
 				controls: 1,
@@ -56,6 +58,7 @@
 					if (currentSong?.sourceId) {
 						event.target.loadVideoById(currentSong.sourceId);
 					}
+					isPlayerReady = true;
 					onPlayerReady(event);
 				},
 				onStateChange: handleStateChange,
@@ -87,28 +90,28 @@
 	});
 
 	export function play() {
-		if (player) {
+		if (player && typeof player.playVideo === 'function') {
 			player.playVideo();
 		}
 	}
 	export function pause() {
-		if (player) {
+		if (player && typeof player.pauseVideo === 'function') {
 			player.pauseVideo();
 		}
 	}
 	export function setVolume(newVolume: number) {
-		if (player) {
+		if (player && typeof player.setVolume === 'function') {
 			volume = newVolume;
 			player.setVolume(volume);
 		}
 	}
 	export function setVideoById(videoId: string) {
-		if (player) {
+		if (player && typeof player.loadVideoById === 'function') {
 			player.loadVideoById(videoId);
 		}
 	}
 	export function loadPlaylist(playlistId: string) {
-		if (player) {
+		if (player && typeof player.loadPlaylist === 'function') {
 			player.loadPlaylist({
 				list: playlistId,
 				listType: 'playlist',
@@ -118,7 +121,20 @@
 			setTimeout(() => {
 				player.setShuffle({ shufflePlaylist: true });
 				player.playVideoAt(0);
-			}, 500);
+			}, 1000);
+		}
+	}
+
+	export function getCurrentTime(): number {
+		if (player && typeof player.getCurrentTime === 'function') {
+			return player.getCurrentTime();
+		}
+		return 0;
+	}
+
+	export function seekTo(seconds: number) {
+		if (player && typeof player.seekTo === 'function') {
+			player.seekTo(seconds, true);
 		}
 	}
 
@@ -129,9 +145,11 @@
 
 <section class="player-wrapper">
 	<section class="player-container" bind:this={playerContainer}></section>
-	{#if !isApiReady}
+	{#if !isPlayerReady || customLoadingMessage}
+	<section class="loading-overlay">
 		<LoadingIndicator />
-		<p>Loading YouTube Player...</p>
+		<p>{!isPlayerReady ? 'Loading YouTube Player...' : customLoadingMessage}</p>
+	</section>
 	{/if}
 </section>
 
@@ -144,10 +162,16 @@
 		border-radius: 12px;
 		overflow: hidden;
 
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		flex-direction: column;
+		.loading-overlay {
+			position: absolute;
+			color: #fff;
+			background: rgba(0, 0, 0, 0.8);
+
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+		}
 	}
 
 	.loading-overlay {

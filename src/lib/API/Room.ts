@@ -131,3 +131,21 @@ export async function DeleteWebhook(roomId: string, webhookId: string): Promise<
 
     return data.success;
 }
+
+export async function UpdateRoomOption(id: string, option: string, value: any): Promise<boolean> {
+    const API_URL = import.meta.env.VITE_API_URL;
+    if (!API_URL) throw new Error("API_URL is not defined in environment variables.");
+
+    const response = await fetch(`${API_URL}/v1/room/${id}/config/${option}?value=${encodeURIComponent(JSON.stringify(value))}`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('turteg-token') || ''}`
+        },
+    });
+    if (!response.ok) {
+        console.log(`API request failed: ${response.statusText}`);
+        return false;
+    }
+
+    return true;
+}
