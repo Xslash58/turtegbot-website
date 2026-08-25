@@ -22,6 +22,10 @@
 		if (value) {
 			me = value;
 		}
+		if(me && page.params.id && Number.isNaN(Number(page.params.id))) {
+			let path = window.location.pathname.substring(6);
+			goto(`/users/${me?.id}${path}`);
+		}
 	});
 
 	onMount(async () => {
@@ -29,10 +33,6 @@
 	});
 	$effect(() => {
 		const currentId = page.params.id ?? '';
-		if(Number.isNaN(Number(currentId))) {
-			let path = window.location.pathname.substring(6);
-			goto(`/users/${me?.id}${path}`);
-		}
 		if (currentId !== prevUserId) {
 			prevUserId = currentId;
 			(async () => {
