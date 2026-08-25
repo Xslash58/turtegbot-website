@@ -33,13 +33,26 @@
 	});
 
 	async function handleForm(e: any) {
-		isLoading = true;
 		e.preventDefault();
 		const formData = new FormData(e.target);
 		const data = Object.fromEntries(formData);
 
+		const rawPlaylist = data['queue-backup-playlist'] as string;
+		const playlistId = getValidPlaylistId(rawPlaylist);
+		
+		if(rawPlaylist.trim() && !playlistId) {
+			feedbackDialog.set({
+				title: 'Invalid Playlist',
+				content: 'The provided playlist URL/ID is invalid. Please provide a valid YouTube playlist URL or ID.',
+				visible: true
+			});
+			return;
+		}
+
+		isLoading = true;
+		
 		const settings: MediaSettings = {
-			queue_backup_playlist_id: data['queue-backup-playlist'] as string | null,
+			queue_backup_playlist_id: playlistId,
 			queue_requests_allowed: data['queue-requests-allowed'] === 'on',
 			queue_requests_blacklist: data['queue-requests-blacklist'] as string,
 			queue_youtube_minviews: parseInt(data['queue-youtube-minviews'] as string) || 0,
@@ -52,6 +65,25 @@
 			}
 		}
 		isLoading = false;
+	}
+
+	function getValidPlaylistId(input: string | null | undefined): string | null {
+		if (!input) return null;
+		let candidate = input.trim();
+
+		try {
+			const url = new URL(candidate);
+			const listParam = url.searchParams.get('list');
+			if (listParam) {
+				candidate = listParam;
+			} else {
+				return null;
+			}
+		} catch {}
+
+		const isValid = /^(PL|UU|LL|RD|OLAK|FL)[a-zA-Z0-9_-]{16,41}$/.test(candidate);
+		
+		return isValid ? candidate : null;
 	}
 
 	function getOverlayUrl(): string {
