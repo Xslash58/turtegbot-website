@@ -4,9 +4,7 @@
 	import type { SearchUser } from '$lib/API/Models/Users';
 	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import { formatDate } from '$lib/Utilities';
-	import {
-		GetTurtles,
-	} from '$lib/API/Admin';
+	import { GetTurtles } from '$lib/API/Admin';
 	import UserComponent from '$components/users/UserComponent.svelte';
 	import UserSearch from '$components/users/UserSearch.svelte';
 	import type { TurtleData, TurtleDataRank } from '$lib/API/Models/Turtles';
@@ -18,30 +16,30 @@
 	onMount(async () => {
 		console.log('Turtles page mounted');
 		await fetchTurtles();
-        filteredTurtles = turtles;
+		filteredTurtles = turtles;
 		isLoaded = true;
 	});
 
 	async function fetchTurtles() {
 		turtles = await GetTurtles();
 
-        turtles.map((turtle, index) => {
-            turtle.rank = index + 1;
-        });
+		turtles.map((turtle, index) => {
+			turtle.rank = index + 1;
+		});
 
 		turtles = [...turtles];
 	}
 
-    async function searchByUser(user: SearchUser | null) {
-        if(user == null) {
-            filteredTurtles = turtles;
-            return;
-        }
+	async function searchByUser(user: SearchUser | null) {
+		if (user == null) {
+			filteredTurtles = turtles;
+			return;
+		}
 
-        filteredTurtles = turtles.filter(turtle => {
-            return turtle.user.ID == user.ID;
-        });
-    }
+		filteredTurtles = turtles.filter((turtle) => {
+			return turtle.user.ID == user.ID;
+		});
+	}
 </script>
 
 <section class="tickets">
@@ -55,7 +53,7 @@
 			<thead>
 				<tr>
 					<th>ID</th>
-                    <th>Rank</th>
+					<th>Rank</th>
 					<th>User</th>
 					<th>Turtles</th>
 					<th>lastCollect</th>
@@ -66,8 +64,13 @@
 				{#each filteredTurtles as turtle}
 					<tr>
 						<td>{turtle.ID}</td>
-                        <td>{turtle.rank}</td>
-						<td><UserComponent userId={turtle.user.ID} username={turtle.user.twitchUsername ?? turtle.user.kickUsername} /></td>
+						<td>{turtle.rank}</td>
+						<td
+							><UserComponent
+								userId={turtle.user.ID}
+								username={turtle.user.twitchUsername ?? turtle.user.kickUsername}
+							/></td
+						>
 						<td>{turtle.turtles}</td>
 						<td>{formatDate(turtle.lastCollect)}</td>
 						<td>{formatDate(turtle.nextCollect)}</td>

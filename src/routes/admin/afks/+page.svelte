@@ -8,7 +8,7 @@
 		Exam,
 		ListMagnifyingGlass,
 		Moon,
-		Shower,
+		Shower
 	} from 'phosphor-svelte';
 	import type { AFK, User } from '$lib/API/Models/Users';
 	import { DeleteAFK, GetAFKs, PatchAFK } from '$lib/API/Admin';

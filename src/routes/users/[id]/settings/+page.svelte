@@ -2,7 +2,7 @@
 	import type { Language, RoomSettings } from '$lib/API/Models/Room';
 	import type { Webhook } from '$lib/API/Models/Users';
 	import {
-	DeleteWebhook,
+		DeleteWebhook,
 		GetAvailableLanguages,
 		GetRoomPowers,
 		GetRoomSettings,
@@ -55,9 +55,9 @@
 	}
 
 	async function removeWebhook(webhookId: string, force: boolean = false) {
-		if(user == null) return;
-		
-		if(!force) {
+		if (user == null) return;
+
+		if (!force) {
 			confirmationDialog.set({
 				visible: true,
 				text: `Are you sure you want to delete this webhook?
@@ -70,7 +70,7 @@
 		}
 
 		const success = await DeleteWebhook(user.roomIds[selectedPlatform], webhookId);
-		webhooks = webhooks?.filter(w => w.webhookId !== webhookId) ?? null;
+		webhooks = webhooks?.filter((w) => w.webhookId !== webhookId) ?? null;
 	}
 
 	async function handleForm(e: any) {
@@ -98,7 +98,7 @@
 
 		let redirectUri = import.meta.env.VITE_AUTH_TWITCH_URL_SCOPES + '&scope=';
 
-		let scopes = ["channel:bot"];
+		let scopes = ['channel:bot'];
 		for (const key in data) {
 			scopes.push(key);
 		}
@@ -236,7 +236,12 @@
 									</td>
 									<td>{formatDate(webhook.createdAt)}</td>
 									<td class="webhook-id">
-										<button on:click={() => copyToClipboard(`https://turteghook.xslash.ovh/webhooks/${webhook.webhookId}`)}>
+										<button
+											on:click={() =>
+												copyToClipboard(
+													`https://turteghook.xslash.ovh/webhooks/${webhook.webhookId}`
+												)}
+										>
 											{webhook.webhookId}
 										</button>
 									</td>
@@ -318,16 +323,6 @@
 	section.user-powers {
 		td {
 			text-align: center;
-			button {
-				background: none;
-				border: none;
-				cursor: pointer;
-				transition: 0.1s transform;
-
-				&:hover {
-					transform: scale(1.1);
-				}
-			}
 			&.username {
 				text-align: left;
 			}

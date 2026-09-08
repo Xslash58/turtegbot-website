@@ -12,7 +12,7 @@
 	<section class="block1">
 		<h1>Welcome to TurtegBot</h1>
 		<p>General utility and fun chatbot</p>
-		<button id="add" on:click={() => goto("/how-to-add")}>Add Bot</button>
+		<button id="add" on:click={() => goto('/how-to-add')}>Add Bot</button>
 	</section>
 	<section class="block2">
 		<h1>What does it do?</h1>
@@ -114,7 +114,7 @@
 			padding: 5px 10px;
 			border-radius: 10px;
 			cursor: pointer;
-            margin-top: 10px;
+			margin-top: 10px;
 
 			&:hover {
 				background-color: rgb(230, 230, 230);

@@ -6,22 +6,21 @@
 
 	let isDetailedView: boolean = $state(false);
 
-    let alertId: string = $state(import.meta.env.VITE_ALERT_ID || '');
+	let alertId: string = $state(import.meta.env.VITE_ALERT_ID || '');
 	let alertTitle: string = $state('');
 	let alertMessage: string = $state('');
 	let alertType: string = $state(import.meta.env.VITE_ALERT_TYPE || 'info'); // 'info', 'warning', 'error'
 
-
 	onMount(async () => {
-        if(browser && window.localStorage) {
-            const dismissed = localStorage.getItem(`turteg-alert-${alertId}-dismissed`);
-            if(dismissed === 'true') {
-                return;
-            }
-        }
+		if (browser && window.localStorage) {
+			const dismissed = localStorage.getItem(`turteg-alert-${alertId}-dismissed`);
+			if (dismissed === 'true') {
+				return;
+			}
+		}
 
-	    alertTitle = import.meta.env.VITE_ALERT_TITLE || '';
-	    alertMessage = import.meta.env.VITE_ALERT_MESSAGE || '';
+		alertTitle = import.meta.env.VITE_ALERT_TITLE || '';
+		alertMessage = import.meta.env.VITE_ALERT_MESSAGE || '';
 
 		try {
 			const res = await fetch('https://status.xslash.ovh/index.json');
@@ -31,7 +30,7 @@
 
 			const announcement = json?.data?.attributes?.announcement || null;
 			if (announcement) {
-				alertTitle = "Status Announcement";
+				alertTitle = 'Status Announcement';
 				alertMessage = announcement;
 				alertType = 'error';
 			}
@@ -44,13 +43,13 @@
 		isDetailedView = !isDetailedView;
 	}
 
-    function discardAlert() {
-        if(window.localStorage) {
-            localStorage.setItem(`turteg-alert-${alertId}-dismissed`, 'true');
-        }
-        alertTitle = '';
-        alertMessage = '';
-    }
+	function discardAlert() {
+		if (window.localStorage) {
+			localStorage.setItem(`turteg-alert-${alertId}-dismissed`, 'true');
+		}
+		alertTitle = '';
+		alertMessage = '';
+	}
 </script>
 
 {#if alertTitle}
@@ -70,11 +69,11 @@
 				</button>
 			{/if}
 
-            {#if alertType === 'info'}
-                <button class="discard" onclick={discardAlert}>
-                    <X size={24} weight="bold" />
-                </button>
-            {/if}
+			{#if alertType === 'info'}
+				<button class="discard" onclick={discardAlert}>
+					<X size={24} weight="bold" />
+				</button>
+			{/if}
 		</header>
 		{#if isDetailedView}
 			<section class="details" transition:slide={{ duration: 300 }}>
@@ -118,10 +117,6 @@
 						transform: rotate(180deg);
 					}
 				}
-
-                &.discard {
-                    
-                }
 			}
 		}
 

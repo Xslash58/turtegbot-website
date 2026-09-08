@@ -6,7 +6,7 @@
 	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 
 	let token: string = '';
-	let error: string = "";
+	let error: string = '';
 
 	onMount(async () => {
 		console.log('Kick Auth Page Mounted');
@@ -17,14 +17,14 @@
 
 		if (code == null || state == null || codeVerifier == null) {
 			console.error('Missing code, state or codeVerifier in query parameters');
-			error = "Missing code, state or codeVerifier in query parameters";
+			error = 'Missing code, state or codeVerifier in query parameters';
 			return;
 		}
 
 		try {
 			token = await ExchangeKickCodeForToken(code, codeVerifier);
 		} catch (err) {
-			error = err instanceof Error ? err.message : String(err).replace("Error: ", "");
+			error = err instanceof Error ? err.message : String(err).replace('Error: ', '');
 			return;
 		}
 

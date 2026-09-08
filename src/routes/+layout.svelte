@@ -29,8 +29,8 @@
 
 	<div class="layout-wrapper">
 		<Header />
-    <AlertBar />
-    
+		<AlertBar />
+
 		<div class="main-content">
 			{@render children?.()}
 		</div>

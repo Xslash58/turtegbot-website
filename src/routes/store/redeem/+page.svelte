@@ -13,8 +13,8 @@
 
 	let me: User | null = null;
 	$: if (me == null) me = $myUser;
-    $: codeParameter = $page.url.searchParams.get('code') || '';
-    $: if (codeParameter) code = codeParameter;
+	$: codeParameter = $page.url.searchParams.get('code') || '';
+	$: if (codeParameter) code = codeParameter;
 
 	const toSignedString = (num: number) =>
 		new Intl.NumberFormat('en', { signDisplay: 'always' }).format(num);

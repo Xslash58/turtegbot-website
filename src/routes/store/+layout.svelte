@@ -26,18 +26,6 @@
 	.store-content {
 		flex: 1;
 		padding: 20px;
-
-		section.loading {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			height: 100%;
-			font-size: 1.25rem;
-			h1 {
-				text-align: center;
-			}
-		}
 	}
 
 	@media (max-width: 768px) {

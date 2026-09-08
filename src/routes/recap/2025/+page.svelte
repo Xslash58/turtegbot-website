@@ -57,10 +57,9 @@
 		category = -1;
 		if (!suser) {
 			viewUser = null;
-			
-			if(user)
-				getRecaps(user);
-			
+
+			if (user) getRecaps(user);
+
 			return;
 		}
 		let userPage = await GetUserPage(suser.ID + '');
@@ -85,12 +84,18 @@
 		{#if user && !viewUser}
 			<h2>Welcome back, <span style="color:{user?.role.color}">{user?.display_name}</span></h2>
 		{:else if viewUser}
-			<h2 style="color: #6b6b6b">Viewing Recap for <span style="color:{viewUser?.role.color}">{viewUser?.display_name}</span></h2>
+			<h2 style="color: #6b6b6b">
+				Viewing Recap for <span style="color:{viewUser?.role.color}">{viewUser?.display_name}</span>
+			</h2>
 		{/if}
 		<h1>TurtegBot Recap 2025</h1>
 		<p>Let's dive into your year with TurtegBot</p>
 	</section>
-	<UserSearch onSelect={(u) => {getRecapsBySearch(u)}} />
+	<UserSearch
+		onSelect={(u) => {
+			getRecapsBySearch(u);
+		}}
+	/>
 	<section class="categories">
 		<button
 			on:click={() => (category = 0)}
@@ -673,7 +678,7 @@
 				</section>
 			</section>
 		</section>
-		
+
 		<p>Generated: ±2025-12-29T21:50:00</p>
 	{/if}
 </section>

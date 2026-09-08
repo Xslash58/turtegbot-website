@@ -6,7 +6,7 @@
 	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 
 	let token: string = '';
-	let error: string = "";
+	let error: string = '';
 
 	onMount(async () => {
 		console.log('Twitch Auth Page Mounted');
@@ -17,14 +17,14 @@
 
 		if (code == null || scope == null) {
 			console.error('Missing code or scope in query parameters');
-			error = "Missing code or scope in query parameters";
+			error = 'Missing code or scope in query parameters';
 			return;
 		}
-		
+
 		try {
 			token = await ExchangeCodeForToken(code, scope, save);
 		} catch (err) {
-			error = err instanceof Error ? err.message : String(err).replace("Error: ", "");
+			error = err instanceof Error ? err.message : String(err).replace('Error: ', '');
 			return;
 		}
 

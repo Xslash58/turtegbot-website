@@ -5,7 +5,7 @@
 	import './dialogStyle.scss';
 	import './dialogScript.ts';
 	import { onDestroy, onMount } from 'svelte';
-    import { fade } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 	import { generatePKCE } from '$lib/API/Auth';
 
 	onMount(() => {
@@ -22,11 +22,11 @@
 		loginModalVisible.set(false);
 	}
 
-    function loginWithTwitch() {
+	function loginWithTwitch() {
 		localStorage.setItem('turteg-auth-return-to', window.location.pathname);
-        location.href = import.meta.env.VITE_AUTH_TWITCH_URL;
-        close();
-    }
+		location.href = import.meta.env.VITE_AUTH_TWITCH_URL;
+		close();
+	}
 
 	async function loginWithKick() {
 		localStorage.setItem('turteg-auth-return-to', window.location.pathname);

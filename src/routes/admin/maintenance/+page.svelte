@@ -9,8 +9,8 @@
 	onMount(async () => {
 		console.log('Maintenance page mounted');
 
-        // Send initial ping
-        await reload('webping');
+		// Send initial ping
+		await reload('webping');
 	});
 
 	async function reload(module: string) {
@@ -31,8 +31,7 @@
 
 		try {
 			success = await PostScript(script);
-			if (success)
-				error = `Script executed. Please wait a moment for changes to take effect.`;
+			if (success) error = `Script executed. Please wait a moment for changes to take effect.`;
 		} catch (err) {
 			console.error(`Error running script ${script}:`, error);
 			error = err instanceof Error ? err.message : String(err).replace('Error: ', '');
@@ -48,8 +47,8 @@
 			<nav>
 				<button onclick={() => reload('rolemanager')}>Reload Roles</button>
 				<button onclick={() => reload('afkmanager')}>Reload AFKs</button>
-                <button onclick={() => reload('translationmanager')}>Reload Translations</button>
-                <br>
+				<button onclick={() => reload('translationmanager')}>Reload Translations</button>
+				<br />
 				<button class="danger" onclick={() => reload('bot')}>Restart Bot</button>
 				<button class="danger" onclick={() => runScript('killbotscreens')}>Kill Bot</button>
 			</nav>
@@ -62,9 +61,9 @@
 		<section class="panel">
 			<h1>{error}</h1>
 			{#if !error.includes('Script executed')}
-			<nav>
-				<button class="danger" onclick={() => runScript('restartbot')}>Restart Bot</button>
-			</nav>
+				<nav>
+					<button class="danger" onclick={() => runScript('restartbot')}>Restart Bot</button>
+				</nav>
 			{/if}
 		</section>
 	{/if}

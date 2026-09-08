@@ -4,17 +4,17 @@
 	import { myUser } from '$lib/stores/userStore';
 	import { ArrowUUpLeft, Check, CheckCircle } from 'phosphor-svelte';
 
-    let user: User | null = null;
+	let user: User | null = null;
 
-    myUser.subscribe((value) => {
-        if (value) {
-            user = value;
-        }
-    });
+	myUser.subscribe((value) => {
+		if (value) {
+			user = value;
+		}
+	});
 
-    function login() {
-        loginModalVisible.set(true);
-    }
+	function login() {
+		loginModalVisible.set(true);
+	}
 </script>
 
 <section class="howtoadd">
@@ -27,10 +27,12 @@
 	<section class="steps">
 		<section class="step">
 			<h2 style="color: {user ? 'lime' : 'white'};">
-				Step 1: Mod <code>turtegbot</code> in your chat or <button on:click={login} class="login-button">Login</button> on this website
-                {#if user}
-                <CheckCircle size={20} color="lime" weight="bold" />
-                {/if}
+				Step 1: Mod <code>turtegbot</code> in your chat or
+				<button on:click={login} class="login-button">Login</button>
+				on this website
+				{#if user}
+					<CheckCircle size={20} color="lime" weight="bold" />
+				{/if}
 			</h2>
 		</section>
 		<section class="step">
@@ -69,18 +71,21 @@
 	<p>
 		More details about this change can be found in the official Twitch announcement:
 		<a
-            target="_blank"
+			target="_blank"
 			href="https://discuss.dev.twitch.com/t/giving-broadcasters-control-concurrent-join-limits-for-irc-and-eventsub"
 		>
 			Giving Broadcasters Control: Concurrent Join Limits for IRC and EventSub
 		</a>
 	</p>
 
-    <br>
-    <p>To comply with these new requirements, TurtegBot now needs to be either modded in your channel or you need to authorize it via our website.</p>
+	<br />
+	<p>
+		To comply with these new requirements, TurtegBot now needs to be either modded in your channel
+		or you need to authorize it via our website.
+	</p>
 
 	<br />
-    <p>Sorry for all the issues... and</p>
+	<p>Sorry for all the issues... and</p>
 	<p>Thank you for using TurtegBot!</p>
 </section>
 
@@ -121,7 +126,7 @@
 			color: #33ca00;
 		}
 
-        .login-button {
+		.login-button {
 			background-color: white;
 			color: black;
 			border: none;

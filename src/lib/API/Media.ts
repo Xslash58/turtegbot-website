@@ -18,7 +18,10 @@ export async function GetMediaQueue(roomId: string): Promise<MediaRequest[] | nu
 	return data.requests;
 }
 
-export async function GetMediaHistory(roomId: string, page: number): Promise<MediaRequest[] | null> {
+export async function GetMediaHistory(
+	roomId: string,
+	page: number
+): Promise<MediaRequest[] | null> {
 	const API_URL = import.meta.env.VITE_API_URL;
 	if (!API_URL) throw new Error('API_URL is not defined in environment variables.');
 
@@ -66,7 +69,7 @@ export async function SkipMedia(roomId: string, mediaId: string): Promise<boolea
 		method: 'POST',
 		headers: {
 			Authorization: `Bearer ${localStorage.getItem('turteg-token') || ''}`
-		},
+		}
 	});
 	if (!response.ok) {
 		console.log(`API request failed: ${response.statusText}`);
@@ -76,7 +79,10 @@ export async function SkipMedia(roomId: string, mediaId: string): Promise<boolea
 	return true;
 }
 
-export async function PostMediaSettings(roomId: string, mediaSettings: MediaSettings): Promise<boolean> {
+export async function PostMediaSettings(
+	roomId: string,
+	mediaSettings: MediaSettings
+): Promise<boolean> {
 	const API_URL = import.meta.env.VITE_API_URL;
 	if (!API_URL) throw new Error('API_URL is not defined in environment variables.');
 

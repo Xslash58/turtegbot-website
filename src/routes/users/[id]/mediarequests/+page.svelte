@@ -47,7 +47,7 @@
 	let ws = new WebSocket(import.meta.env.VITE_WEBSOCKET_URL);
 	let wsConnectionAttempts: number = $state(0);
 	let isFirstLoad: boolean = $state(true);
-	let pingInterval: ReturnType<typeof setInterval> | null = null;
+	let pingInterval: number | null = null;
 
 	onMount(async () => {
 		if (user == null) return;
@@ -134,9 +134,7 @@
 			setTimeout(webSocketReconnect, 5000);
 		};
 
-		if (window) {
-			pingInterval = window.setInterval(webSocketPing, 30000);
-		}
+		if (window) pingInterval = window.setInterval(webSocketPing, 30000);
 
 		mediaSettings = await GetMediaSettings(user.roomIds[Object.keys(user.roomIds)[0]]);
 		await loadHistoryPage(historyPage);
@@ -334,13 +332,13 @@
 
 <section class="media-requests">
 	<section class="player">
-			<YoutubePlayer
-				bind:this={playerRef}
-				bind:customLoadingMessage={playerCustomLoadMessage}
-				onPlayerReady={handlePlayerReady}
-				onSongEnded={handleSongEnded}
-				onSongError={handleSongError}
-			/>
+		<YoutubePlayer
+			bind:this={playerRef}
+			bind:customLoadingMessage={playerCustomLoadMessage}
+			onPlayerReady={handlePlayerReady}
+			onSongEnded={handleSongEnded}
+			onSongError={handleSongError}
+		/>
 		<section class="current-metadata">
 			{#if currentSong}
 				<p>

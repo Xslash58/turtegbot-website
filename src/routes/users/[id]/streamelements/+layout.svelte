@@ -12,7 +12,7 @@
 
 	let user: User | null = $state(null);
 	let me: User | null = $state(null);
-	
+
 	let isLoaded: boolean = $state(false);
 
 	myUser.subscribe((value) => {
@@ -34,48 +34,47 @@
 		//}
 		isLoaded = true;
 	});
-
 </script>
 
 <section class="user-layout">
 	<StreamElementsBar {user} />
 	<section class="user-content">
 		{#if user}
-		{@render children?.()}
+			{@render children?.()}
 		{:else if !isLoaded}
-		<section class="loading">
-			<h1>Loading user data...</h1>
-			<LoadingIndicator />
-		</section>
+			<section class="loading">
+				<h1>Loading user data...</h1>
+				<LoadingIndicator />
+			</section>
 		{:else}
-		<section class="loading">
-			<h1>User not found.</h1>
-		</section>
+			<section class="loading">
+				<h1>User not found.</h1>
+			</section>
 		{/if}
 	</section>
 </section>
 
 <style lang="scss">
-.user-layout {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-}
-
-.user-content {
-    flex: 1;
-    padding: 20px;
-
-	section.loading {
+	.user-layout {
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		height: 100%;
-		font-size: 1.25rem;
-		h1 {
-			text-align: center;
+		flex: 1;
+	}
+
+	.user-content {
+		flex: 1;
+		padding: 20px;
+
+		section.loading {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			height: 100%;
+			font-size: 1.25rem;
+			h1 {
+				text-align: center;
+			}
 		}
 	}
-}
 </style>
