@@ -146,10 +146,10 @@
 <section class="player-wrapper">
 	<section class="player-container" bind:this={playerContainer}></section>
 	{#if !isPlayerReady || customLoadingMessage}
-	<section class="loading-overlay">
-		<LoadingIndicator />
-		<p>{!isPlayerReady ? 'Loading YouTube Player...' : customLoadingMessage}</p>
-	</section>
+		<section class="loading-overlay">
+			<LoadingIndicator />
+			<p>{!isPlayerReady ? 'Loading YouTube Player...' : customLoadingMessage}</p>
+		</section>
 	{/if}
 </section>
 

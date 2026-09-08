@@ -33,8 +33,8 @@
 			border-radius: 10px;
 			padding: 10px 0;
 			cursor: pointer;
-            width: 120px;
-            margin: 5px;
+			width: 120px;
+			margin: 5px;
 			&:hover {
 				background-color: #28a300;
 			}

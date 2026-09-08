@@ -16,17 +16,17 @@
 
 <section class="sidebar">
 	<nav>
-        <button on:click={() => gotoCategory(``)}>Home</button>
-        {#if me && me.role.power >= 5}
-		    <button on:click={() => gotoCategory(`tickets`)}>Tickets</button>
-		    <button on:click={() => gotoCategory(`reminders`)}>Reminders</button>
-		    <button on:click={() => gotoCategory(`afks`)}>AFKs</button>
+		<button on:click={() => gotoCategory(``)}>Home</button>
+		{#if me && me.role.power >= 5}
+			<button on:click={() => gotoCategory(`tickets`)}>Tickets</button>
+			<button on:click={() => gotoCategory(`reminders`)}>Reminders</button>
+			<button on:click={() => gotoCategory(`afks`)}>AFKs</button>
 			<button on:click={() => gotoCategory(`turtles`)}>Turtles</button>
-        {/if}
-        {#if me && me.role.power >= 10}
-		    <button class="admin" on:click={() => gotoCategory(`codes`)}>Codes</button>
-		    <button class="admin" on:click={() => gotoCategory(`users`)}>Users</button>
-		    <button class="admin" on:click={() => gotoCategory(`maintenance`)}>Maintenance</button>
+		{/if}
+		{#if me && me.role.power >= 10}
+			<button class="admin" on:click={() => gotoCategory(`codes`)}>Codes</button>
+			<button class="admin" on:click={() => gotoCategory(`users`)}>Users</button>
+			<button class="admin" on:click={() => gotoCategory(`maintenance`)}>Maintenance</button>
 		{/if}
 	</nav>
 </section>
@@ -53,13 +53,13 @@
 			cursor: pointer;
 			margin-bottom: 10px;
 
-            &.admin {
-                background-color: #dc3545;
+			&.admin {
+				background-color: #dc3545;
 
-                &:hover {
-                    background-color: #c82333;
-                }
-            }
+				&:hover {
+					background-color: #c82333;
+				}
+			}
 
 			&:hover {
 				background-color: #28a300;

@@ -1,46 +1,46 @@
 export interface ModVIPList {
-    mods: RoleUser[];
-    vips: RoleUser[];
+	mods: RoleUser[];
+	vips: RoleUser[];
 }
 
 export interface RoleUser {
-    id: string;
-    login: string;
-    displayName: string;
-    grantedAt: string;
+	id: string;
+	login: string;
+	displayName: string;
+	grantedAt: string;
 }
 
 export interface IVRTwitchUser {
-    banned: boolean;
-    displayName: string;
-    login: string;
-    id: string;
-    bio: string;
-    followers: number;
-    chatColor: string;
-    logo: string;
-    banner: string;
-    createdAt: string;
-    updatedAt: string;
-    emotePrefix: string | null;
-    roles: IVRTwitchUserRoles;
+	banned: boolean;
+	displayName: string;
+	login: string;
+	id: string;
+	bio: string;
+	followers: number;
+	chatColor: string;
+	logo: string;
+	banner: string;
+	createdAt: string;
+	updatedAt: string;
+	emotePrefix: string | null;
+	roles: IVRTwitchUserRoles;
 }
 
 export interface IVRTwitchUserRoles {
-    isPreAffiliate: boolean;
-    isAffiliate: boolean;
-    isPartner: boolean;
-    isStaff: boolean;
+	isPreAffiliate: boolean;
+	isAffiliate: boolean;
+	isPartner: boolean;
+	isStaff: boolean;
 }
 
 export interface FoundersList {
-    founders: FounderUser[];
+	founders: FounderUser[];
 }
 
 export interface FounderUser {
-    isSubscribed: boolean;
-    entitlementStart: string;
-    id: string;
-    login: string;
-    displayName: string;
+	isSubscribed: boolean;
+	entitlementStart: string;
+	id: string;
+	login: string;
+	displayName: string;
 }

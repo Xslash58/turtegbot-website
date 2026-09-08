@@ -23,7 +23,7 @@
 	let mounted = false;
 	let showDropdown = false;
 	let isLoading = false;
-	let timeout: number | null = null;
+	let timeout: ReturnType<typeof setTimeout> | null = null;
 
 	onMount(() => {
 		mounted = true;
@@ -103,20 +103,23 @@
 		{/if}
 	{:else if selectionMode}
 		<section class="search-bar">
-			<button class="fake-cover" on:click={() => selectUser(null)} aria-label="Clear result"></button>
+			<button class="fake-cover" on:click={() => selectUser(null)} aria-label="Clear result"
+			></button>
 			<section class="icon">
 				<X fill="white" weight="bold" />
 			</section>
 			<input
-				type="text" value={selectedUser.twitchUsername ?? selectedUser.kickUsername}
+				type="text"
+				value={selectedUser.twitchUsername ?? selectedUser.kickUsername}
 				readonly
-				disabled />
+				disabled
+			/>
 		</section>
 	{/if}
 </section>
 
 <style lang="scss">
-	@use "sass:color";
+	@use 'sass:color';
 	.search-bar {
 		display: flex;
 		align-items: center;

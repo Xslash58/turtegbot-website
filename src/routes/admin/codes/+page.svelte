@@ -7,35 +7,34 @@
 	let codes: TurtleCode[] = [];
 	let errorMessage: string = '';
 
-    let showStreamElements: boolean = false;
+	let showStreamElements: boolean = false;
 
 	onMount(async () => {
 		await fetchCodes();
 	});
 
 	async function changeVisibility(codeId: string, isVisible: boolean) {
-        let success = false;
+		let success = false;
 		if (success) fetchCodes();
 	}
 
 	async function deleteCode(codeId: string) {
 		const success = await DeleteCode(codeId);
-		if (success)
-			fetchCodes();
+		if (success) fetchCodes();
 	}
 
 	async function fetchCodes() {
 		codes = await GetCodes();
-        
+
 		codes = codes
-			.filter(code => showStreamElements || code.codeName.split(';')[0] !== 'SE')
-			.map(code => code);
+			.filter((code) => showStreamElements || code.codeName.split(';')[0] !== 'SE')
+			.map((code) => code);
 	}
 
 	async function handleSubmit(event: Event) {
 		errorMessage = '';
 
-        event.preventDefault();
+		event.preventDefault();
 
 		const form = event.target as HTMLFormElement;
 		const formData = new FormData(form);
@@ -43,12 +42,12 @@
 			code: formData.get('code') as string,
 			turtles: Number(formData.get('points')),
 			uses: Number(formData.get('uses')),
-			tip: formData.get('tip') as string, 
+			tip: formData.get('tip') as string,
 			codeName: formData.get('name') as string
 		};
 
-        if(newCode.tip == "") delete newCode.tip;
-        if(newCode.codeName == "") delete newCode.codeName;
+		if (newCode.tip == '') delete newCode.tip;
+		if (newCode.codeName == '') delete newCode.codeName;
 
 		let success = false;
 
@@ -80,7 +79,13 @@
 	</section>
 	<section class="code-list">
 		<h1>Codes List</h1>
-        <label>Show StreamElements: <input type="checkbox" bind:checked={showStreamElements} onchange={() => fetchCodes()} /></label>
+		<label
+			>Show StreamElements: <input
+				type="checkbox"
+				bind:checked={showStreamElements}
+				onchange={() => fetchCodes()}
+			/></label
+		>
 		<table>
 			<thead>
 				<tr>
@@ -216,10 +221,12 @@
 				transform: scale(1.25);
 			}
 		}
-        th, td {
-            &.tip, &.codeName {
-                display: none;
-            }
-        }
+		th,
+		td {
+			&.tip,
+			&.codeName {
+				display: none;
+			}
+		}
 	}
 </style>

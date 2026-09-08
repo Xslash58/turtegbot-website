@@ -78,7 +78,7 @@
 		Miscellaneous: {
 			description: 'General purpose commands',
 			icon: { type: 'img', value: PepegaReadingEmote }
-		},
+		}
 	};
 
 	async function loadCommands() {
@@ -100,8 +100,12 @@
 
 		for (const cmd of raw) {
 			if (cmd.category === 'Special') continue;
-			if(cmd.required_channel_power == null && cmd.required_global_power != null && (!me?.role.power || 
-				cmd.required_global_power > me?.role.power)) continue;
+			if (
+				cmd.required_channel_power == null &&
+				cmd.required_global_power != null &&
+				(!me?.role.power || cmd.required_global_power > me?.role.power)
+			)
+				continue;
 			const catName = cmd.category || 'Miscellaneous';
 			const existingCategory = categories.find((c) => c.name === catName);
 			if (!existingCategory) {
@@ -147,12 +151,12 @@
 	onMount(async () => {
 		await loadCommands();
 
-		if(currentHash) {
+		if (currentHash) {
 			const categoryName = currentHash.substring(1);
 			const key = Object.keys(categoryMeta).find(
-				x => x.toLowerCase() === categoryName.toLowerCase()
+				(x) => x.toLowerCase() === categoryName.toLowerCase()
 			);
-			if(key) selectedCategory = key;
+			if (key) selectedCategory = key;
 		}
 	});
 </script>
@@ -172,7 +176,9 @@
 				disabled={isLoading}
 			/>
 			{#if search}
-				<button class="clear" onclick={() => (search = '')} aria-label="Clear"><X weight="bold" /></button>
+				<button class="clear" onclick={() => (search = '')} aria-label="Clear"
+					><X weight="bold" /></button
+				>
 			{/if}
 		</div>
 	</div>
@@ -275,7 +281,11 @@
 							</div>
 							<div class="commands-grid">
 								{#each category.commands as command, j}
-									<button class="command" style="--j: {j}" onclick={() => goto(`/commands/${command.name}`)}>
+									<button
+										class="command"
+										style="--j: {j}"
+										onclick={() => goto(`/commands/${command.name}`)}
+									>
 										<div class="cmd-top">
 											<span class="hash">#</span>
 											<span class="cmd-name">{command.name}</span>
@@ -299,7 +309,11 @@
 				{:else}
 					<div class="commands-grid">
 						{#each filteredCommands as any[] as command, j}
-							<button class="command" style="--j: {j}" onclick={() => goto(`/commands/${command.name}`)}>
+							<button
+								class="command"
+								style="--j: {j}"
+								onclick={() => goto(`/commands/${command.name}`)}
+							>
 								<div class="cmd-top">
 									<span class="hash">#</span>
 									<span class="cmd-name">{command.name}</span>
@@ -313,7 +327,7 @@
 							</button>
 						{/each}
 					</div>
-				{/if}	
+				{/if}
 			{/if}
 		</main>
 	</div>

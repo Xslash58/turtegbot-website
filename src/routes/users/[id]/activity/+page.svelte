@@ -118,8 +118,8 @@
 						{/if}
 					{:else if log.actionType == 'mod_remove'}
 						{#if details.isTimed}
-							Removed <strong>{details.username}</strong> from being {log.platform} moderator
-							after <strong>{formatDuration(details.lasted)}</strong>
+							Removed <strong>{details.username}</strong> from being {log.platform} moderator after
+							<strong>{formatDuration(details.lasted)}</strong>
 						{:else}
 							Removed <strong>{details.username}</strong> from being {log.platform} moderator
 						{/if}
@@ -133,16 +133,14 @@
 						{/if}
 					{:else if log.actionType == 'vip_remove'}
 						{#if details.isTimed}
-							Removed <strong>{details.username}</strong> from being {log.platform} VIP
-							after <strong>{formatDuration(details.lasted)}</strong>
+							Removed <strong>{details.username}</strong> from being {log.platform} VIP after
+							<strong>{formatDuration(details.lasted)}</strong>
 						{:else}
 							Removed <strong>{details.username}</strong> from being {log.platform} VIP
 						{/if}
 					{:else if log.actionType == 'twitch_ban'}
 						Banned <strong>{log.targetUsername}</strong> from {log.platform}
-						{details.ends
-							? `until ${formatDate(details.ends)}`
-							: ''}
+						{details.ends ? `until ${formatDate(details.ends)}` : ''}
 					{:else if log.actionType == 'twitch_unban'}
 						Unbanned <strong>{log.targetUsername}</strong> from {log.platform}
 					{:else if log.actionType == 'twitch_setgame'}
@@ -155,20 +153,20 @@
 						Deleted all {log.platform} chat webhooks
 					{:else if log.actionType == '7tv_add'}
 						{#if !details.isTimed}
-							Added 7TV emote <a href={`https://7tv.app/emotes/${details.emote.Id}`}
-								target="_blank">{details.emote.Alias}</a
+							Added 7TV emote <a href={`https://7tv.app/emotes/${details.emote.Id}`} target="_blank"
+								>{details.emote.Alias}</a
 							>
 							to
-							<a href={`https://7tv.app/emote-sets/${details.emoteSet?.id}`}
-								target="_blank">{details.emoteSet?.name}</a
+							<a href={`https://7tv.app/emote-sets/${details.emoteSet?.id}`} target="_blank"
+								>{details.emoteSet?.name}</a
 							>
 						{:else}
-							Added 7TV emote <a href={`https://7tv.app/emotes/${details.emote.Id}`}
-								target="_blank">{details.emote.Alias}</a
+							Added 7TV emote <a href={`https://7tv.app/emotes/${details.emote.Id}`} target="_blank"
+								>{details.emote.Alias}</a
 							>
 							to
-							<a href={`https://7tv.app/emote-sets/${details.emoteSet?.id}`}
-								target="_blank">{details.emoteSet?.name}</a
+							<a href={`https://7tv.app/emote-sets/${details.emoteSet?.id}`} target="_blank"
+								>{details.emoteSet?.name}</a
 							>
 							for
 							<strong>{formatDuration(details.timeSpan)}</strong>
@@ -180,8 +178,8 @@
 							target="_blank">{details.emote?.name}</a
 						>
 						from
-						<a href={`https://7tv.app/emote-sets/${details.emoteSet?.id}`}
-							target="_blank">{details.emoteSet?.name}</a
+						<a href={`https://7tv.app/emote-sets/${details.emoteSet?.id}`} target="_blank"
+							>{details.emoteSet?.name}</a
 						>
 					{:else if log.actionType == '7tv_alias'}
 						Aliased 7TV emote from <a
@@ -189,12 +187,13 @@
 							target="_blank">{details.from}</a
 						>
 						to
-						<a href={`https://7tv.app/emotes/${details.emote?.id ?? details.emote?.Id}`}
+						<a
+							href={`https://7tv.app/emotes/${details.emote?.id ?? details.emote?.Id}`}
 							target="_blank">{details.to}</a
 						>
 						in
-						<a href={`https://7tv.app/emote-sets/${details.emoteSet?.id}`}
-							target="_blank">{details.emoteSet?.name}</a
+						<a href={`https://7tv.app/emote-sets/${details.emoteSet?.id}`} target="_blank"
+							>{details.emoteSet?.name}</a
 						>
 					{:else if log.actionType == '7tv_yoink'}
 						Yoinked 7TV emote <a
@@ -202,23 +201,26 @@
 							target="_blank">{details.emote?.Alias}</a
 						>
 						from
-						<a href={`https://7tv.app/emote-sets/${details.fromEmoteSet?.id}`}
-							target="_blank">{details.fromEmoteSet?.name}</a
+						<a href={`https://7tv.app/emote-sets/${details.fromEmoteSet?.id}`} target="_blank"
+							>{details.fromEmoteSet?.name}</a
 						>
 						to
-						<a href={`https://7tv.app/emote-sets/${details.toEmoteSet?.id}`}
-							target="_blank">{details.toEmoteSet?.name}</a
+						<a href={`https://7tv.app/emote-sets/${details.toEmoteSet?.id}`} target="_blank"
+							>{details.toEmoteSet?.name}</a
 						>
 					{:else if log.actionType == '7tv_replace'}
 						Replaced 7TV emote
-						<a href={`https://7tv.app/emotes/${details.oldEmote?.id}`}
-							target="_blank">{details.oldEmote?.name}</a>
+						<a href={`https://7tv.app/emotes/${details.oldEmote?.id}`} target="_blank"
+							>{details.oldEmote?.name}</a
+						>
 						to
-						<a href={`https://7tv.app/emotes/${details.newEmote?.id}`}
-							target="_blank">{details.newEmote?.name}</a>
+						<a href={`https://7tv.app/emotes/${details.newEmote?.id}`} target="_blank"
+							>{details.newEmote?.name}</a
+						>
 						in
-						<a href={`https://7tv.app/emote-sets/${details.emoteSet?.id}`}
-							target="_blank">{details.emoteSet?.name}</a>
+						<a href={`https://7tv.app/emote-sets/${details.emoteSet?.id}`} target="_blank"
+							>{details.emoteSet?.name}</a
+						>
 					{:else}
 						{log.actionType}
 					{/if}

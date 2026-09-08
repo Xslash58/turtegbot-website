@@ -14,24 +14,23 @@
 	let user: User | null = $profileUser;
 	let isLoaded: boolean = $state(false);
 
-    let connections: string[] | undefined = $state(undefined);
+	let connections: string[] | undefined = $state(undefined);
 
-    let availableConnections: [string, string][] = $state([
-        ['StreamElements', 'https://cdn.brandfetch.io/idj4DI2QBL/w/400/h/400/theme/dark/icon.png'],
-        ['Spotify', 'https://cdn.brandfetch.io/spotify.com/symbol'],
+	let availableConnections: [string, string][] = $state([
+		['StreamElements', 'https://cdn.brandfetch.io/idj4DI2QBL/w/400/h/400/theme/dark/icon.png'],
+		['Spotify', 'https://cdn.brandfetch.io/spotify.com/symbol'],
 		['Twitch', twitchLogo],
-		['Kick', kickLogo],
-    ]);
+		['Kick', kickLogo]
+	]);
 
 	onMount(async () => {
 		console.log('Connections page mounted for user:', userId);
-        connections = (await GetUserConnections(userId))?.connections;
+		connections = (await GetUserConnections(userId))?.connections;
 		isLoaded = true;
 	});
 
-    function handleLinkClick(connection: string, forced: boolean = false) {
-		if((connection == 'Twitch' || connection == 'Kick') && !forced)
-		{
+	function handleLinkClick(connection: string, forced: boolean = false) {
+		if ((connection == 'Twitch' || connection == 'Kick') && !forced) {
 			confirmationDialog.set({
 				visible: true,
 				text: `Are you sure you want to link your ${connection} account?
@@ -43,52 +42,58 @@
 			});
 			return;
 		}
-        console.log(`Linking ${connection}...`);
-        
-        goto(`/auth/${connection.toLowerCase()}/link`, {
-            replaceState: true
-        });
-    }
+		console.log(`Linking ${connection}...`);
 
-    function handleUnlinkClick(connection: string) {
-        console.log(`Unlinking ${connection}...`);
-        
-        DeleteUserConnection(userId, connection.toLowerCase())
-            .then(() => {
-                console.log(`${connection} unlinked successfully.`);
-                connections = connections?.filter(conn => conn !== connection.toLowerCase());
-            })
-            .catch(error => {
-                console.error(`Failed to unlink ${connection}:`, error);
-            });
-    }
+		goto(`/auth/${connection.toLowerCase()}/link`, {
+			replaceState: true
+		});
+	}
+
+	function handleUnlinkClick(connection: string) {
+		console.log(`Unlinking ${connection}...`);
+
+		DeleteUserConnection(userId, connection.toLowerCase())
+			.then(() => {
+				console.log(`${connection} unlinked successfully.`);
+				connections = connections?.filter((conn) => conn !== connection.toLowerCase());
+			})
+			.catch((error) => {
+				console.error(`Failed to unlink ${connection}:`, error);
+			});
+	}
 </script>
 
 <section class="connections">
 	{#if isLoaded}
-    {#each availableConnections as [name, icon]}
-        <section class="connection">
-            <section class="branding">
-                <img src={icon} alt="{name} logo" />
-                <p>{name}</p>
-            </section>
-            <nav>
-                {#if connections && connections.includes(name.toLowerCase())
-				|| (name == 'Twitch' && user?.twitchId != "0")
-				|| (name == 'Kick' && user?.kickId != "0")}
-                    <button class="danger" onclick={() => handleUnlinkClick(name)} disabled={name == 'Twitch' || name == 'Kick'}>Unlink</button>
-                    <button class="warning" onclick={() => handleLinkClick(name)} disabled={name == 'Twitch' || name == 'Kick'}>Re-link</button>
-					{#if name == 'Twitch'}
-					<button class="nointeract">{user?.twitchLogin}</button>
-					{:else if name == 'Kick'}
-					<button class="nointeract">{user?.kickLogin}</button>
-					{/if}	
-                {:else}
-                    <button onclick={() => handleLinkClick(name)}>Link</button>
-                {/if}
-            </nav>
-        </section>
-    {/each}
+		{#each availableConnections as [name, icon]}
+			<section class="connection">
+				<section class="branding">
+					<img src={icon} alt="{name} logo" />
+					<p>{name}</p>
+				</section>
+				<nav>
+					{#if (connections && connections.includes(name.toLowerCase())) || (name == 'Twitch' && user?.twitchId != '0') || (name == 'Kick' && user?.kickId != '0')}
+						<button
+							class="danger"
+							onclick={() => handleUnlinkClick(name)}
+							disabled={name == 'Twitch' || name == 'Kick'}>Unlink</button
+						>
+						<button
+							class="warning"
+							onclick={() => handleLinkClick(name)}
+							disabled={name == 'Twitch' || name == 'Kick'}>Re-link</button
+						>
+						{#if name == 'Twitch'}
+							<button class="nointeract">{user?.twitchLogin}</button>
+						{:else if name == 'Kick'}
+							<button class="nointeract">{user?.kickLogin}</button>
+						{/if}
+					{:else}
+						<button onclick={() => handleLinkClick(name)}>Link</button>
+					{/if}
+				</nav>
+			</section>
+		{/each}
 	{:else}
 		<LoadingIndicator />
 	{/if}
@@ -144,7 +149,7 @@
 				flex-direction: row;
 				align-items: center;
 				justify-content: center;
-				
+
 				button {
 					background-color: #4caf50;
 					color: white;

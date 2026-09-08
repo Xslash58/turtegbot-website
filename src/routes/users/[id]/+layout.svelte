@@ -22,7 +22,7 @@
 		if (value) {
 			me = value;
 		}
-		if(me && page.params.id && Number.isNaN(Number(page.params.id))) {
+		if (me && page.params.id && Number.isNaN(Number(page.params.id))) {
 			let path = window.location.pathname.substring(6);
 			goto(`/users/${me?.id}${path}`);
 		}
