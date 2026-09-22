@@ -51,6 +51,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>{user ? `${user.display_name} | TurtegBot` : 'TurtegBot'}</title>
+</svelte:head>
+
 <section class="user-layout">
 	<SideBar {userPage} {user} {me} />
 	<section class="user-content">
