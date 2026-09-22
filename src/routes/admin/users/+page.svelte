@@ -7,6 +7,7 @@
     import TwitchLogo from '$lib/assets/glitch_flat_white.svg';
 	import { goto } from '$app/navigation';
 	import { DeleteUserSession, PatchUser } from '$lib/API/Admin';
+	import { feedbackDialog } from '$lib/stores/modalStore';
 
     let selectedUser: User | null = $state(null);
 
@@ -45,9 +46,17 @@
 
         const success = await DeleteUserSession(selectedUser.id);
         if(success) {
-            console.log('Session invalidated successfully');
+            feedbackDialog.set({
+                title: 'Session Invalidated',
+                content: `The session for user ${selectedUser.display_name} has been invalidated.`,
+                visible: true
+            });
         } else {
-            console.error('Failed to invalidate session');
+            feedbackDialog.set({
+                title: 'Failed to Invalidate Session',
+                content: `The session for user ${selectedUser.display_name} can't be invalidated.`,
+                visible: true
+            });
         }
     }
 
