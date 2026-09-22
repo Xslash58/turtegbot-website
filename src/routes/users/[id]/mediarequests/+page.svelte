@@ -8,6 +8,7 @@
 		GetMediaHistory,
 		GetMediaQueue,
 		GetMediaSettings,
+		RequestBackupMedia,
 		RequestHistoryMedia,
 		SkipMedia
 	} from '$lib/API/Media';
@@ -38,7 +39,6 @@
 	let isPlayerReady: boolean = $state(false);
 	let isQueueLoaded: boolean = $state(false);
 	let isSongMissing: boolean = $state(false);
-	let isBackupPlaylistPlaying: boolean = $state(false);
 	let isHistoryLoading: boolean = $state(false);
 	let historyPage: number = $state(0);
 	let currentCategory: number = $state(0);
@@ -86,7 +86,7 @@
 			await loadMediaQueue();
 
 			// If player loaded first then start the queue here.
-			if (isPlayerReady && (currentSong === null || !isBackupPlaylistPlaying)) {
+			if (isPlayerReady && (currentSong === null)) {
 				endSong();
 			}
 
@@ -104,8 +104,7 @@
 			const msg = JSON.parse(event.data);
 			if (msg.event === 'media_request') {
 				songQueue.push(msg.data);
-				if (isBackupPlaylistPlaying) {
-					isBackupPlaylistPlaying = false;
+				if (isSongMissing) {
 					endSong();
 				}
 				isSongMissing = false; // Reset the missing song flag
@@ -116,7 +115,6 @@
 					songQueue.unshift(currentSong);
 				}
 				currentSong = msg.data;
-				isBackupPlaylistPlaying = false;
 				isSongMissing = false; // Reset the missing song flag
 			} else if (msg.event == 'media_skip') {
 				handleWebSocketMediaSkip(msg.data.id);
@@ -153,7 +151,7 @@
 	});
 
 	$effect(() => {
-		if (!currentSong && !isBackupPlaylistPlaying && isQueueLoaded && isPlayerReady)
+		if (!currentSong && isQueueLoaded && isPlayerReady)
 			playerCustomLoadMessage = 'Waiting for media...';
 		else playerCustomLoadMessage = null;
 	});
@@ -232,7 +230,7 @@
 		}
 	}
 
-	function endSong() {
+	async function endSong() {
 		if (currentSong) {
 			songHistory.push(currentSong);
 			currentSong = null;
@@ -242,7 +240,7 @@
 			const nextSong = songQueue.shift();
 			if (nextSong) {
 				let timeoutDuration = 0;
-				if (currentSong == null && !isBackupPlaylistPlaying) {
+				if (currentSong == null) {
 					timeoutDuration = 1000; // delay so the player can load
 				}
 
@@ -253,29 +251,14 @@
 			}
 		} else {
 			isSongMissing = true;
-			playerRef?.loadPlaylist(mediaSettings?.queue_backup_playlist_id ?? '');
-			if (mediaSettings?.queue_backup_playlist_id) {
-				isBackupPlaylistPlaying = true;
+			if(user != null && user.roomIds != null && Object.keys(user.roomIds).length > 0) {
+				await RequestBackupMedia(user.roomIds[Object.keys(user.roomIds)[0]]);
 			}
 		}
 	}
 
 	async function playSongFromHistory(media: MediaRequest) {
 		await RequestHistoryMedia(media.room_id, media.id);
-		// if (index >= 0 && index < songHistory.length) {
-		// 	const selectedSong = songHistory[index];
-
-		// 	if (currentSong) {
-		// 		songQueue.unshift(currentSong);
-		// 	}
-		// 	if (selectedSong) {
-		// 		console.log('Selected song:', selectedSong);
-		// 		songQueue.unshift(selectedSong);
-		// 		if (!isSongMissing) endSong();
-		// 		isSongMissing = false;
-		// 		isBackupPlaylistPlaying = false;
-		// 	}
-		// }
 	}
 
 	async function loadHistoryPage(page: number) {
@@ -347,8 +330,6 @@
 					Requested by:
 					<UserComponent userId={Number(currentSong.user_id)} username={currentSong.requested_by} />
 				</p>
-			{:else if isBackupPlaylistPlaying}
-				<p>Playing backup playlist</p>
 			{:else}
 				<p>No more media in the queue.</p>
 			{/if}

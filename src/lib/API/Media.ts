@@ -58,6 +58,24 @@ export async function RequestHistoryMedia(roomId: string, mediaId: string): Prom
 	return true;
 }
 
+export async function RequestBackupMedia(roomId: string): Promise<boolean> {
+	const API_URL = import.meta.env.VITE_API_URL;
+	if (!API_URL) throw new Error('API_URL is not defined in environment variables.');
+
+	const response = await fetch(`${API_URL}/v1/room/${roomId}/media/request/backup`, {
+		method: 'POST',
+		headers: {
+			Authorization: `Bearer ${localStorage.getItem('turteg-token') || ''}`
+		}
+	});
+	if (!response.ok) {
+		console.log(`API request failed: ${response.statusText}`);
+		return false;
+	}
+
+	return true;
+}
+
 export async function SkipMedia(roomId: string, mediaId: string): Promise<boolean> {
 	const API_URL = import.meta.env.VITE_API_URL;
 	if (!API_URL) throw new Error('API_URL is not defined in environment variables.');
