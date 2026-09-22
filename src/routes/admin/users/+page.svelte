@@ -6,7 +6,7 @@
     import KickLogo from '$lib/assets/KickLogo.svg';
     import TwitchLogo from '$lib/assets/glitch_flat_white.svg';
 	import { goto } from '$app/navigation';
-	import { PatchUser } from '$lib/API/Admin';
+	import { DeleteUserSession, PatchUser } from '$lib/API/Admin';
 
     let selectedUser: User | null = $state(null);
 
@@ -39,6 +39,18 @@
         }
 
     }
+
+    async function InvalidateSession() {
+        if(!selectedUser) return;
+
+        const success = await DeleteUserSession(selectedUser.id);
+        if(success) {
+            console.log('Session invalidated successfully');
+        } else {
+            console.error('Failed to invalidate session');
+        }
+    }
+
     async function ApplyUserChanges() {
         if(!selectedUser) return;
 
@@ -93,6 +105,7 @@
             <section class="actions">
                 <button onclick={() => {goto(`/users/${selectedUser?.id}`)}}>Go to Profile</button>
                 <button disabled>Global Ban</button>
+                <button onclick={() => InvalidateSession()}>Invalidate Session</button>
                 <button onclick={() => {ApplyUserChanges()}}>Save Changes</button>
             </section>
         </section>
