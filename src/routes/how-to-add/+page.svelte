@@ -4,6 +4,10 @@
 	import { ArrowUUpLeft } from 'phosphor-svelte';
 </script>
 
+<svelte:head>
+	<title>How To Add | TurtegBot</title>
+</svelte:head>
+
 <section class="howtoadd">
 	<button on:click={() => history.back()}>
 		<ArrowUUpLeft size={24} color="white" weight="bold" />

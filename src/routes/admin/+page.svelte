@@ -6,6 +6,10 @@
     $: if(me == null) me = $myUser;
 </script>
 
+<svelte:head>
+    <title>Admin | TurtegBot</title>
+</svelte:head>
+
 <section class="welcome">
     <h1>Welcome {me?.display_name}</h1>
     <p>Enjoy doing your <strong style="color: {me?.role.color}">{me?.role.name}</strong> stuff!</p>

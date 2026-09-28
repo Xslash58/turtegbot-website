@@ -8,6 +8,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>TurtegBot</title>
+</svelte:head>
+
 <main>
 	<section class="block1">
 		<h1>Welcome to TurtegBot</h1>
