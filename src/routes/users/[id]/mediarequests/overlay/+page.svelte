@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import LoadingIndicator from '$components/LoadingIndicator.svelte';
-	import { GetMediaQueue } from '$lib/API/Media';
-	import type { MediaRequest } from '$lib/API/Models/Media';
+	import { GetMediaQueue, GetMediaSettings } from '$lib/API/Media';
+	import type { MediaRequest, MediaSettings } from '$lib/API/Models/Media';
 	import type { UserPage } from '$lib/API/Models/Users';
 	import { GetUserPage } from '$lib/API/Users';
 	import { X } from 'phosphor-svelte';
@@ -11,6 +11,8 @@
 	let mediaQueue: MediaRequest[] = $state([]);
 	let profileUser: UserPage | null = $state(null);
 
+	let mediaSettings: MediaSettings | null = $state(null);
+
 	let wsConnectionAttempts: number = $state(0);
 	let ws: WebSocket | null = null;
 	let wsState: number = $state(WebSocket.CONNECTING);
@@ -18,6 +20,7 @@
 	let currentSong: MediaRequest | null = $state(null);
 	let isBackupPlaylistPlaying: boolean = $state(false);
 	let isSongMissing: boolean = $state(true);
+	let noMediaTimeout: ReturnType<typeof setInterval> | null = null;
 
 	let isFirstLoad: boolean = $state(true);
 
@@ -65,11 +68,19 @@
 					isBackupPlaylistPlaying = false;
 					endMedia();
 				}
+				if (noMediaTimeout) {
+					clearInterval(noMediaTimeout);
+					noMediaTimeout = null;
+				}
 				isSongMissing = false; // Reset the missing song flag
 			} else if (msg.event == 'media_request_history') {
 				const msg = JSON.parse(event.data);
 				if (currentSong) {
 					mediaQueue.unshift(currentSong);
+				}
+				if (noMediaTimeout) {
+					clearInterval(noMediaTimeout);
+					noMediaTimeout = null;
 				}
 				currentSong = msg.data;
 				isBackupPlaylistPlaying = false;
@@ -77,7 +88,13 @@
 				showOverlay();
 			} else if (msg.event == 'media_skip') {
 				if (currentSong && currentSong.id === msg.data.id) {
-					endMedia();
+					let shouldTriggerOverlay = true;
+					if (mediaQueue.length < 1 && mediaSettings?.queue_backup_playlist_id != null) {
+						// Try to wait for backup song to load
+						noMediaTimeout = setTimeout(showOverlay, 2500);
+						shouldTriggerOverlay = false;
+					}
+					endMedia(shouldTriggerOverlay);
 				} else {
 					mediaQueue = mediaQueue.filter((media) => media.id !== msg.data.id);
 				}
@@ -94,6 +111,10 @@
 			wsState = WebSocket.CLOSED;
 			setTimeout(webSocketReconnect, 5000);
 		};
+
+		mediaSettings = await GetMediaSettings(
+			profileUser.user.roomIds[Object.keys(profileUser.user.roomIds)[0]]
+		);
 	});
 
 	onDestroy(() => {
@@ -144,7 +165,7 @@
 		}
 	}
 
-	function endMedia() {
+	function endMedia(triggerOverlay: boolean = true) {
 		if (mediaQueue.length > 0) {
 			currentSong = mediaQueue.shift()!;
 			isSongMissing = false;
@@ -154,7 +175,7 @@
 			isBackupPlaylistPlaying = true;
 			isSongMissing = true;
 		}
-		showOverlay();
+		if (triggerOverlay) showOverlay();
 	}
 
 	function showOverlay() {
@@ -195,11 +216,13 @@
 			<h2>Nothing Playing</h2>
 			<p>No more media in the queue.</p>
 		{:else if currentSong}
-			<img src={currentSong.thumbnail_url} alt={currentSong.title} />
-			<section class="metadata">
-				<h2>Currently Playing</h2>
-				<p>{currentSong.title}</p>
-				<p>Requested by {currentSong.requested_by}</p>
+			<section class="media-info">
+				<img src={currentSong.thumbnail_url} alt={currentSong.title} />
+				<section class="metadata">
+					<h2>Currently Playing</h2>
+					<p>{currentSong.title}</p>
+					<p>Requested by {currentSong.requested_by}</p>
+				</section>
 			</section>
 		{/if}
 	</section>
@@ -234,9 +257,20 @@
 			animation: pulse_error 1s infinite;
 		}
 
+		.media-info {
+			display: flex;
+			align-items: center;
+			gap: 16px;
+		}
+
 		img {
 			width: 128px;
-			float: left;
+			flex: 0 0 128px;
+		}
+
+		.metadata {
+			flex: 1;
+			min-width: 0;
 		}
 
 		h2 {
