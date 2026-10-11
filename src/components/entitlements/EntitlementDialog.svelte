@@ -14,12 +14,13 @@
 	import Button from '$components/Button.svelte';
 	import { Minus, Plus } from 'phosphor-svelte';
 	import { can } from '$lib/stores/permissions';
+	import Select from '$components/Select.svelte';
 
 	let entitlementsCatalog: Entitlement[] = $state([]);
 	let entitlementKinds: string[] = $state([]);
 
 	let availableEntitlementOptions: Entitlement[] = $state([]);
-	let selectedEntitlementId: string | null = $state(null);
+	let selectedEntitlementId: string = $state('');
 
 	let isVisible: boolean = $state(false);
 	let isLoading: boolean = $state(false);
@@ -100,11 +101,16 @@
 				{/each}
 			</section>
 			{#if availableEntitlementOptions.length > 0}
-				<select bind:value={selectedEntitlementId}>
-					{#each availableEntitlementOptions as entitlement}
-						<option value={entitlement.id}>{entitlement.name}</option>
-					{/each}
-				</select>
+				<Select
+					options={availableEntitlementOptions.map((entitlement) => ({
+						value: entitlement.id,
+						label: entitlement.name
+					}))}
+					bind:value={selectedEntitlementId}
+					name="entitlement"
+					placeholder="Select an entitlement..."
+					searchPlaceholder="Search entitlements..."
+				/>
 			{/if}
 			<nav>
 				{#if !isLoading}
