@@ -14,6 +14,8 @@
 	import UserSearch from './users/UserSearch.svelte';
 	import { List, UserList } from 'phosphor-svelte';
 	import MobileNav from './MobileNav.svelte';
+	import { GetMyPermissions } from '$lib/API/Entitlements';
+	import { hasAnyInNamespace, myPermissions } from '$lib/stores/permissions';
 
 	let user: User | null = null;
 
@@ -31,6 +33,9 @@
 			user = await GetMe();
 			myUser.set(user);
 			console.log('User fetched:', user);
+			let perms = await GetMyPermissions();
+			myPermissions.set(perms);
+			console.log('User permissions fetched:', perms);
 		}
 
 		if (!page.route.id?.startsWith('/auth/')) isLoaded = true;
@@ -59,7 +64,7 @@
 			{#if import.meta.env.VITE_RECAPS == '1'}
 				<li><a href="/recap/2025" class="special-event">RECAP 2025</a></li>
 			{/if}
-			{#if user && user.role?.power >= 5}
+			{#if user && $hasAnyInNamespace('moderation') || $hasAnyInNamespace('admin')}
 				<li><a href="/admin" style="color: red;">Admin</a></li>
 			{/if}
 		</ul>

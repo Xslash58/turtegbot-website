@@ -26,14 +26,15 @@ export interface User {
     kickId: string;
     profile_image_url: string;
     roomIds: Record<string, string>;
-    role: UserRole;
+    role: UserRole; // kept for legacy reasons
+    roles: UserRole[];
     flags: string[];
     streamElementsData: StreamElementsData;
 }
 
 export interface UserRole {
     name: string;
-    power: number;
+    power: number; // kept for legacy reasons, roles no longer have power
     color: string;
 }
 

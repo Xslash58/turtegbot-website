@@ -16,6 +16,7 @@
 	import { onMount } from 'svelte';
 	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import SearchBar from '$components/SearchBar.svelte';
+	import Button from '$components/Button.svelte';
 
 	let codes: (TurtleCode & { deleted?: boolean })[] = [];
 	let userId: string = page.params.id + '';
@@ -158,11 +159,13 @@
 				>
 			{/if}
 
-			{#if !isLoading}
-				<button>Generate</button>
-			{:else}
-				<button disabled style="padding: 2px"> <LoadingIndicator size={24} /> </button>
-			{/if}
+			<Button style="min-width: 100%; {isLoading && 'padding: 2px;'}" type="submit" disabled={isLoading} center>
+				{#if isLoading}
+					<LoadingIndicator size={24} />
+				{:else}
+					Generate
+				{/if}
+			</Button>
 		</form>
 		<small>{errorMessage}</small>
 	</section>

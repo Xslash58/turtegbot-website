@@ -8,6 +8,6 @@ interface Command {
     arguments: Record<string, string>;
     channel_cooldown: number;
     user_cooldown: number;
-    required_global_power: number | null;
+    required_permission: string | null;
     required_channel_power: number | null;
 }

@@ -4,6 +4,7 @@
 	import { myUser } from '$lib/stores/userStore';
 	import SideBar from '$components/admin/SideBar.svelte';
 	import { error } from '@sveltejs/kit';
+	import { hasAnyInNamespace } from '$lib/stores/permissions.js';
 
 	let { data, children } = $props();
 
@@ -14,7 +15,7 @@
 			me = value;
 		}
 
-		if (!me || !me.role || me.role.power < 5) {
+		if (!me || (!$hasAnyInNamespace('moderation') && !$hasAnyInNamespace('admin'))) {
 			console.log('Access denied: insufficient permissions');
 			error(404, 'fake_notfound');
 		}
@@ -41,13 +42,16 @@
 
 	.user-content {
 		flex: 1;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
 		padding: 20px;
 	}
 
 	@media (max-width: 768px) {
 		.user-layout {
 			flex-direction: column;
-			flex: 0;
+			flex: 1;
 		}
 	}
 </style>

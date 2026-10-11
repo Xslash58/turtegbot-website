@@ -7,6 +7,7 @@
 	import { X } from 'phosphor-svelte';
 	import type { User } from '$lib/API/Models/Users';
 	import { myUser } from '$lib/stores/userStore';
+	import { hasAnyInNamespace } from '$lib/stores/permissions';
 
 	let commandName = page.params.command;
 	let command: Command | undefined = $state(undefined);
@@ -84,9 +85,9 @@
 						<li><strong>Required Channel Power:</strong> None</li>
 					{/if}
 				{/if}
-				{#if (me?.role?.power ?? 0) > 0}
-					<li><strong>Required Global Power:</strong> {command.required_global_power ?? 'None'}</li>
-				{:else if command.required_global_power == null && (command.required_channel_power ?? 0) > 0}
+				{#if $hasAnyInNamespace('admin')}
+					<li><strong>Required Permission:</strong> {command.required_permission ?? 'None'}</li>
+				{:else if command.required_permission == null && (command.required_channel_power ?? 0) > 0}
 					<li><strong>This command can't be bypassed by bot staff</strong></li>
 				{/if}
 			</ul>

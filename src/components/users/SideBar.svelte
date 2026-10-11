@@ -1,27 +1,32 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import type { User, UserPage } from '$lib/API/Models/Users';
 	import { onMount } from 'svelte';
 
 	import loadingImage from '$lib/assets/loading_texture.webp';
 	import { Logout } from '$lib/API/Auth';
 	import { hexToRgba } from '$lib/API/Helpers';
+	import Button from '$components/Button.svelte';
+	import { Gear, House, MusicNotes, Note, Plugs, Pulse, Robot, Seal, SignOut, Ticket, Wrench } from 'phosphor-svelte';
+	import { page } from '$app/state';
+	import { can, hasAnyInNamespace, myPermissions } from '$lib/stores/permissions';
 
-	export let userPage: UserPage | null;
-	export let user: User | null;
-	export let me: User | null;
+	interface Props {
+        userPage?: UserPage | null;
+        user?: User | null;
+        me?: User | null;
+    }
 
-	let profileImageUrl: string = loadingImage;
-	$: profileImageUrl = user?.profile_image_url || loadingImage;
+	let { userPage = null, user = null, me = null }: Props = $props();
 
-	$: roleBgColor = user?.role?.color ? hexToRgba(user?.role?.color, 0.4) : null;
+	let profileImageUrl = $derived(user?.profile_image_url || loadingImage);
 
 	onMount(async () => {
 		console.log('SideBar component mounted');
 	});
 
-	function gotoCategory(category: string) {
-		goto(`/users/${user?.id}/${category}`);
+	function getCategoryPath(category: string) {
+		if(category === '') return `/users/${user?.id}`;
+		return `/users/${user?.id}/${category}`;
 	}
 	async function logout() {
 		const success = await Logout();
@@ -38,14 +43,16 @@
 
 <section class="sidebar">
 	<section class="user-info">
-		<img src={profileImageUrl} alt="profile" on:error={handleProfileImageError} />
+		<img src={profileImageUrl} alt="profile" onerror={handleProfileImageError} />
 		<section class="user-meta">
 			<h1>{user?.display_name}</h1>
 			<section class="roles">
-				{#if user?.role.name}
-					<section class="role" style="background-color: {roleBgColor};">
-						<p>{user?.role.name}</p>
-					</section>
+				{#if user?.roles && user.roles.length > 0}
+					{#each user?.roles as role}
+						<div class="role" style="background-color: {hexToRgba(role.color, 0.2)}">
+							<p style="color: {hexToRgba(role.color, 1)}">{role.name}</p>
+						</div>
+					{/each}
 				{/if}
 			</section>
 		</section>
@@ -53,26 +60,110 @@
 
 	<nav>
 		{#if user}
-			<button on:click={() => gotoCategory(``)}>User Page</button>
+			<Button href={getCategoryPath('')} active={page.url.pathname === getCategoryPath('')} class="side-button">
+				{#snippet icon({ active })}
+					<House weight={active ? 'fill' : 'regular'} />
+				{/snippet}
+				User Page
+			</Button>
 			{#if Object.keys(user?.roomIds).length > 0}
-				<button on:click={() => gotoCategory(`activity`)}>Activity</button>
+				<Button
+					href={getCategoryPath('activity')}
+					active={page.url.pathname === getCategoryPath('activity')}
+					class="side-button"
+				>
+					{#snippet icon({ active })}
+						<Pulse weight={active ? 'bold' : 'regular'} />
+					{/snippet}
+					Activity
+				</Button>
 			{/if}
 		{/if}
-		{#if user?.flags?.includes('experiment-streamelements') && (user?.id === me?.id || (userPage?.myPowers?.['TWITCH'] ?? 0) > 5 || (me?.role.power ?? 0) > 10)}
-			<button on:click={() => gotoCategory(`streamelements`)}>StreamElements</button>
+		{#if user?.flags?.includes('experiment-streamelements') && (user?.id === me?.id || (userPage?.myPowers?.['TWITCH'] ?? 0) > 5 || $hasAnyInNamespace('admin.users'))}
+			<Button
+				href={getCategoryPath('streamelements/codes')}
+				active={page.url.pathname === getCategoryPath('streamelements/codes')}
+				class="side-button"
+			>
+				{#snippet icon({ active })}
+					<Robot weight={active ? 'fill' : 'regular'} />
+				{/snippet}
+				StreamElements
+			</Button>
 		{/if}
-		{#if me && user && (me?.id === user?.id || me.role.power >= 5)}
+		{#if me && user && (me?.id === user?.id || $hasAnyInNamespace('admin.users'))}
 			{#if Object.keys(user?.roomIds).length > 0}
-				<button on:click={() => gotoCategory(`settings`)}>Bot Settings</button>
-				{#if me?.id === user?.id}
-					<button on:click={() => gotoCategory(`mediarequests`)}>Media Requests</button>
-				{/if}
+				<Button
+					href={getCategoryPath('settings')}
+					active={page.url.pathname === getCategoryPath('settings')}
+					class="side-button"
+				>
+					{#snippet icon({ active })}
+						<Gear weight={active ? 'fill' : 'regular'} />
+					{/snippet}
+					Bot Settings
+				</Button>
+				<Button
+					href={getCategoryPath('mediarequests')}
+					active={page.url.pathname === getCategoryPath('mediarequests')}
+					class="side-button"
+				>
+					{#snippet icon({ active })}
+						<MusicNotes weight={active ? 'fill' : 'regular'} />
+					{/snippet}
+					Media Requests
+				</Button>
 			{/if}
-			<button on:click={() => gotoCategory(`tickets`)}>Tickets</button>
-			<button on:click={() => gotoCategory(`reminders`)}>Reminders</button>
-			<button on:click={() => gotoCategory(`connections`)}>Connections</button>
+			<Button href={getCategoryPath('cosmetics')} active={page.url.pathname === getCategoryPath('cosmetics')} class="side-button">
+				{#snippet icon({ active })}
+					<Seal weight={active ? 'fill' : 'regular'} />
+				{/snippet}
+				Cosmetics
+			</Button>
+			<Button href={getCategoryPath('tickets')} active={page.url.pathname === getCategoryPath('tickets')} class="side-button">
+				{#snippet icon({ active })}
+					<Ticket weight={active ? 'fill' : 'regular'} />
+				{/snippet}
+				Tickets
+			</Button>
+			<Button
+				href={getCategoryPath('reminders')}
+				active={page.url.pathname === getCategoryPath('reminders')}
+				class="side-button"
+			>
+				{#snippet icon({ active })}
+					<Note weight={active ? 'fill' : 'regular'} />
+				{/snippet}
+				Reminders
+			</Button>
+			<Button
+				href={getCategoryPath('connections')}
+				active={page.url.pathname === getCategoryPath('connections')}
+				class="side-button"
+			>
+				{#snippet icon({ active })}
+					<Plugs weight={active ? 'fill' : 'regular'} />
+				{/snippet}
+				Connections
+			</Button>
 			{#if me?.id === user?.id}
-				<button class="logout" on:click={() => logout()}>Logout</button>
+				<Button onclick={() => logout()} class="side-button">
+					{#snippet icon()}
+						<SignOut />
+					{/snippet}
+					Logout
+				</Button>
+			{/if}
+			{#if $can('admin.users.view')}
+				<Button
+					href={`/admin/users/${user?.id}`}
+					class="side-button"
+				>
+					{#snippet icon({ active })}
+						<Wrench weight={active ? 'fill' : 'regular'} />
+					{/snippet}
+					Admin
+				</Button>
 			{/if}
 		{/if}
 	</nav>
@@ -107,38 +198,27 @@
 			}
 
 			.roles {
+				margin-top: 10px;
 				text-align: center;
-				display: inline-block;
+				display: flex;
+				justify-content: center;
+				flex-direction: row;
+				flex-wrap: wrap;
 				.role {
 					background-color: rgba($color: #fff, $alpha: 0.4);
 					border-radius: 10px;
 					min-width: 70px;
 					width: auto;
 					padding: 0 10px;
+					margin: 1px;
 					p {
-						font-size: 0.9rem;
+						font-size: 0.8rem;
 						padding: 0.1rem;
+						font-weight: 500;
+						font-family: 'Inter';
+						margin: 0;
 					}
 				}
-			}
-		}
-
-		button {
-			background-color: #33ca00;
-			color: white;
-			border: none;
-			border-radius: 10px;
-			padding: 10px 15px;
-			cursor: pointer;
-			margin-bottom: 10px;
-
-			&:hover {
-				background-color: #28a300;
-			}
-
-			&:disabled {
-				background-color: #555;
-				cursor: not-allowed;
 			}
 		}
 
@@ -146,14 +226,7 @@
 			width: 100%;
 			display: flex;
 			flex-direction: column;
-		}
-
-		.logout {
-			background-color: #ff0000;
-
-			&:hover {
-				background-color: #cc0000;
-			}
+			gap: 4px;
 		}
 	}
 
@@ -162,14 +235,16 @@
 			width: 100%;
 			padding: 0;
 			gap: 0;
-		}
-		button {
-			min-width: 120px;
-			padding: 5px 0 !important;
-
-			display: flex;
-			justify-content: center;
-			align-items: center;
+			
+			:global(.side-button) {
+				min-width: 120px;
+				padding: 5px 10px;
+				text-wrap: nowrap;
+	
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
 		}
 		nav {
 			flex-direction: row !important;
