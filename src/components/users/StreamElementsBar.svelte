@@ -1,6 +1,8 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
+	import Button from '$components/Button.svelte';
 	import type { User } from '$lib/API/Models/Users';
+	import { Gift } from 'phosphor-svelte';
 	import { onMount } from 'svelte';
 
 	export let user: User | null;
@@ -9,14 +11,20 @@
 		console.log('StreamElementsBar component mounted');
 	});
 
-	function gotoCategory(category: string) {
-		goto(`/users/${user?.id}/streamelements/${category}`);
+	function getCategoryPath(category: string) {
+		if (category === '') return `/users/${user?.id}/streamelements`;
+		return `/users/${user?.id}/streamelements/${category}`;
 	}
 </script>
 
 <section class="sidebar">
 	<nav>
-		<button on:click={() => gotoCategory(`codes`)}>Codes</button>
+		<Button href={getCategoryPath('codes')} active={page.url.pathname === getCategoryPath('codes')}>
+			{#snippet icon({ active })}
+				<Gift weight={active ? 'fill' : 'regular'} />
+			{/snippet}
+			Codes
+		</Button>
 	</nav>
 </section>
 
@@ -25,25 +33,6 @@
 		background-color: #101010;
 		color: white;
 		width: 100%;
-
-		button {
-			background-color: #0079ca;
-			color: white;
-			border: none;
-			border-radius: 10px;
-			padding: 10px 0;
-			cursor: pointer;
-            width: 120px;
-            margin: 5px;
-			&:hover {
-				background-color: #28a300;
-			}
-
-			&:disabled {
-				background-color: #555;
-				cursor: not-allowed;
-			}
-		}
 
 		nav {
 			width: 100%;

@@ -4,6 +4,7 @@
 	import type { User } from '$lib/API/Models/Users';
 	import { fade } from 'svelte/transition';
 	import { Hash, House, Rewind, Wrench } from 'phosphor-svelte';
+	import { hasAnyInNamespace } from '$lib/stores/permissions';
 
 	const { user, onAction }: { user: User | null; onAction?: () => void } = $props();
 
@@ -52,7 +53,7 @@
 					>
 				</li>
 			{/if}
-			{#if user && user.role?.power >= 5}
+			{#if $hasAnyInNamespace('moderation') || $hasAnyInNamespace('admin')}
 				<li>
 					<a href="/admin" style="color: red;" onclick={handleClick}>
 						<span class="icon"><Wrench weight="fill" /></span> Admin</a

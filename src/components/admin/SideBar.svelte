@@ -1,38 +1,148 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import type { User, UserPage } from '$lib/API/Models/Users';
+	import { page } from '$app/state';
+	import Button from '$components/Button.svelte';
+	import { can } from '$lib/stores/permissions';
+	import {
+		Coins,
+		Gift,
+		Graph,
+		House,
+		Moon,
+		Note,
+		Ticket,
+		User,
+		Users,
+		Wrench
+	} from 'phosphor-svelte';
 	import { onMount } from 'svelte';
-
-	export let me: User | null;
 
 	onMount(async () => {
 		console.log('SideBar component mounted');
 	});
 
-	function gotoCategory(category: string) {
-		goto(`/admin/${category}`);
+	function getCategoryPath(category: string) {
+		if (category === '') return `/admin`;
+		return `/admin/${category}`;
 	}
 </script>
 
 <section class="sidebar">
 	<nav>
-        <button on:click={() => gotoCategory(``)}>Home</button>
-        {#if me && me.role.power >= 5}
-		    <button on:click={() => gotoCategory(`tickets`)}>Tickets</button>
-		    <button on:click={() => gotoCategory(`reminders`)}>Reminders</button>
-		    <button on:click={() => gotoCategory(`afks`)}>AFKs</button>
-			<button on:click={() => gotoCategory(`turtles`)}>Turtles</button>
-        {/if}
-        {#if me && me.role.power >= 10}
-		    <button class="admin" on:click={() => gotoCategory(`codes`)}>Codes</button>
-		    <button class="admin" on:click={() => gotoCategory(`users`)}>Users</button>
-		    <button class="admin" on:click={() => gotoCategory(`maintenance`)}>Maintenance</button>
+		<Button
+			href={getCategoryPath('')}
+			active={page.url.pathname === getCategoryPath('')}
+			class="side-button"
+		>
+			{#snippet icon({ active })}
+				<House weight={active ? 'fill' : 'regular'} />
+			{/snippet}
+			Home
+		</Button>
+		{#if $can('admin.tickets.view')}
+			<Button
+				href={getCategoryPath('tickets')}
+				active={page.url.pathname === getCategoryPath('tickets')}
+				class="side-button"
+			>
+				{#snippet icon({ active })}
+					<Ticket weight={active ? 'fill' : 'regular'} />
+				{/snippet}
+				Tickets
+			</Button>
+		{/if}
+		{#if $can('admin.reminders.view')}
+			<Button
+				href={getCategoryPath('reminders')}
+				active={page.url.pathname === getCategoryPath('reminders')}
+				class="side-button"
+			>
+				{#snippet icon({ active })}
+					<Note weight={active ? 'fill' : 'regular'} />
+				{/snippet}
+				Reminders
+			</Button>
+		{/if}
+		{#if $can('admin.afks.view')}
+			<Button
+				href={getCategoryPath('afks')}
+				active={page.url.pathname === getCategoryPath('afks')}
+				class="side-button"
+			>
+				{#snippet icon({ active })}
+					<Moon weight={active ? 'fill' : 'regular'} />
+				{/snippet}
+				AFKs
+			</Button>
+		{/if}
+		{#if $can('admin.turtles.view')}
+			<Button
+				href={getCategoryPath('turtles')}
+				active={page.url.pathname === getCategoryPath('turtles')}
+				class="side-button"
+			>
+				{#snippet icon({ active })}
+					<Coins weight={active ? 'fill' : 'regular'} />
+				{/snippet}
+				Turtles
+			</Button>
+		{/if}
+		{#if $can('admin.entitlements.view')}
+			<Button
+				href={getCategoryPath('entitlement-graph')}
+				active={page.url.pathname === getCategoryPath('entitlement-graph')}
+				class="side-button"
+			>
+				{#snippet icon({ active })}
+					<Graph weight={active ? 'fill' : 'regular'} />
+				{/snippet}
+				Entitlement Graph
+			</Button>
+		{/if}
+		{#if $can('admin.codes.view')}
+			<Button
+				href={getCategoryPath('codes')}
+				active={page.url.pathname === getCategoryPath('codes')}
+				class="side-button"
+			>
+				{#snippet icon({ active })}
+					<Gift weight={active ? 'fill' : 'regular'} />
+				{/snippet}
+				Codes
+			</Button>
+		{/if}
+		{#if $can('admin.users.view')}
+			<Button
+				href={getCategoryPath('users')}
+				active={page.url.pathname.startsWith(getCategoryPath('users'))}
+				class="side-button"
+			>
+				{#snippet icon({ active })}
+					<Users weight={active ? 'fill' : 'regular'} />
+				{/snippet}
+				Users
+			</Button>
+		{/if}
+		{#if $can('admin.maintenance.view')}
+			<Button
+				href={getCategoryPath('maintenance')}
+				active={page.url.pathname === getCategoryPath('maintenance')}
+				class="side-button"
+			>
+				{#snippet icon({ active })}
+					<Wrench weight={active ? 'fill' : 'regular'} />
+				{/snippet}
+				Maintenance
+			</Button>
 		{/if}
 	</nav>
 </section>
 
 <style lang="scss">
 	.sidebar {
+		position: sticky;
+		top: 0;
+
 		background-color: #101010;
 		color: white;
 		padding: 20px;
@@ -44,31 +154,8 @@
 		align-items: center;
 		gap: 100px;
 
-		button {
-			background-color: #33ca00;
-			color: white;
-			border: none;
-			border-radius: 10px;
-			padding: 10px 15px;
-			cursor: pointer;
-			margin-bottom: 10px;
-
-            &.admin {
-                background-color: #dc3545;
-
-                &:hover {
-                    background-color: #c82333;
-                }
-            }
-
-			&:hover {
-				background-color: #28a300;
-			}
-
-			&:disabled {
-				background-color: #555;
-				cursor: not-allowed;
-			}
+		nav {
+			gap: 5px;
 		}
 
 		nav {
@@ -83,14 +170,16 @@
 			width: 100%;
 			padding: 0;
 			gap: 0;
-		}
-		button {
-			min-width: 120px;
-			padding: 5px 0 !important;
 
-			display: flex;
-			justify-content: center;
-			align-items: center;
+			:global(.side-button) {
+				min-width: 120px;
+				padding: 5px 10px;
+				text-wrap: nowrap;
+	
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
 		}
 		nav {
 			flex-direction: row !important;
