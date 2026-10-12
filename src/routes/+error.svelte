@@ -2,6 +2,7 @@
 	import { goto } from "$app/navigation";
 	import { page } from "$app/state";
 	import { myUser } from "$lib/stores/userStore";
+	import { onMount } from "svelte";
 
 	const emoteUrls = [
 		"https://cdn.7tv.app/emote/01GQ637BD800023EFT95G0MECC/4x.avif",
@@ -27,6 +28,12 @@
 
 	myUser.subscribe((value) => {
 		if (value && window && location && page.error?.message.startsWith("fake_")) {
+			goto(location.href)
+		}
+	});
+
+	onMount(() => {
+		if ($myUser && window && location && page.error?.message.startsWith("fake_")) {
 			goto(location.href)
 		}
 	});
