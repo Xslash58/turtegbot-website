@@ -11,6 +11,7 @@
 	let { data, children } = $props();
 
 	let isOverlay = $derived(page.url.pathname.includes('overlay'));
+	let isLegal = $derived(page.url.pathname.includes('privacy'));
 </script>
 
 <svelte:head>
@@ -29,8 +30,10 @@
 
 	<div class="layout-wrapper">
 		<Header />
-    <AlertBar />
-    
+		{#if !isLegal}
+			<AlertBar />
+		{/if}
+
 		<div class="main-content">
 			{@render children?.()}
 		</div>
