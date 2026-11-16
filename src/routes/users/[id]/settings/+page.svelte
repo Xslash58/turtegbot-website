@@ -1,5 +1,9 @@
 <script lang="ts">
-	import type { Language, RoomSettings } from '$lib/API/Models/Room';
+	import Button from '$components/Button.svelte';
+	import Input from '$components/Input.svelte';
+	import Select from '$components/Select.svelte';
+	import Toggle from '$components/Toggle.svelte';
+import type { Language, RoomSettings } from '$lib/API/Models/Room';
 	import type { Webhook } from '$lib/API/Models/Users';
 	import {
 	DeleteWebhook,
@@ -115,16 +119,16 @@
 	<form class="room-select">
 		<label
 			>Editing settings for:
-			<select
+			<Select
 				id="room"
 				name="room"
 				bind:value={selectedPlatform}
-				on:change={() => fetchData(selectedPlatform)}
-			>
-				{#each Object.keys(user?.roomIds ?? {}) as roomPlatform}
-					<option value={roomPlatform}>{roomPlatform}</option>
-				{/each}
-			</select>
+				onchange={() => fetchData(selectedPlatform)}
+				options={Object.keys(user?.roomIds ?? {}).map((platform) => ({
+					value: platform,
+					label: platform
+				}))}
+			/>
 		</label>
 		<p>{feedbackMessage}</p>
 	</form>
@@ -138,29 +142,24 @@
 				<section class="form-group">
 					<label
 						>Language:
-						<select id="language" name="language">
-							{#each languages as language}
-								<option value={language.locale} selected={settings?.language == language.locale}>
-									{language.name}
-								</option>
-							{/each}
-						</select>
+						<Select id="language" name="language" options={languages.map((lang) => ({ value: lang.locale, label: lang.name }))} value={settings?.language} />
 					</label>
 
 					<label
 						>Prefix:
-						<input
+						<Input
 							type="text"
 							id="prefix"
 							name="prefix"
-							size="1"
-							maxlength="1"
+							size={1}
+							maxlength={1}
 							bind:value={roomPrefix}
+							style="text-align: center;"
 						/>
 					</label>
 				</section>
 			</section>
-			<input type="submit" value="Save Settings" />
+			<Button type="submit" variant="dark">Save Settings</Button>
 		</form>
 
 		{#if selectedPlatform == 'TWITCH'}
@@ -171,18 +170,18 @@
 					<h1>Twitch Scopes</h1>
 					<section class="form-group">
 						<label
-							><input type="checkbox" name="channel:manage:vips" /> Allow bot to grant VIPs on your behalf
+							><Toggle name="channel:manage:vips" /> Allow bot to grant VIPs on your behalf
 						</label>
 						<label
-							><input type="checkbox" name="channel:manage:moderators" /> Allow bot to grant Moderators
+							><Toggle name="channel:manage:moderators" /> Allow bot to grant Moderators
 							on your behalf
 						</label>
 						<label
-							><input type="checkbox" name="channel:manage:broadcast" /> Allow bot to manage broadcast
+							><Toggle name="channel:manage:broadcast" /> Allow bot to manage broadcast
 						</label>
 					</section>
 				</section>
-				<input type="submit" value="Save Settings" />
+				<Button type="submit" variant="dark">Save Settings</Button>
 			</form>
 		{/if}
 

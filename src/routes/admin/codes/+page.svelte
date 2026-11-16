@@ -1,7 +1,11 @@
 <script lang="ts">
+	import Button from '$components/Button.svelte';
+	import Input from '$components/Input.svelte';
+	import LoadingIndicator from '$components/LoadingIndicator.svelte';
+	import Toggle from '$components/Toggle.svelte';
 	import { DeleteCode, GetCodes, PostCode } from '$lib/API/Admin';
 	import type { TurtleCode } from '$lib/API/Models/Turtles';
-	import { Eye, EyeClosed, Trash } from 'phosphor-svelte';
+	import { Coins, Eye, EyeClosed, Gift, IdentificationBadge, Lightbulb, ListNumbers, Trash } from 'phosphor-svelte';
 	import { onMount } from 'svelte';
 
 	let codes: TurtleCode[] = [];
@@ -9,8 +13,11 @@
 
     let showStreamElements: boolean = false;
 
+	let isLoading: boolean = true;
+
 	onMount(async () => {
 		await fetchCodes();
+		isLoading = false;
 	});
 
 	async function changeVisibility(codeId: string, isVisible: boolean) {
@@ -19,23 +26,29 @@
 	}
 
 	async function deleteCode(codeId: string) {
+		isLoading = true;
 		const success = await DeleteCode(codeId);
 		if (success)
 			fetchCodes();
+		isLoading = false;
 	}
 
 	async function fetchCodes() {
+		isLoading = true;
 		codes = await GetCodes();
         
 		codes = codes
 			.filter(code => showStreamElements || code.codeName.split(';')[0] !== 'SE')
 			.map(code => code);
+		isLoading = false;
 	}
 
 	async function handleSubmit(event: Event) {
 		errorMessage = '';
 
         event.preventDefault();
+
+		isLoading = true;
 
 		const form = event.target as HTMLFormElement;
 		const formData = new FormData(form);
@@ -56,31 +69,77 @@
 			success = await PostCode(newCode);
 		} catch (err) {
 			errorMessage = err instanceof Error ? err.message : String(err).replace('Error: ', '');
+			isLoading = false;
 		}
 
 		if (success) {
 			fetchCodes();
 			form.reset();
 		} else if (errorMessage == '') errorMessage = 'Failed to generate code';
+
+		isLoading = false;
 	}
 </script>
 
 <section class="codes">
 	<section class="code-creation">
 		<form onsubmit={handleSubmit}>
-			<label>code: <input type="text" name="code" autocomplete="off" /></label>
-			<label>turtles: <input type="number" name="points" /></label>
-			<label>uses: <input type="number" name="uses" /></label>
-			<label>tip: <textarea name="tip"></textarea></label>
-			<label>name: <input type="text" name="name" autocomplete="off" /></label>
+			<label>
+				Code:
+				<Input type="text" name="code" autocomplete="off" placeholder="Optional, empty for random">
+				{#snippet icon()}
+					<Gift weight="bold" />
+				{/snippet}
+				</Input>
+			</label>
+			<label>
+				Turtles:
+				<Input type="number" name="points" placeholder="Economy amount to grant">
+				{#snippet icon()}
+					<Coins weight="bold" />
+				{/snippet}
+				</Input>
+			</label>
+			<label>
+				Uses:
+				<Input type="number" name="uses" placeholder="Max uses for this code">
+				{#snippet icon()}
+					<ListNumbers weight="bold" />
+				{/snippet}
+				</Input>
+			</label>
+			<label>
+				Tip:
+				<Input type="text" name="tip" autocomplete="off" placeholder="Optional, tip to guess">
+				{#snippet icon()}
+					<Lightbulb weight="bold" />
+				{/snippet}
+				</Input>
+			</label>
+			<label>
+				Name:
+				<Input type="text" name="name" autocomplete="off" placeholder="Optional, name for this code">
+				{#snippet icon()}
+					<IdentificationBadge weight="bold" />
+				{/snippet}
+				</Input>
+			</label>
 
-			<button>Generate</button>
+			<span class="generate-button">
+				<Button type="submit" style="min-width: 100%; {isLoading && 'padding: 2px;'}" disabled={isLoading}>
+					{#if isLoading}
+					<LoadingIndicator size={24} />
+					{:else}
+					Generate
+					{/if}
+				</Button>
+			</span>
 		</form>
 		<small>{errorMessage}</small>
 	</section>
 	<section class="code-list">
 		<h1>Codes List</h1>
-        <label>Show StreamElements: <input type="checkbox" bind:checked={showStreamElements} onchange={() => fetchCodes()} /></label>
+        <label>Show StreamElements: <Toggle bind:checked={showStreamElements} onchange={() => fetchCodes()} /></label>
 		<table>
 			<thead>
 				<tr>
@@ -154,23 +213,8 @@
 				gap: 5px;
 				width: 100%;
 			}
-			input {
-				width: 75%;
-				background-color: #303030;
-				color: white;
-				text-align: center;
-				border: none;
-				margin: 2px 2px;
-				border-radius: 5px;
-			}
 
-			button {
-				background-color: #33ca00;
-				color: white;
-				padding: 0.5rem 1rem;
-				border: none;
-				border-radius: 5px;
-				margin: 5px 0;
+			.generate-button {
 				width: 100%;
 			}
 			small {

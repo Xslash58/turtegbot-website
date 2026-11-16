@@ -18,6 +18,25 @@ export async function GetEntitlementGraph(userId: string): Promise<EntitlementGr
 	return data as EntitlementGraphResponse;
 }
 
+export async function GetEntitlementGraphForEntitlement(
+	entitlementId: string
+): Promise<EntitlementGraphResponse> {
+	const API_URL = import.meta.env.VITE_API_URL;
+	if (!API_URL) throw new Error('API_URL is not defined in environment variables.');
+	const url = `${API_URL}/v1/entitlements/graph/entitlement/${entitlementId}`;
+	const response = await fetch(url, {
+		headers: {
+			Authorization: `Bearer ${localStorage.getItem('turteg-token') || ''}`
+		}
+	});
+
+	const data = await response.json();
+	if (data.error) throw new Error(data.error);
+	if (!response.ok) throw new Error(`API request failed: ${response.statusText}`);
+
+	return data as EntitlementGraphResponse;
+}
+
 export async function GetMyPermissions(): Promise<string[]> {
 	const API_URL = import.meta.env.VITE_API_URL;
 	if (!API_URL) throw new Error('API_URL is not defined in environment variables.');
@@ -121,6 +140,84 @@ export async function EquipBadge(userId: string, badgeId: string | null): Promis
 		body: JSON.stringify({ badgeId })
 	});
 
+	const data = await response.json();
+	if (data.error) throw new Error(data.error);
+	if (!response.ok) throw new Error(`API request failed: ${response.statusText}`);
+
+	return true;
+}
+
+export async function AddEntitlementEdge(parentId: string, childId: string): Promise<boolean> {
+	const API_URL = import.meta.env.VITE_API_URL;
+	if (!API_URL) throw new Error('API_URL is not defined in environment variables.');
+	const url = `${API_URL}/v1/entitlements/edges/${parentId}/${childId}`;
+	const response = await fetch(url, {
+		method: 'POST',
+		headers: {
+			Authorization: `Bearer ${localStorage.getItem('turteg-token') || ''}`
+		}
+	});
+
+	const data = await response.json();
+	if (data.error) throw new Error(data.error);
+	if (!response.ok) throw new Error(`API request failed: ${response.statusText}`);
+	return true;
+}
+
+export async function RemoveEntitlementEdge(parentId: string, childId: string): Promise<boolean> {
+	const API_URL = import.meta.env.VITE_API_URL;
+	if (!API_URL) throw new Error('API_URL is not defined in environment variables.');
+	const url = `${API_URL}/v1/entitlements/edges/${parentId}/${childId}`;
+	const response = await fetch(url, {
+		method: 'DELETE',
+		headers: {
+			Authorization: `Bearer ${localStorage.getItem('turteg-token') || ''}`
+		}
+	});
+
+	const data = await response.json();
+	if (data.error) throw new Error(data.error);
+	if (!response.ok) throw new Error(`API request failed: ${response.statusText}`);
+	return true;
+}
+
+export async function CreateEntitlement(
+	entitlementId: string,
+	kind: string,
+	name: string,
+	description: string,
+	priority: number,
+	metadata: JSON
+): Promise<boolean> {
+	const API_URL = import.meta.env.VITE_API_URL;
+	if (!API_URL) throw new Error('API_URL is not defined in environment variables.');
+	const url = `${API_URL}/v1/entitlements/catalog/${entitlementId}`;
+	const response = await fetch(url, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${localStorage.getItem('turteg-token') || ''}`
+		},
+		body: JSON.stringify({ kind, name, description, priority, metadata })
+	});
+
+	const data = await response.json();
+	if (data.error) throw new Error(data.error);
+	if (!response.ok) throw new Error(`API request failed: ${response.statusText}`);
+
+	return true;
+}
+
+export async function DeleteEntitlement(entitlementId: string): Promise<boolean> {
+	const API_URL = import.meta.env.VITE_API_URL;
+	if (!API_URL) throw new Error('API_URL is not defined in environment variables.');
+	const url = `${API_URL}/v1/entitlements/catalog/${entitlementId}`;
+	const response = await fetch(url, {
+		method: 'DELETE',
+		headers: {
+			Authorization: `Bearer ${localStorage.getItem('turteg-token') || ''}`
+		}
+	});
 	const data = await response.json();
 	if (data.error) throw new Error(data.error);
 	if (!response.ok) throw new Error(`API request failed: ${response.statusText}`);

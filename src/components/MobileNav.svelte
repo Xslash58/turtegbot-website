@@ -3,8 +3,11 @@
 	import { hexToRgba } from '$lib/API/Helpers';
 	import type { User } from '$lib/API/Models/Users';
 	import { fade } from 'svelte/transition';
-	import { Hash, House, Rewind, Wrench } from 'phosphor-svelte';
+	import { Gift, Hash, House, Rewind, SignOut, Wrench } from 'phosphor-svelte';
 	import { hasAnyInNamespace } from '$lib/stores/permissions';
+	import { Logout } from '$lib/API/Auth';
+	import Button from './Button.svelte';
+	import Role from './users/Role.svelte';
 
 	const { user, onAction }: { user: User | null; onAction?: () => void } = $props();
 
@@ -12,6 +15,16 @@
 
 	function handleClick() {
 		onAction?.();
+	}
+
+	function changePage(url: string) {
+		goto(url);
+		handleClick();
+	}
+
+	async function handleLogout() {
+		const success = await Logout();
+		if (success && window && location) location.reload();
 	}
 </script>
 
@@ -28,39 +41,59 @@
 					<img src={user.profile_image_url} alt="profile" />
 					<section class="metadata">
 						<p>{user.display_name}</p>
-						<p class="role" style="--role-color: {roleBgColor}">{user.role?.name}</p>
+						<Role role={user.role} />
 					</section>
 				</button>
 			</section>
 		{/if}
 	</section>
 	<nav>
-		<ul>
-			<li>
-				<a href="/" onclick={handleClick}>
-					<span class="icon"><House weight="fill" /></span> Home</a
-				>
-			</li>
-			<li>
-				<a href="/commands" onclick={handleClick}>
-					<span class="icon"><Hash weight="bold" /></span> Commands</a
-				>
-			</li>
-			{#if import.meta.env.VITE_RECAPS == '1'}
-				<li>
-					<a href="/recap/2025" class="special-event" onclick={handleClick}>
-						<span class="icon" style="color: aqua"><Rewind weight="fill" /></span> RECAP 2025</a
-					>
-				</li>
-			{/if}
-			{#if $hasAnyInNamespace('moderation') || $hasAnyInNamespace('admin')}
-				<li>
-					<a href="/admin" style="color: red;" onclick={handleClick}>
-						<span class="icon"><Wrench weight="fill" /></span> Admin</a
-					>
-				</li>
-			{/if}
-		</ul>
+		<Button onclick={() => changePage('/')} variant="dark">
+			{#snippet icon()}
+				<House weight="fill" />
+			{/snippet}
+			Home
+		</Button>
+		<Button onclick={() => changePage('/commands')} variant="dark">
+			{#snippet icon()}
+				<Hash weight="bold" />
+			{/snippet}
+			Commands
+		</Button>
+		<Button onclick={() => changePage('/store/redeem')} variant="dark">
+			{#snippet icon()}
+				<Gift weight="bold" />
+			{/snippet}
+			Redeem
+		</Button>
+		{#if import.meta.env.VITE_RECAPS == '1'}
+			<Button onclick={() => changePage('/recap/2025')} class="special-event" variant="dark">
+				{#snippet icon()}
+					<Rewind weight="fill" />
+				{/snippet}
+				Recap 2025
+			</Button>
+		{/if}
+		{#if $hasAnyInNamespace('moderation') || $hasAnyInNamespace('admin')}
+			<Button
+				onclick={() => changePage('/admin')}
+				style="color: red; text-align: left;"
+				variant="dark"
+			>
+				{#snippet icon()}
+					<Wrench weight="fill" />
+				{/snippet}
+				Admin
+			</Button>
+		{/if}
+		{#if user}
+			<Button onclick={handleLogout} variant="dark">
+				{#snippet icon()}
+					<SignOut weight="fill" />
+				{/snippet}
+				Logout
+			</Button>
+		{/if}
 	</nav>
 </section>
 
@@ -78,63 +111,13 @@
 			display: flex;
 			justify-content: center;
 			align-items: center;
+			flex-direction: column;
+			gap: 5px;
 
-			ul {
-				display: flex;
-				flex-direction: column;
-				list-style: none;
-				padding: 0;
-				margin: 0;
+			:global(.btn) {
 				width: 100%;
-
-				li {
-					background-color: #121212;
-					border-radius: 10px;
-					margin: 2px 5px;
-
-					&:hover {
-						background-color: #18181885;
-					}
-					a {
-						display: flex;
-						align-items: center;
-						gap: 5px;
-						padding: 10px 0;
-
-						color: white;
-						text-decoration: none;
-						font-size: 18px;
-						transition: color 0.2s;
-
-						span {
-							display: flex;
-							align-items: center;
-							justify-content: center;
-
-							padding: 5px 10px;
-						}
-
-						&.special-event {
-							font-weight: bold;
-							letter-spacing: 1px;
-							background: linear-gradient(
-								90deg,
-								#fc3737,
-								#ffffff,
-								#87ceeb,
-								#fc3737,
-								#ffffff,
-								#87ceeb,
-								#fc3737
-							);
-							background-size: 500% 100%;
-							background-clip: text;
-							-webkit-background-clip: text;
-							color: transparent;
-							animation: rainbow-slide 6s linear infinite;
-						}
-					}
-				}
+				height: 48px;
+				font-size: large;
 			}
 		}
 
