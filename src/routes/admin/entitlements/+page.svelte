@@ -3,7 +3,11 @@
 	import EntitlementDialog from '$components/entitlements/EntitlementDialog.svelte';
 	import Input from '$components/Input.svelte';
 	import Select from '$components/Select.svelte';
-	import { CreateEntitlement, DeleteEntitlement, GetEntitlementsCatalog } from '$lib/API/Entitlements';
+	import {
+		CreateEntitlement,
+		DeleteEntitlement,
+		GetEntitlementsCatalog
+	} from '$lib/API/Entitlements';
 	import type { Entitlement, EntitlementKind } from '$lib/API/Models/Entitlements';
 	import { confirmationDialog, feedbackDialog } from '$lib/stores/modalStore';
 	import {
@@ -24,6 +28,9 @@
 	let entitlementsCatalog: Entitlement[] = $state([]);
 	let entitlementData: Entitlement | null = $state(null);
 	let isCreateMode: boolean = $state(false);
+	let entitlementKinds = $derived(
+		Array.from(new Set(entitlementsCatalog.map((entitlement) => entitlement.kind))).sort()
+	);
 
 	onMount(async () => {
 		entitlementsCatalog = await GetEntitlementsCatalog();
@@ -32,7 +39,9 @@
 	async function changeEntitlement(entitlementId: string | undefined) {
 		isCreateMode = false;
 		selectedEntitlementId = entitlementId;
-		entitlementData = entitlementId ? entitlementsCatalog.find((e) => e.id === entitlementId) || null : null;
+		entitlementData = entitlementId
+			? entitlementsCatalog.find((e) => e.id === entitlementId) || null
+			: null;
 		entitlementDialog?.refreshGraph();
 	}
 
@@ -113,9 +122,9 @@
 	}
 
 	async function deleteSelectedEntitlement(confirm: boolean = false) {
-		if(!selectedEntitlementId) return;
+		if (!selectedEntitlementId) return;
 
-		if(!confirm) {
+		if (!confirm) {
 			confirmationDialog.set({
 				visible: true,
 				text: `Are you sure you want to delete the entitlement "${selectedEntitlementId}"?
@@ -194,12 +203,7 @@
 			<label
 				>Kind:
 				<Select
-					options={[
-						{ value: 'ROLE', label: 'Role' },
-						{ value: 'PERMISSION', label: 'Permission' },
-						{ value: 'BADGE', label: 'Badge' },
-						{ value: 'BUNDLE', label: 'Bundle' }
-					]}
+					options={entitlementKinds.map((kind) => ({ value: kind, label: kind }))}
 					name="kind"
 					placeholder="Select kind..."
 					required
