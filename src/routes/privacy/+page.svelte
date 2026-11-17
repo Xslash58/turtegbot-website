@@ -20,7 +20,7 @@
 	</p>
 	<ul>
 		<li>Email: support@xslash.ovh</li>
-		<li>Discord: <a href="http://dc.xslash.ovh/" target="_blank">Xslash's Shellter</a></li>
+		<li>Discord: <a href="https://dc.xslash.ovh/" target="_blank">Xslash's Shellter</a></li>
 	</ul>
 	<p>
 		(Please do not include passwords, OAuth tokens, or other sensitive credentials in your
