@@ -16,7 +16,6 @@
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
-	<title>TurtegBot</title>
 </svelte:head>
 
 {#if isOverlay}

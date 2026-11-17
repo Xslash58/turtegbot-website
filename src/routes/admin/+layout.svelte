@@ -26,6 +26,10 @@
 	});
 </script>
 
+<svelte:head>
+    <title>Admin | TurtegBot</title>
+</svelte:head>
+
 <section class="user-layout">
 	<SideBar {me} />
 	<section class="user-content">

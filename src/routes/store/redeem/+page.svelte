@@ -61,6 +61,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Redeem | TurtegBot</title>
+</svelte:head>
+
 <section class="redeem">
 	<h1>Redeem Code</h1>
 	<p>Enter your redeem code below to claim your reward!</p>
