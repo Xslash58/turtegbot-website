@@ -5,6 +5,7 @@
 	import { DeleteTicket, GetTickets, PatchTicket } from '$lib/API/Admin';
 	import { confirmationDialog } from '$lib/stores/modalStore';
 	import TicketCard from '$components/users/TicketCard.svelte';
+	import Toggle from '$components/Toggle.svelte';
 
 	let isLoaded: boolean = $state(false);
 	let tickets: Ticket[] = $state([]);
@@ -57,7 +58,7 @@
 	<section class="settings">
 		<label>
 			Show all:
-			<input type="checkbox" bind:checked={showAll} onchange={fetchTickets} />
+			<Toggle bind:checked={showAll} onchange={fetchTickets} />
 		</label>
 	</section>
 	{#if isLoaded}

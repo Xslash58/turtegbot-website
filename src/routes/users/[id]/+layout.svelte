@@ -2,7 +2,7 @@
 	import type { User, UserPage } from '$lib/API/Models/Users';
 	import { onMount } from 'svelte';
 	import SideBar from '$components/users/SideBar.svelte';
-	import { GetMe, GetUserPage } from '$lib/API/Users';
+	import { GetUserPage } from '$lib/API/Users';
 	import { page } from '$app/state';
 	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import { myUser, profileUser } from '$lib/stores/userStore';
@@ -22,7 +22,7 @@
 		if (value) {
 			me = value;
 		}
-		if(me && page.params.id && Number.isNaN(Number(page.params.id))) {
+		if (me && page.params.id && Number.isNaN(Number(page.params.id))) {
 			let path = window.location.pathname.substring(6);
 			goto(`/users/${me?.id}${path}`);
 		}

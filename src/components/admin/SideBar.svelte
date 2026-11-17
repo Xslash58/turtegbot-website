@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import Button from '$components/Button.svelte';
 	import { can } from '$lib/stores/permissions';
@@ -11,11 +10,12 @@
 		Moon,
 		Note,
 		Ticket,
-		User,
 		Users,
 		Wrench
 	} from 'phosphor-svelte';
 	import { onMount } from 'svelte';
+
+	const buttonVariant = 'transparent';
 
 	onMount(async () => {
 		console.log('SideBar component mounted');
@@ -33,6 +33,7 @@
 			href={getCategoryPath('')}
 			active={page.url.pathname === getCategoryPath('')}
 			class="side-button"
+			variant={buttonVariant}
 		>
 			{#snippet icon({ active })}
 				<House weight={active ? 'fill' : 'regular'} />
@@ -44,6 +45,7 @@
 				href={getCategoryPath('tickets')}
 				active={page.url.pathname === getCategoryPath('tickets')}
 				class="side-button"
+				variant={buttonVariant}
 			>
 				{#snippet icon({ active })}
 					<Ticket weight={active ? 'fill' : 'regular'} />
@@ -56,6 +58,7 @@
 				href={getCategoryPath('reminders')}
 				active={page.url.pathname === getCategoryPath('reminders')}
 				class="side-button"
+				variant={buttonVariant}
 			>
 				{#snippet icon({ active })}
 					<Note weight={active ? 'fill' : 'regular'} />
@@ -68,6 +71,7 @@
 				href={getCategoryPath('afks')}
 				active={page.url.pathname === getCategoryPath('afks')}
 				class="side-button"
+				variant={buttonVariant}
 			>
 				{#snippet icon({ active })}
 					<Moon weight={active ? 'fill' : 'regular'} />
@@ -80,6 +84,7 @@
 				href={getCategoryPath('turtles')}
 				active={page.url.pathname === getCategoryPath('turtles')}
 				class="side-button"
+				variant={buttonVariant}
 			>
 				{#snippet icon({ active })}
 					<Coins weight={active ? 'fill' : 'regular'} />
@@ -92,6 +97,7 @@
 				href={getCategoryPath('entitlement-graph')}
 				active={page.url.pathname === getCategoryPath('entitlement-graph')}
 				class="side-button"
+				variant={buttonVariant}
 			>
 				{#snippet icon({ active })}
 					<Graph weight={active ? 'fill' : 'regular'} />
@@ -99,11 +105,25 @@
 				Entitlement Graph
 			</Button>
 		{/if}
+		{#if $can('admin.entitlements.create')}
+			<Button
+				href={getCategoryPath('entitlements')}
+				active={page.url.pathname === getCategoryPath('entitlements')}
+				class="side-button"
+				variant={buttonVariant}
+			>
+				{#snippet icon({ active })}
+					<Graph weight={active ? 'fill' : 'regular'} />
+				{/snippet}
+				Entitlements
+			</Button>
+		{/if}
 		{#if $can('admin.codes.view')}
 			<Button
 				href={getCategoryPath('codes')}
 				active={page.url.pathname === getCategoryPath('codes')}
 				class="side-button"
+				variant={buttonVariant}
 			>
 				{#snippet icon({ active })}
 					<Gift weight={active ? 'fill' : 'regular'} />
@@ -116,6 +136,7 @@
 				href={getCategoryPath('users')}
 				active={page.url.pathname.startsWith(getCategoryPath('users'))}
 				class="side-button"
+				variant={buttonVariant}
 			>
 				{#snippet icon({ active })}
 					<Users weight={active ? 'fill' : 'regular'} />
@@ -128,6 +149,7 @@
 				href={getCategoryPath('maintenance')}
 				active={page.url.pathname === getCategoryPath('maintenance')}
 				class="side-button"
+				variant={buttonVariant}
 			>
 				{#snippet icon({ active })}
 					<Wrench weight={active ? 'fill' : 'regular'} />

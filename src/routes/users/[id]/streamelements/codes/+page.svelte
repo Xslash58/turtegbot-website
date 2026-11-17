@@ -12,11 +12,22 @@
 		PutStreamElementsCode
 	} from '$lib/API/StreamElements';
 	import { profileUser } from '$lib/stores/userStore';
-	import { ArrowsClockwise, Eye, EyeClosed, Trash } from 'phosphor-svelte';
+	import {
+		ArrowsClockwise,
+		Coins,
+		Eye,
+		EyeClosed,
+		Gift,
+		ListNumbers,
+		Stack,
+		Trash
+	} from 'phosphor-svelte';
 	import { onMount } from 'svelte';
 	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import SearchBar from '$components/SearchBar.svelte';
 	import Button from '$components/Button.svelte';
+	import Input from '$components/Input.svelte';
+	import Toggle from '$components/Toggle.svelte';
 
 	let codes: (TurtleCode & { deleted?: boolean })[] = [];
 	let userId: string = page.params.id + '';
@@ -133,33 +144,59 @@
 <section class="codes">
 	<section class="code-creation">
 		<form on:submit|preventDefault={handleSubmit}>
-			<label
-				>code: <input
+			<label>
+				Code:
+				<Input
 					type="text"
 					name="name"
 					autocomplete="off"
 					placeholder="Empty for random..."
 					disabled={isBulk}
-				/></label
-			>
-			<label>points: <input type="number" name="points" /></label>
-			<label>uses: <input type="number" name="uses" /></label>
-			<label for="mass-generate"
-				><input type="checkbox" name="mass-generate" id="mass-generate" bind:checked={isBulk} />Mass
-				Generate</label
-			>
-			{#if isBulk}
-				<label
-					>bulk: <input
-						type="number"
-						name="mass-amount"
-						placeholder="Amount to generate..."
-						value="1"
-					/></label
 				>
+					{#snippet icon()}
+						<Gift weight="bold" />
+					{/snippet}
+				</Input>
+			</label>
+			<label>
+				Points:
+				<Input type="number" name="points" placeholder="Economy amount to grant">
+					{#snippet icon()}
+						<Coins weight="bold" />
+					{/snippet}
+				</Input>
+			</label>
+			<label>
+				Uses:
+				<Input type="number" name="uses" placeholder="Max uses for this code">
+					{#snippet icon()}
+						<ListNumbers weight="bold" />
+					{/snippet}
+				</Input>
+			</label>
+			<label for="mass-generate">
+				Mass Generate:
+				<Toggle name="mass-generate" id="mass-generate" bind:checked={isBulk} />
+			</label>
+			{#if isBulk}
+				<label>
+					Bulk:
+					<Input type="number" name="mass-amount" placeholder="Amount to generate..." value="1">
+						{#snippet icon()}
+							<Stack weight="bold" />
+						{/snippet}
+					</Input>
+				</label>
 			{/if}
 
-			<Button style="min-width: 100%; {isLoading && 'padding: 2px;'}" type="submit" disabled={isLoading} center>
+			<hr />
+
+			<Button
+				style="min-width: 100%; {isLoading && 'padding: 2px;'}"
+				type="submit"
+				disabled={isLoading}
+				center
+			>
 				{#if isLoading}
 					<LoadingIndicator size={24} />
 				{:else}
@@ -287,6 +324,10 @@
 			}
 			small {
 				text-align: center;
+			}
+
+			hr {
+				border: 1px solid #333;
 			}
 		}
 

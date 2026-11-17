@@ -7,6 +7,8 @@
 
 	export let user: User | null;
 
+	const buttonVariant = 'transparent';
+
 	onMount(async () => {
 		console.log('StreamElementsBar component mounted');
 	});
@@ -19,7 +21,11 @@
 
 <section class="sidebar">
 	<nav>
-		<Button href={getCategoryPath('codes')} active={page.url.pathname === getCategoryPath('codes')}>
+		<Button
+			href={getCategoryPath('codes')}
+			active={page.url.pathname === getCategoryPath('codes')}
+			variant={buttonVariant}
+		>
 			{#snippet icon({ active })}
 				<Gift weight={active ? 'fill' : 'regular'} />
 			{/snippet}

@@ -1,9 +1,12 @@
 <script lang="ts">
 	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import {
+		AddEntitlementEdge,
 		GetEntitlementGraph,
+		GetEntitlementGraphForEntitlement,
 		GetEntitlementsCatalog,
 		GrantEntitlement,
+		RemoveEntitlementEdge,
 		RevokeEntitlement
 	} from '$lib/API/Entitlements';
 	import type { Entitlement, EntitlementGraphResponse } from '$lib/API/Models/Entitlements';
@@ -15,6 +18,7 @@
 	import { Minus, Plus } from 'phosphor-svelte';
 	import { can } from '$lib/stores/permissions';
 	import Select from '$components/Select.svelte';
+	import Radio from '$components/Radio.svelte';
 
 	let entitlementsCatalog: Entitlement[] = $state([]);
 	let entitlementKinds: string[] = $state([]);
@@ -28,9 +32,13 @@
 	let graphData: EntitlementGraphResponse | null = $state(null);
 
 	const {
-		user
+		user,
+		entitlementId,
+		mode
 	}: {
-		user: User;
+		user?: User;
+		entitlementId?: string;
+		mode: 'user' | 'entitlement';
 		onDelete?: (id: number) => void;
 	} = $props();
 
@@ -42,9 +50,11 @@
 		await refreshGraph();
 	});
 
-	async function refreshGraph() {
+	export async function refreshGraph() {
 		graphData = null;
-		graphData = await GetEntitlementGraph(user.id + '');
+		if (mode === 'user') graphData = await GetEntitlementGraph(user?.id + '');
+		else if (mode === 'entitlement')
+			graphData = await GetEntitlementGraphForEntitlement(entitlementId + '');
 	}
 
 	function handleKindClick(event: Event) {
@@ -58,7 +68,10 @@
 	async function addEntitlement() {
 		if (selectedEntitlementId) {
 			isLoading = true;
-			await GrantEntitlement(user.id, selectedEntitlementId);
+
+			if (mode === 'user') await GrantEntitlement(user?.id + '', selectedEntitlementId);
+			else if (mode === 'entitlement')
+				await AddEntitlementEdge(entitlementId + '', selectedEntitlementId);
 			await refreshGraph();
 			isLoading = false;
 		}
@@ -67,7 +80,9 @@
 	async function removeEntitlement() {
 		if (selectedEntitlementId) {
 			isLoading = true;
-			await RevokeEntitlement(user.id, selectedEntitlementId);
+			if (mode === 'user') await RevokeEntitlement(user?.id + '', selectedEntitlementId);
+			else if (mode === 'entitlement')
+				await RemoveEntitlementEdge(entitlementId + '', selectedEntitlementId);
 			await refreshGraph();
 			isLoading = false;
 		}
@@ -83,23 +98,16 @@
 		<button onclick={() => toggleVisibility()} class="background" aria-label="Close dialog"
 		></button>
 		<dialog class="dialog" transition:fade={{ duration: 200 }} open>
-			<h2>Manage Entitlements for {user.display_name} ({user.id})</h2>
+			{#if mode === 'user' && user}
+				<h2>Manage Entitlements for {user?.display_name} ({user.id})</h2>
+			{:else if mode === 'entitlement' && entitlementId}
+				<h2>Manage Entitlement {entitlementId}</h2>
+			{/if}
 			<hr />
-			<section class="radios">
-				{#each entitlementKinds as kind}
-					<label
-						><input
-							type="radio"
-							name="entitleement-kind"
-							id={kind}
-							value={kind}
-							onclick={handleKindClick}
-						/>
-						{kind}</label
-					>
-					<br />
-				{/each}
-			</section>
+			<Radio
+				options={entitlementKinds.map((kind) => ({ label: kind, value: kind }))}
+				onclick={handleKindClick}
+			/>
 			{#if availableEntitlementOptions.length > 0}
 				<Select
 					options={availableEntitlementOptions.map((entitlement) => ({
@@ -119,7 +127,8 @@
 							disabled={selectedEntitlementId === null ||
 								isLoading ||
 								graphData?.links.some(
-									(e) => e.source === `user:${user.id}` && e.target === selectedEntitlementId
+									(e) => (mode === 'user' && user && e.source === `user:${user.id}` && e.target === selectedEntitlementId)
+									|| (mode === 'entitlement' && entitlementId && e.source === `${entitlementId}` && e.target === selectedEntitlementId)
 								)}
 							onclick={addEntitlement}
 						>
@@ -134,7 +143,8 @@
 							disabled={selectedEntitlementId === null ||
 								isLoading ||
 								!graphData?.links.some(
-									(e) => e.source === `user:${user.id}` && e.target === selectedEntitlementId
+									(e) => (mode === 'user' && user && e.source === `user:${user.id}` && e.target === selectedEntitlementId)
+									|| (mode === 'entitlement' && entitlementId && e.source === `${entitlementId}` && e.target === selectedEntitlementId)
 								)}
 							onclick={removeEntitlement}
 						>

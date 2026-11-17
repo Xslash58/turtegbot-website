@@ -105,12 +105,15 @@
 		<section class="search-bar">
 			<button class="fake-cover" on:click={() => selectUser(null)} aria-label="Clear result"></button>
 			<section class="icon">
-				<X fill="white" weight="bold" />
+				<img src={selectedUser.profile?.profile_image_url ?? loadingTexture} alt="" width="16" height="16" style="border-radius: 50%;" />
 			</section>
 			<input
-				type="text" value={selectedUser.twitchUsername ?? selectedUser.kickUsername}
+				type="text" value={selectedUser.profile?.display_name ?? selectedUser.twitchUsername ?? selectedUser.kickUsername}
 				readonly
 				disabled />
+			<section style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);">
+				<X fill="white" weight="bold" />
+			</section>
 		</section>
 	{/if}
 </section>

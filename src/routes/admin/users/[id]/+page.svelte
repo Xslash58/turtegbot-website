@@ -94,7 +94,7 @@
 
 <section class="users">
 	{#if selectedUser}
-		<EntitlementDialog bind:this={entitlementDialog} user={selectedUser} />
+		<EntitlementDialog bind:this={entitlementDialog} user={selectedUser} mode="user" />
 
 		<section class="panel">
 			<section class="title">

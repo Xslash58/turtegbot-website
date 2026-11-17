@@ -6,6 +6,7 @@
 	import { feedbackDialog } from '$lib/stores/modalStore';
 	import { PostRedeemCode } from '$lib/API/Store';
 	import { page } from '$app/stores';
+	import Button from '$components/Button.svelte';
 
 	let code: string = '';
 
@@ -79,13 +80,13 @@
 		{#if isLoading}
 			<LoadingIndicator size={30} />
 		{:else if me == null}
-			<button type="submit" disabled={true}>
+			<Button type="submit" disabled={true} center>
 				{isLoading ? '...' : 'Login required'}
-			</button>
+			</Button>
 		{:else}
-			<button type="submit" disabled={isLoading}>
+			<Button type="submit" disabled={isLoading} center>
 				{isLoading ? '...' : 'Redeem'}
-			</button>
+			</Button>
 		{/if}
 	</form>
 </section>
@@ -121,24 +122,6 @@
 				}
 				&:disabled {
 					background-color: #151515;
-					cursor: not-allowed;
-				}
-			}
-
-			button {
-				padding: 10px;
-				border-radius: 4px;
-				border: none;
-				background-color: #33ca00;
-				color: white;
-				cursor: pointer;
-
-				&:hover {
-					background-color: #28a300;
-				}
-
-				&:disabled {
-					background-color: #555;
 					cursor: not-allowed;
 				}
 			}

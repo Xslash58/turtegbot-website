@@ -16,6 +16,7 @@
 	import MobileNav from './MobileNav.svelte';
 	import { GetMyPermissions } from '$lib/API/Entitlements';
 	import { hasAnyInNamespace, myPermissions } from '$lib/stores/permissions';
+	import UserDropdown from './users/UserDropdown.svelte';
 
 	let user: User | null = null;
 
@@ -64,7 +65,7 @@
 			{#if import.meta.env.VITE_RECAPS == '1'}
 				<li><a href="/recap/2025" class="special-event">RECAP 2025</a></li>
 			{/if}
-			{#if user && $hasAnyInNamespace('moderation') || $hasAnyInNamespace('admin')}
+			{#if (user && $hasAnyInNamespace('moderation')) || $hasAnyInNamespace('admin')}
 				<li><a href="/admin" style="color: red;">Admin</a></li>
 			{/if}
 		</ul>
@@ -89,24 +90,8 @@
 				style="cursor: pointer;"
 			/>
 		{/if}
-		{#if user && isLoaded}
-			<section class="profile">
-				<button on:click={() => goto(`/users/${user?.id}`)}>
-					<p>{user.display_name}</p>
-					<img src={user.profile_image_url} alt="profile" />
-				</button>
-			</section>
-		{:else if !isLoaded}
-			<section class="profile">
-				<LoadingIndicator />
-			</section>
-		{:else}
-			<section class="login-wrapper">
-				<button class="login-button" on:click={openLoginModal}>
-					<span>Login</span>
-				</button>
-			</section>
-		{/if}
+
+		<UserDropdown bind:user bind:isLoaded />
 		<button class="mobile-view" on:click={() => (mobileNavVisible = !mobileNavVisible)}>
 			<List size={24} weight="bold" />
 		</button>
@@ -234,47 +219,6 @@
 		}
 	}
 
-	section.profile {
-		button {
-			display: flex;
-			align-items: center;
-			background: none;
-			border: none;
-			cursor: pointer;
-		}
-		p {
-			margin: 0;
-			font-weight: 600;
-			color: white;
-		}
-		img {
-			width: 40px;
-			height: 40px;
-			border-radius: 50%;
-			margin-left: 10px;
-		}
-	}
-
-	section.login-wrapper {
-		display: flex;
-		align-items: center;
-
-		.login-button {
-			background-color: white;
-			color: black;
-			border: none;
-			padding: 5px 10px;
-			border-radius: 10px;
-			cursor: pointer;
-
-			font-weight: 600;
-
-			&:hover {
-				background-color: rgb(230, 230, 230);
-			}
-		}
-	}
-
 	.seasonal-xmas {
 		z-index: 7;
 
@@ -323,10 +267,6 @@
 		}
 
 		nav {
-			display: none;
-		}
-
-		section.profile {
 			display: none;
 		}
 
