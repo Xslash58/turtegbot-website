@@ -60,7 +60,7 @@
 </script>
 
 <svelte:head>
-	<title>{channelName ? `Mods in ${channelName} | TurtegBot` : 'Mods | TurtegBot'}</title>
+	<title>{channelName ? `Moderators for ${channelName} | TurtegBot` : 'Moderators | TurtegBot'}</title>
 </svelte:head>
 
 <section class="mods">
