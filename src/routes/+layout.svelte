@@ -11,7 +11,7 @@
 	let { data, children } = $props();
 
 	let isOverlay = $derived(page.url.pathname.includes('overlay'));
-	let isLegal = $derived(page.url.pathname.includes('privacy'));
+	let isLegal = $derived(page.url.pathname.includes('legal'));
 </script>
 
 <svelte:head>

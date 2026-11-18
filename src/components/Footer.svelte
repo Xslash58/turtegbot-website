@@ -1,7 +1,8 @@
 <footer>
 	<p>
 		TurtegBot is not affiliated with Twitch, Kick, or any integrated third-party services ·
-		<a href="/privacy">Privacy Policy</a>
+		<a href="/legal/privacy">Privacy Policy</a> ·
+		<a href="/legal/tos">Terms of Service</a>
 	</p>
 </footer>
 
