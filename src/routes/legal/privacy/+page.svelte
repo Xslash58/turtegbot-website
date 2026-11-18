@@ -19,7 +19,7 @@
 		about this Privacy Policy or wish to exercise your data rights, you can contact us at:
 	</p>
 	<ul>
-		<li>Email: support@xslash.ovh</li>
+		<li>Email: <a href="mailto:support@xslash.ovh">support@xslash.ovh</a></li>
 		<li>Discord: <a href="https://dc.xslash.ovh/" target="_blank">Xslash's Shellter</a></li>
 	</ul>
 	<p>
@@ -172,7 +172,7 @@
 		<li>Withdraw consent at any time by unlinking accounts or revoking OAuth permissions.</li>
 	</ul>
 	<p>
-		To submit a privacy request, email support@xslash.ovh with your platform username/ID and the
+		To submit a privacy request, email <a href="mailto:support@xslash.ovh">support@xslash.ovh</a> with your platform username/ID and the
 		specific action you are requesting. We may ask you to verify ownership of the account before
 		fulfilling the request.
 	</p>
