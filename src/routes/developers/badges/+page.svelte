@@ -58,7 +58,7 @@ for (const badge of badges) {
 </script>
 
 <svelte:head>
-	<title>Badges API</title>
+	<title>Badges API | TurtegBot</title>
 </svelte:head>
 
 <main>
