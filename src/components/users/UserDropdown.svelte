@@ -6,7 +6,7 @@
 	import loadingTexture from '$lib/assets/loading_texture.webp';
 	import { fade } from 'svelte/transition';
 	import Button from '$components/Button.svelte';
-	import { Gift, SignOut } from 'phosphor-svelte';
+	import { Code, Gift, SignOut } from 'phosphor-svelte';
 	import { hexToRgba } from '$lib/API/Helpers';
 	import { Logout } from '$lib/API/Auth';
 	import Role from './Role.svelte';
@@ -97,6 +97,13 @@
 					<Gift weight={active ? 'fill' : 'regular'} />
 				{/snippet}
 				Redeem
+			</Button>
+
+			<Button variant="transparent" onclick={() => changePage('/developers/docs')}>
+				{#snippet icon({ active })}
+					<Code weight={active ? 'fill' : 'regular'} />
+				{/snippet}
+				Developer Portal
 			</Button>
 
             <hr />

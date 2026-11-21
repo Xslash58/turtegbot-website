@@ -3,7 +3,7 @@
 	import { hexToRgba } from '$lib/API/Helpers';
 	import type { User } from '$lib/API/Models/Users';
 	import { fade } from 'svelte/transition';
-	import { Gift, Hash, House, Rewind, SignOut, Wrench } from 'phosphor-svelte';
+	import { Code, Gift, Hash, House, Rewind, SignOut, Wrench } from 'phosphor-svelte';
 	import { hasAnyInNamespace } from '$lib/stores/permissions';
 	import { Logout } from '$lib/API/Auth';
 	import Button from './Button.svelte';
@@ -74,6 +74,12 @@
 				Recap 2025
 			</Button>
 		{/if}
+		<Button onclick={() => changePage('/developers/docs')} variant="dark">
+			{#snippet icon()}
+				<Code weight="bold" />
+			{/snippet}
+			Developer Portal
+		</Button>
 		{#if $hasAnyInNamespace('moderation') || $hasAnyInNamespace('admin')}
 			<Button
 				onclick={() => changePage('/admin')}
@@ -145,14 +151,6 @@
 					font-weight: 600;
 					font-size: large;
 					color: white;
-
-					&.role {
-						font-size: small;
-						padding: 2px 5px;
-						border-radius: 5px;
-						color: white;
-						background-color: var(--role-color);
-					}
 				}
 				img {
 					width: 40px;
