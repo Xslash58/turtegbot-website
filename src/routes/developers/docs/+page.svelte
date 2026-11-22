@@ -30,7 +30,7 @@
   <title>API Documentation | TurtegBot</title>
 </svelte:head>
 
-<section class="scalar-wrapper" bind:this={container}></section>
+<div class="scalar-wrapper" bind:this={container}></div>
 
 <style>
   .scalar-wrapper {
