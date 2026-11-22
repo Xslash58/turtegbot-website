@@ -6,7 +6,7 @@
 		active?: boolean;
 		disabled?: boolean;
 		center?: boolean;
-		variant?: 'normal' | 'dark' | 'danger' | 'warning' | 'transparent';
+		variant?: 'normal' | 'dark' | 'danger' | 'warning' | 'transparent' | 'menu';
 		onclick?: (e: MouseEvent) => void;
 		icon?: Snippet<[{ active: boolean }]>;
 		children?: Snippet;
@@ -218,6 +218,29 @@
 	.btn-transparent {
 		background-color: transparent;
 		border-color: transparent;
+		color: inherit;
+
+		&:not(.disabled, :disabled) {
+			@media (hover: hover) and (pointer: fine) {
+				&:hover {
+					background-color: rgba(255, 255, 255, 0.08);
+				}
+			}
+
+			&.active {
+				background-color: rgba(255, 255, 255, 0.14);
+			}
+			&:active {
+				background-color: rgba(255, 255, 255, 0.22);
+			}
+		}
+	}
+	
+	/* --- Menu (for dropdowns) --- */
+	.btn-menu {
+		background-color: #151515;
+		border-color: transparent;
+		border-radius: 0;
 		color: inherit;
 
 		&:not(.disabled, :disabled) {

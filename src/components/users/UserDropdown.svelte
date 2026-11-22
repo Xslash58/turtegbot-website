@@ -12,7 +12,9 @@
 	import Role from './Role.svelte';
 
 	let dropdownVisible: boolean = $state(false);
-	let dropdownTimeout: number | null = $state(null);
+	let dropdownTimeout: ReturnType<typeof setTimeout> | null = $state(null);
+
+	const buttonType = 'menu';
 
 	let {
 		user = $bindable<User | null>(null),
@@ -91,17 +93,17 @@
 				</section>
 				<hr />
 			{/if}
-			
-            <Button variant="transparent" onclick={() => changePage('/store/redeem')}>
+
+			<Button variant={buttonType} onclick={() => changePage('/store/redeem')}>
 				{#snippet icon({ active })}
 					<Gift weight={active ? 'fill' : 'regular'} />
 				{/snippet}
 				Redeem
 			</Button>
 
-            <hr />
+			<hr />
 
-			<Button variant="transparent" onclick={handleLogout}>
+			<Button variant={buttonType} onclick={handleLogout}>
 				{#snippet icon({ active })}
 					<SignOut weight={active ? 'fill' : 'regular'} />
 				{/snippet}
@@ -113,14 +115,19 @@
 
 <style lang="scss">
 	hr {
-		background-color: #303030; height: 1px; border: 0;
-        margin: 0;
+		background-color: #303030;
+		height: 1px;
+		border: 0;
+		margin: 0;
 	}
+
 	section.profile {
 		position: relative;
 		display: flex;
 		align-items: center;
 		border-radius: 10px;
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
 
 		&:hover {
 			background-color: #b9b9b92f;
@@ -167,15 +174,19 @@
 			width: 200px;
 			background-color: #101010;
 			border-radius: 10px;
+			border-top-left-radius: 0;
+			border-top-right-radius: 0;
 			margin-top: 5px;
 			box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 			z-index: 1000;
+			overflow: hidden;
 
 			:global(.btn) {
 				width: 100%;
 			}
 
 			section.profile {
+				border-radius: 0;
 				button {
 					width: 100%;
 					display: flex;
@@ -186,6 +197,7 @@
 
 					padding: 5px 10px;
 					margin: 2px 5px;
+					border-radius: 0;
 					border-radius: 10px;
 				}
 				p {
