@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { ArrowSquareOut } from 'phosphor-svelte';
 	import type { Snippet } from 'svelte';
 
 	interface Props {
@@ -6,7 +7,8 @@
 		active?: boolean;
 		disabled?: boolean;
 		center?: boolean;
-		variant?: 'normal' | 'dark' | 'danger' | 'warning' | 'transparent';
+		external?: boolean;
+		variant?: 'normal' | 'dark' | 'danger' | 'warning' | 'transparent' | 'menu';
 		onclick?: (e: MouseEvent) => void;
 		icon?: Snippet<[{ active: boolean }]>;
 		children?: Snippet;
@@ -19,6 +21,7 @@
 		active = false,
 		disabled = false,
 		center = false,
+		external = false,
 		variant = 'normal',
 		onclick,
 		icon,
@@ -53,6 +56,11 @@
 		{#if children}
 			<span class="label">{@render children()}</span>
 		{/if}
+		{#if external}
+			<span class="icon">
+				<ArrowSquareOut />
+			</span>
+		{/if}
 	</a>
 {:else if href && disabled}
 	<a
@@ -69,6 +77,11 @@
 		{/if}
 		{#if children}
 			<span class="label">{@render children()}</span>
+		{/if}
+		{#if external}
+			<span class="icon">
+				<ArrowSquareOut />
+			</span>
 		{/if}
 	</a>
 {:else}
@@ -87,6 +100,11 @@
 		{/if}
 		{#if children}
 			<span class="label">{@render children()}</span>
+		{/if}
+		{#if external}
+			<span class="icon">
+				<ArrowSquareOut />
+			</span>
 		{/if}
 	</button>
 {/if}
@@ -218,6 +236,29 @@
 	.btn-transparent {
 		background-color: transparent;
 		border-color: transparent;
+		color: inherit;
+
+		&:not(.disabled, :disabled) {
+			@media (hover: hover) and (pointer: fine) {
+				&:hover {
+					background-color: rgba(255, 255, 255, 0.08);
+				}
+			}
+
+			&.active {
+				background-color: rgba(255, 255, 255, 0.14);
+			}
+			&:active {
+				background-color: rgba(255, 255, 255, 0.22);
+			}
+		}
+	}
+
+	/* --- Menu (for dropdowns) --- */
+	.btn-menu {
+		background-color: #151515;
+		border-color: transparent;
+		border-radius: 0;
 		color: inherit;
 
 		&:not(.disabled, :disabled) {
