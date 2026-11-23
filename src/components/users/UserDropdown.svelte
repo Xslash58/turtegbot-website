@@ -119,12 +119,13 @@
 				<hr />
 			{/if}
 
-      <Button variant="transparent" onclick={() => changePage('/developers/docs')}>
+			<Button variant={buttonType} onclick={() => changePage('/developers/docs')} active={page.url.pathname === getPagePath('/developers/docs')}>
 				{#snippet icon({ active })}
-					<Code weight={active ? 'fill' : 'regular'} />
+					<Code weight={active ? 'bold' : 'regular'} />
 				{/snippet}
 				Developer Portal
 			</Button>
+
 			<Button
 				variant={buttonType}
 				onclick={() => openExternalLink('https://github.com/Xslash58/turtegbot-website')}
@@ -135,6 +136,7 @@
 				{/snippet}
 				Github
 			</Button>
+			
 			<Button
 				variant={buttonType}
 				onclick={() => openExternalLink('https://crowdin.com/project/turtegbot')}
