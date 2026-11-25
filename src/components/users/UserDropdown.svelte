@@ -6,7 +6,7 @@
 	import loadingTexture from '$lib/assets/loading_texture.webp';
 	import { fade } from 'svelte/transition';
 	import Button from '$components/Button.svelte';
-	import { Gavel, Gift, LockKey, SignOut } from 'phosphor-svelte';
+	import { Code, Gavel, Gift, LockKey, SignOut } from 'phosphor-svelte';
 	import { hexToRgba } from '$lib/API/Helpers';
 	import { Logout } from '$lib/API/Auth';
 	import Role from './Role.svelte';
@@ -119,6 +119,13 @@
 				<hr />
 			{/if}
 
+			<Button variant={buttonType} onclick={() => changePage('/developers/docs')} active={page.url.pathname === getPagePath('/developers/docs')}>
+				{#snippet icon({ active })}
+					<Code weight={active ? 'bold' : 'regular'} />
+				{/snippet}
+				Developer Portal
+			</Button>
+
 			<Button
 				variant={buttonType}
 				onclick={() => openExternalLink('https://github.com/Xslash58/turtegbot-website')}
@@ -129,6 +136,7 @@
 				{/snippet}
 				Github
 			</Button>
+			
 			<Button
 				variant={buttonType}
 				onclick={() => openExternalLink('https://crowdin.com/project/turtegbot')}
