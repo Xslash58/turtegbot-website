@@ -52,7 +52,7 @@
 			wsConnectionAttempts = 0;
 			wsState = WebSocket.OPEN;
 
-			for (const [_, roomId] of Object.entries(currentUser.roomIds)) {
+			for (const roomId of Object.values(currentUser.roomIds)) {
 				ws?.send(JSON.stringify({ action: 'subscribe', room: `room:${roomId}` }));
 			}
 
@@ -188,11 +188,6 @@
 		overlayHideTimeout = setTimeout(() => {
 			isOverlayRequested = false;
 		}, 5000);
-	}
-
-	function enableDebugTools() {
-		isDebugToolsEnabled = true;
-		return 'Debug Tools Enabled.';
 	}
 </script>
 

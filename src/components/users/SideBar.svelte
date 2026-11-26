@@ -56,7 +56,7 @@
 			<h1>{user?.display_name}</h1>
 			<section class="roles">
 				{#if user?.roles && user.roles.length > 0}
-					{#each user?.roles as role}
+					{#each user?.roles as role, i (i)}
 						<Role {role} />
 					{/each}
 				{/if}
@@ -174,7 +174,7 @@
 				Connections
 			</Button>
 			{#if $can('admin.users.view')}
-				<hr>
+				<hr />
 				<Button variant={buttonVariant} href={`/admin/users/${user?.id}`} class="side-button">
 					{#snippet icon({ active })}
 						<Wrench weight={active ? 'fill' : 'regular'} />

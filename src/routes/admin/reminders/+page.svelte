@@ -1,15 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { ListMagnifyingGlass } from 'phosphor-svelte';
-	import type { Reminder, User } from '$lib/API/Models/Users';
+	import type { Reminder } from '$lib/API/Models/Users';
 	import { DeleteReminder, GetReminders, PatchReminder } from '$lib/API/Admin';
 	import { confirmationDialog } from '$lib/stores/modalStore';
 	import UserSearch from '$components/users/UserSearch.svelte';
-	import { myUser } from '$lib/stores/userStore';
 	import SearchBar from '$components/SearchBar.svelte';
 	import ReminderCard from '$components/users/ReminderCard.svelte';
-
-	let me: User | null = $myUser;
 
 	let isLoaded: boolean = $state(false);
 	let reminders: Reminder[] = $state([]);
@@ -32,7 +29,7 @@
 
 	async function deleteReminder(id: number, force: boolean = false) {
 		if (!force) {
-			confirmationDialog.set({
+			return confirmationDialog.set({
 				visible: true,
 				text: `Are you sure you want to delete this reminder?
                 Consider marking it as viewed instead.
@@ -41,7 +38,6 @@
 					await deleteReminder(id, true);
 				}
 			});
-			return;
 		}
 
 		const success = await DeleteReminder(id);
@@ -74,7 +70,7 @@
 		</button>
 	</section>
 	{#if isLoaded}
-		{#each reminders as reminder}
+		{#each reminders as reminder, i (i)}
 			<ReminderCard
 				data={reminder}
 				adminMode={true}

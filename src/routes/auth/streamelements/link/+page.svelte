@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { page } from '$app/state';
+	import { page } from '$app/state';
 	import { ExchangeStreamElementsCode } from '$lib/API/Auth';
 	import { onMount } from 'svelte';
 	import type { User } from '$lib/API/Models/Users';
@@ -7,73 +7,76 @@
 	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import { Check, X } from 'phosphor-svelte';
 
-    let success: boolean = false;
-    let error: string = "";
-    let user: User | null = null;
+	let success: boolean = false;
+	let error: string = '';
+	let user: User | null = null;
 
-    onMount(async () => {
-        console.log('StreamElements Auth Page Mounted');
-        const query = page.url.searchParams;
-        const code = query.get('code');
-        const state = query.get('state');
+	onMount(async () => {
+		console.log('StreamElements Auth Page Mounted');
+		const query = page.url.searchParams;
+		const code = query.get('code');
+		const state = query.get('state');
 
-        user = await GetMe();
+		user = await GetMe();
 
-        if(!user) {
-            console.error("User is not logged in");
-            error = "User not logged in";
-            return;
-        }
+		if (!state) {
+			console.error('No state');
+			return (error = 'No state provided');
+		}
 
-        if(code == null) {
-            console.error("Missing code or state in query parameters");
+		if (!user) {
+			console.error('User is not logged in');
+			return (error = 'User not logged in');
+		}
 
-            location.href = import.meta.env.VITE_AUTH_STREAMELEMENTS_URL;
+		if (code == null) {
+			console.error('Missing code or state in query parameters');
 
-            return;
-        }
+			location.href = import.meta.env.VITE_AUTH_STREAMELEMENTS_URL;
 
-        try {
-            success = await ExchangeStreamElementsCode(code, state);
-        } catch (err) {
-            console.error('Error linking StreamElements account:', err);
-            error = err instanceof Error ? err.message : String(err).replace("Error: ", "");
-            return;
-        }
+			return;
+		}
 
-        if(success)
-            location.href = `/users/${user?.id}/connections`;
-    });
+		try {
+			success = await ExchangeStreamElementsCode(code, state);
+		} catch (err) {
+			console.error('Error linking StreamElements account:', err);
+			error = err instanceof Error ? err.message : String(err).replace('Error: ', '');
+			return;
+		}
+
+		if (success) location.href = `/users/${user?.id}/connections`;
+	});
 </script>
 
 <section class="loading">
-    {#if error}
-        <p>{error}</p>
-        <X size="40px" weight="bold" color="white" />
-    {:else if !error && !success}
-        <p>Linking...</p>
-        <LoadingIndicator />
-    {:else}
-        <p>Link Successful!</p>
-        <p>You should be redirected soon.</p>
-        <Check size="40px" weight="bold" color="white" />
-    {/if}
+	{#if error}
+		<p>{error}</p>
+		<X size="40px" weight="bold" color="white" />
+	{:else if !error && !success}
+		<p>Linking...</p>
+		<LoadingIndicator />
+	{:else}
+		<p>Link Successful!</p>
+		<p>You should be redirected soon.</p>
+		<Check size="40px" weight="bold" color="white" />
+	{/if}
 </section>
 
 <style lang="scss">
-    section.loading {
-        flex-grow: 1;
+	section.loading {
+		flex-grow: 1;
 
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.25rem;
-        font-weight: bold;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		font-size: 1.25rem;
+		font-weight: bold;
 
-        p {
-            text-align: center;
-            margin: 0 0 0.5rem 0;
-        }
-    }
+		p {
+			text-align: center;
+			margin: 0 0 0.5rem 0;
+		}
+	}
 </style>

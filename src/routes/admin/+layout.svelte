@@ -6,14 +6,12 @@
 	import { error } from '@sveltejs/kit';
 	import { hasAnyInNamespace } from '$lib/stores/permissions.js';
 
-	let { data, children } = $props();
+	let { children } = $props();
 
 	let me: User | null = $state(null);
 
 	myUser.subscribe((value) => {
-		if (value) {
-			me = value;
-		}
+		if (value) me = value;
 
 		if (!me || (!$hasAnyInNamespace('moderation') && !$hasAnyInNamespace('admin'))) {
 			console.log('Access denied: insufficient permissions');
@@ -27,11 +25,11 @@
 </script>
 
 <svelte:head>
-    <title>Admin | TurtegBot</title>
+	<title>Admin | TurtegBot</title>
 </svelte:head>
 
 <section class="user-layout">
-	<SideBar {me} />
+	<SideBar />
 	<section class="user-content">
 		{@render children?.()}
 	</section>

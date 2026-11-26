@@ -7,12 +7,11 @@
 	import {
 		GetMediaHistory,
 		GetMediaQueue,
-		GetMediaSettings,
 		RequestBackupMedia,
 		RequestHistoryMedia,
 		SkipMedia
 	} from '$lib/API/Media';
-	import type { MediaRequest, MediaSettings } from '$lib/API/Models/Media';
+	import type { MediaRequest } from '$lib/API/Models/Media';
 	import { feedbackDialog } from '$lib/stores/modalStore';
 	import { profileUser } from '$lib/stores/userStore';
 	import {
@@ -32,7 +31,6 @@
 	let playerRef: YoutubePlayer | null = $state(null);
 	let playerCustomLoadMessage: string | null = $state(null);
 
-	let mediaSettings: MediaSettings | null = $state(null);
 	let songQueue: MediaRequest[] = $state([]);
 	let songHistory: MediaRequest[] = $state([]);
 	let currentSong: MediaRequest | null = $state(null);
@@ -76,7 +74,7 @@
 			wsConnectionAttempts = 0;
 			wsState = WebSocket.OPEN;
 
-			for (const [_, roomId] of Object.entries(user.roomIds)) {
+			for (const roomId of Object.values(user.roomIds)) {
 				ws.send(JSON.stringify({ action: 'subscribe', room: `room:${roomId}` }));
 			}
 
@@ -86,7 +84,7 @@
 			await loadMediaQueue();
 
 			// If player loaded first then start the queue here.
-			if (isPlayerReady && (currentSong === null)) {
+			if (isPlayerReady && currentSong === null) {
 				endSong();
 			}
 
@@ -132,18 +130,14 @@
 			setTimeout(webSocketReconnect, 5000);
 		};
 
-		if (window) {
-			pingInterval = window.setInterval(webSocketPing, 30000);
-		}
+		pingInterval = setInterval(webSocketPing, 30000);
 
-		mediaSettings = await GetMediaSettings(user.roomIds[Object.keys(user.roomIds)[0]]);
 		await loadHistoryPage(historyPage);
 	});
 
 	onDestroy(() => {
-		if (pingInterval) {
-			window.clearInterval(pingInterval);
-		}
+		if (pingInterval) clearInterval(pingInterval);
+
 		if (ws) {
 			ws.onclose = null;
 			ws.close();
@@ -251,7 +245,7 @@
 			}
 		} else {
 			isSongMissing = true;
-			if(user != null && user.roomIds != null && Object.keys(user.roomIds).length > 0) {
+			if (user != null && user.roomIds != null && Object.keys(user.roomIds).length > 0) {
 				await RequestBackupMedia(user.roomIds[Object.keys(user.roomIds)[0]]);
 			}
 		}
@@ -268,17 +262,12 @@
 
 		isHistoryLoading = true;
 		let tempHistory: MediaRequest[] = [];
-		for (const [_, roomId] of Object.entries(user.roomIds)) {
+		for (const roomId of Object.values(user.roomIds)) {
 			const fetchedHistory = await GetMediaHistory(roomId, page);
-			if (fetchedHistory) {
-				tempHistory = [...tempHistory, ...fetchedHistory];
-			}
+			if (fetchedHistory) tempHistory = [...tempHistory, ...fetchedHistory];
 		}
 
-		if (tempHistory.length === 0 && page > 0) {
-			isHistoryLoading = false;
-			return;
-		}
+		if (tempHistory.length === 0 && page > 0) return (isHistoryLoading = false);
 
 		songHistory = tempHistory;
 		historyPage = page;
@@ -291,20 +280,16 @@
 		playerCustomLoadMessage = 'Loading media queue...';
 		songQueue = [];
 
-		for (const [_, roomId] of Object.entries(user.roomIds)) {
+		for (const roomId of Object.values(user.roomIds)) {
 			const fetchedQueue = await GetMediaQueue(roomId);
-			if (fetchedQueue) {
-				songQueue = [...songQueue, ...fetchedQueue];
-			}
+			if (fetchedQueue) songQueue = [...songQueue, ...fetchedQueue];
 		}
 
 		isQueueLoaded = true;
 		playerCustomLoadMessage = null;
 	}
 
-	async function deleteSong(media: MediaRequest) {
-		await SkipMedia(media.room_id, media.id);
-	}
+	const deleteSong = async (media: MediaRequest) => await SkipMedia(media.room_id, media.id);
 
 	function clearLegacyData() {
 		if (window.localStorage) {
@@ -317,13 +302,13 @@
 
 <section class="media-requests">
 	<section class="player">
-			<YoutubePlayer
-				bind:this={playerRef}
-				bind:customLoadingMessage={playerCustomLoadMessage}
-				onPlayerReady={handlePlayerReady}
-				onSongEnded={handleSongEnded}
-				onSongError={handleSongError}
-			/>
+		<YoutubePlayer
+			bind:this={playerRef}
+			bind:customLoadingMessage={playerCustomLoadMessage}
+			onPlayerReady={handlePlayerReady}
+			onSongEnded={handleSongEnded}
+			onSongError={handleSongError}
+		/>
 		<section class="current-metadata">
 			{#if currentSong}
 				<p>
@@ -372,7 +357,7 @@
 	<section class="queue">
 		{#if currentCategory === 0}
 			{#if !isSongMissing}
-				{#each songQueue as songData}
+				{#each songQueue as songData, i (i)}
 					<section class="request">
 						<img src={songData.thumbnail_url} alt="" />
 						<section class="metadata">
@@ -412,7 +397,7 @@
 					<CaretRight size={24} />
 				</button>
 			</nav>
-			{#each songHistory as songData}
+			{#each songHistory as songData, i (i)}
 				<section class="request">
 					<img src={songData.thumbnail_url} alt="" />
 					<section class="metadata">

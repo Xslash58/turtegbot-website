@@ -57,10 +57,9 @@
 		category = -1;
 		if (!suser) {
 			viewUser = null;
-			
-			if(user)
-				getRecaps(user);
-			
+
+			if (user) getRecaps(user);
+
 			return;
 		}
 		let userPage = await GetUserPage(suser.ID + '');
@@ -85,12 +84,18 @@
 		{#if user && !viewUser}
 			<h2>Welcome back, <span style="color:{user?.role.color}">{user?.display_name}</span></h2>
 		{:else if viewUser}
-			<h2 style="color: #6b6b6b">Viewing Recap for <span style="color:{viewUser?.role.color}">{viewUser?.display_name}</span></h2>
+			<h2 style="color: #6b6b6b">
+				Viewing Recap for <span style="color:{viewUser?.role.color}">{viewUser?.display_name}</span>
+			</h2>
 		{/if}
 		<h1>TurtegBot Recap 2025</h1>
 		<p>Let's dive into your year with TurtegBot</p>
 	</section>
-	<UserSearch onSelect={(u) => {getRecapsBySearch(u)}} />
+	<UserSearch
+		onSelect={(u) => {
+			getRecapsBySearch(u);
+		}}
+	/>
 	<section class="categories">
 		<button
 			on:click={() => (category = 0)}
@@ -149,7 +154,7 @@
 			<section class="users-spotlight">
 				<h2>Top Users</h2>
 				<section class="users-list">
-					{#each roomRecap?.top_users as user}
+					{#each roomRecap?.top_users as user, i (i)}
 						<section class="user">
 							<p>{user.username}</p>
 							<p class="bottom">Uses: {user.uses}</p>
@@ -171,7 +176,7 @@
 
 			<section class="tier-commands">
 				<h2>Most Used Commands:</h2>
-				{#each roomRecap?.top_commands as cmd}
+				{#each roomRecap?.top_commands as cmd, i (i)}
 					<section class="command">
 						<p>{cmd.command}</p>
 						<p>{cmd.uses}</p>
@@ -237,7 +242,7 @@
 					<p>Here's how the usage was distributed throughout the year.</p>
 
 					<svg viewBox="0 0 600 300" style="width:100%;max-width:800px;height:auto;">
-						{#each Array(9) as _, monthIndex}
+						{#each { length: 9 }, monthIndex (monthIndex)}
 							{@const monthNames = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']}
 							{@const key = String(monthIndex + 4).padStart(2, '0')}
 							{@const value = roomRecap?.monthly_usage?.[key] ?? 0}
@@ -303,7 +308,7 @@
 
 			<section class="tier-commands">
 				<h2>Your most used commands:</h2>
-				{#each userRecap.top_commands as command}
+				{#each userRecap.top_commands as command, i (i)}
 					<section class="command">
 						<p>{command.name}</p>
 						<p>{command.count}</p>
@@ -394,7 +399,7 @@
 					<p>Here's how your usage was distributed throughout the year.</p>
 
 					<svg viewBox="0 0 600 300" style="width:100%;max-width:800px;height:auto;">
-						{#each Array(9) as _, monthIndex}
+						{#each { length: 9 }, monthIndex (monthIndex)}
 							{@const monthNames = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']}
 							{@const key = String(monthIndex + 4).padStart(2, '0')}
 							{@const value = userRecap?.monthly_command_usage?.[key] ?? 0}
@@ -646,7 +651,7 @@
 					<p>Here's the usage distributed throughout the year.</p>
 
 					<svg viewBox="0 0 600 300" style="width: 100%; max-width: 800px; height: auto;">
-						{#each [1, 2, 3, 4, 5, 6, 7, 8, 9] as month}
+						{#each [1, 2, 3, 4, 5, 6, 7, 8, 9] as month (month)}
 							{@const monthNames = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']}
 							{@const data = [13748, 24941, 29994, 30420, 37780, 25257, 26579, 23862, 20586]}
 							{@const value = data[month - 1]}
@@ -673,7 +678,7 @@
 				</section>
 			</section>
 		</section>
-		
+
 		<p>Generated: ±2025-12-29T21:50:00</p>
 	{/if}
 </section>

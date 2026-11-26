@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { GetCommands } from '$lib/API/Bot';
-	import type { User } from '$lib/API/Models/Users';
-	import { myUser } from '$lib/stores/userStore';
 	import { onMount } from 'svelte';
 	import {
 		DankFixEmote,
@@ -29,12 +27,6 @@
 	let error = $state('');
 
 	let currentHash = $page.url.hash;
-
-	let me: User | null = $state(null);
-
-	myUser.subscribe((value) => {
-		if (value) me = value;
-	});
 
 	const categoryMeta: Record<
 		string,
@@ -212,7 +204,7 @@
 				<span class="cat-count">{totalCount}</span>
 			</button>
 
-			{#each commandCategories as category}
+			{#each commandCategories as category, i (i)}
 				{@const icon = getIcon(category.name)}
 				<button
 					class="cat-btn"
@@ -223,10 +215,9 @@
 					}}
 				>
 					<span class="cat-icon">
-						{#if icon?.type === 'emoji'}{icon.value}{:else if icon?.type === 'img'}<img
-								src={icon.value}
-								alt=""
-							/>{/if}
+						{#if icon?.type === 'emoji'}
+							{icon.value}
+						{:else if icon?.type === 'img'}<img src={icon.value} alt="" />{/if}
 					</span>
 					<span class="cat-label">{category.name}</span>
 					<span class="cat-count">{category.commands.length}</span>
@@ -273,7 +264,7 @@
 				</div>
 
 				{#if selectedCategory === 'All Commands' && !search}
-					{#each commandCategories as category, i}
+					{#each commandCategories as category, i (i)}
 						{@const icon = getIcon(category.name)}
 						<div class="category-section" style="--i: {i}">
 							<div class="category-heading">
@@ -287,7 +278,7 @@
 								<span class="category-heading-count">{category.commands.length}</span>
 							</div>
 							<div class="commands-grid">
-								{#each category.commands as command, j}
+								{#each category.commands as command, j (j)}
 									<button
 										class="command"
 										style="--j: {j}"
@@ -315,7 +306,7 @@
 					</div>
 				{:else}
 					<div class="commands-grid">
-						{#each filteredCommands as any[] as command, j}
+						{#each filteredCommands as any[] as command, j (j)}
 							<button
 								class="command"
 								style="--j: {j}"

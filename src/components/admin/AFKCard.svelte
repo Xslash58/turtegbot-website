@@ -50,7 +50,7 @@
 		onEditSave?: (id: number, newData: AFK) => void;
 	} = $props();
 
-	let TypeIcon = $state(typeIcons[data.type as AFKType]);
+	let TypeIcon = $derived(typeIcons[data.type as AFKType]);
 	let newData: AFK | null = $state(null);
 
 	$effect(() => {
@@ -133,7 +133,7 @@
 		<section class="type">
 			{#if isEditing && newData}
 				<select bind:value={newData.type}>
-					{#each Object.entries(AFKType) as [key, value]}
+					{#each Object.entries(AFKType) as [key, value] (key)}
 						{#if !isNaN(Number(value))}
 							<option {value} selected={value === data.type}>
 								{key}

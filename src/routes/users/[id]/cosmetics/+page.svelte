@@ -6,7 +6,7 @@
 	import { profileUser } from '$lib/stores/userStore';
 	import { page } from '$app/state';
 	import { feedbackDialog } from '$lib/stores/modalStore';
-    import tBadgeNone from '$lib/assets/tbadgenone.png';
+	import tBadgeNone from '$lib/assets/tbadgenone.png';
 
 	let selectedBadgeId: string | null = $state(null);
 	let badges: FFZBadge[] | null = $state(null);
@@ -15,8 +15,7 @@
 	let userPageId: string | null = page.params.id || null;
 
 	onMount(async () => {
-		if(userPageId)
-			badges = await GetUserBadges(userPageId);
+		if (userPageId) badges = await GetUserBadges(userPageId);
 		if (user && badges) {
 			let selBadge = badges.find((b) => b.users.includes(user.twitchId));
 			if (selBadge) selectedBadgeId = selBadge.id.toString();
@@ -35,11 +34,13 @@
 			return;
 		}
 		selectedBadgeId = badgeId;
-        feedbackDialog.set({
-            visible: true,
-            title: 'Success',
-            content: badgeId ? 'Badge equipped successfully! It may take a while for the change to be reflected.' : 'Badge removed successfully! It may take a while for the change to be reflected.'
-        });
+		feedbackDialog.set({
+			visible: true,
+			title: 'Success',
+			content: badgeId
+				? 'Badge equipped successfully! It may take a while for the change to be reflected.'
+				: 'Badge removed successfully! It may take a while for the change to be reflected.'
+		});
 	}
 </script>
 
@@ -56,7 +57,7 @@
 			<p>None</p>
 		</button>
 		{#if user}
-			{#each badges as badge}
+			{#each badges ?? [] as badge, i (i)}
 				<button
 					class="badge"
 					class:selected={selectedBadgeId === badge.id.toString()}
@@ -84,7 +85,7 @@
 		.badges {
 			display: flex;
 			flex-direction: row;
-            flex-wrap: wrap;
+			flex-wrap: wrap;
 			gap: 10px;
 
 			.badge {

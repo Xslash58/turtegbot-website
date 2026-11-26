@@ -1,9 +1,7 @@
 <script lang="ts">
-	import AlertBar from '$components/AlertBar.svelte';
 	import Button from '$components/Button.svelte';
 	import EntitlementDialog from '$components/entitlements/EntitlementDialog.svelte';
 	import LoadingIndicator from '$components/LoadingIndicator.svelte';
-	import MobileNav from '$components/MobileNav.svelte';
 	import Radio from '$components/Radio.svelte';
 	import SearchBar from '$components/SearchBar.svelte';
 	import Select from '$components/Select.svelte';
@@ -18,8 +16,8 @@
 	let selectedOption = $state('');
 	let selectedRadio = $state('2');
 	let selectedUser: SearchUser | null = $state(null);
-    let entitilementDialog: EntitlementDialog | null = $state(null);
-    let confirmationDialogAccepted: boolean = $state(false);
+	let entitilementDialog: EntitlementDialog | null = $state(null);
+	let confirmationDialogAccepted: boolean = $state(false);
 </script>
 
 {#if selectedUser}
@@ -53,7 +51,7 @@
 			Active Button
 		</Button>
 	</section>
-	
+
 	<!-- Buttons Dark -->
 	<section class="panel">
 		<h1>Buttons (Dark)</h1>
@@ -71,13 +69,21 @@
 			Icon Button
 		</Button>
 
-		<Button variant="dark" active={isButtonActive} onclick={() => (isButtonActive = !isButtonActive)}>
+		<Button
+			variant="dark"
+			active={isButtonActive}
+			onclick={() => (isButtonActive = !isButtonActive)}
+		>
 			{#snippet icon({ active })}
 				<User weight={active ? 'fill' : 'regular'} />
 			{/snippet}
 			Active Button Icon
 		</Button>
-		<Button variant="dark" active={isButtonActive} onclick={() => (isButtonActive = !isButtonActive)}>
+		<Button
+			variant="dark"
+			active={isButtonActive}
+			onclick={() => (isButtonActive = !isButtonActive)}
+		>
 			Active Button
 		</Button>
 	</section>
@@ -99,13 +105,21 @@
 			Icon Button
 		</Button>
 
-		<Button variant="danger" active={isButtonActive} onclick={() => (isButtonActive = !isButtonActive)}>
+		<Button
+			variant="danger"
+			active={isButtonActive}
+			onclick={() => (isButtonActive = !isButtonActive)}
+		>
 			{#snippet icon({ active })}
 				<User weight={active ? 'fill' : 'regular'} />
 			{/snippet}
 			Active Button Icon
 		</Button>
-		<Button variant="danger" active={isButtonActive} onclick={() => (isButtonActive = !isButtonActive)}>
+		<Button
+			variant="danger"
+			active={isButtonActive}
+			onclick={() => (isButtonActive = !isButtonActive)}
+		>
 			Active Button
 		</Button>
 	</section>
@@ -127,13 +141,21 @@
 			Icon Button
 		</Button>
 
-		<Button variant="warning" active={isButtonActive} onclick={() => (isButtonActive = !isButtonActive)}>
+		<Button
+			variant="warning"
+			active={isButtonActive}
+			onclick={() => (isButtonActive = !isButtonActive)}
+		>
 			{#snippet icon({ active })}
 				<User weight={active ? 'fill' : 'regular'} />
 			{/snippet}
 			Active Button Icon
 		</Button>
-		<Button variant="warning" active={isButtonActive} onclick={() => (isButtonActive = !isButtonActive)}>
+		<Button
+			variant="warning"
+			active={isButtonActive}
+			onclick={() => (isButtonActive = !isButtonActive)}
+		>
 			Active Button
 		</Button>
 	</section>
@@ -155,13 +177,21 @@
 			Icon Button
 		</Button>
 
-		<Button variant="transparent" active={isButtonActive} onclick={() => (isButtonActive = !isButtonActive)}>
+		<Button
+			variant="transparent"
+			active={isButtonActive}
+			onclick={() => (isButtonActive = !isButtonActive)}
+		>
 			{#snippet icon({ active })}
 				<User weight={active ? 'fill' : 'regular'} />
 			{/snippet}
 			Active Button Icon
 		</Button>
-		<Button variant="transparent" active={isButtonActive} onclick={() => (isButtonActive = !isButtonActive)}>
+		<Button
+			variant="transparent"
+			active={isButtonActive}
+			onclick={() => (isButtonActive = !isButtonActive)}
+		>
 			Active Button
 		</Button>
 	</section>
@@ -258,20 +288,56 @@
 
 	<section class="panel">
 		<h1>Dialogs</h1>
-            <p>Select a user to test the entitlement dialog:</p>
-            <UserSearch searchTerm="Xslash58" onSelect={(user) => {selectedUser = user}} selectionMode />
-		<Button onclick={() => {entitilementDialog?.toggleVisibility()}} disabled={!selectedUser}>Entitlement Dialog</Button>
-        <p>Confirmation dialog accepted: {confirmationDialogAccepted}</p>
-        <Button onclick={() => {confirmationDialog.set({text: 'Are you sure you want to example text?', visible: true, onConfirm: () => {confirmationDialogAccepted = true;}})}}>Confirmation Dialog</Button>
-        <Button onclick={() => {feedbackDialog.set({ title: 'Example Title', content: 'This is an example feedback message.', visible: true })}}>Feedback Dialog</Button>
-        <Button onclick={() => {loginModalVisible.set(true)}}>Login Dialog</Button>
+		<p>Select a user to test the entitlement dialog:</p>
+		<UserSearch
+			searchTerm="Xslash58"
+			onSelect={(user) => {
+				selectedUser = user;
+			}}
+			selectionMode
+		/>
+		<Button
+			onclick={() => {
+				entitilementDialog?.toggleVisibility();
+			}}
+			disabled={!selectedUser}>Entitlement Dialog</Button
+		>
+		<p>Confirmation dialog accepted: {confirmationDialogAccepted}</p>
+		<Button
+			onclick={() => {
+				confirmationDialog.set({
+					text: 'Are you sure you want to example text?',
+					visible: true,
+					onConfirm: () => {
+						confirmationDialogAccepted = true;
+					}
+				});
+			}}>Confirmation Dialog</Button
+		>
+		<Button
+			onclick={() => {
+				feedbackDialog.set({
+					title: 'Example Title',
+					content: 'This is an example feedback message.',
+					visible: true
+				});
+			}}>Feedback Dialog</Button
+		>
+		<Button
+			onclick={() => {
+				loginModalVisible.set(true);
+			}}>Login Dialog</Button
+		>
 	</section>
 
-    <section class="panel">
-        <h1>User Component</h1>
-        <UserComponent userId={1} username="Xslash58" />
-        <UserComponent userId={selectedUser?.ID || 0} username={selectedUser?.profile.display_name || 'Unknown'} />
-    </section>
+	<section class="panel">
+		<h1>User Component</h1>
+		<UserComponent userId={1} username="Xslash58" />
+		<UserComponent
+			userId={selectedUser?.ID || 0}
+			username={selectedUser?.profile.display_name || 'Unknown'}
+		/>
+	</section>
 </section>
 
 <style lang="scss">

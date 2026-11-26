@@ -10,15 +10,15 @@
 
 	let playerContainer: HTMLElement;
 	let player: any = $state(null);
-	let isApiReady: boolean = $state(false);
 	let isPlayerReady: boolean = $state(false);
-	let isPlaying: boolean = $state(false);
 	let volume: number = $state(50);
 
 	let {
 		currentSong = $bindable<Song | null>(null),
 		onPlayerReady = () => {},
 		onSongEnded = () => {},
+		// i think its used
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		onSongError = (errorCode: number) => {},
 		customLoadingMessage = $bindable<string | null>(null)
 	} = $props();
@@ -39,7 +39,6 @@
 	});
 
 	function initPlayer() {
-		isApiReady = true;
 		player = new window.YT.Player(playerContainer, {
 			height: '100%',
 			width: '100%',
@@ -69,12 +68,7 @@
 
 	function handleStateChange(event: any) {
 		if (event.data === window.YT.PlayerState.ENDED) {
-			isPlaying = false;
 			onSongEnded();
-		} else if (event.data === window.YT.PlayerState.PLAYING) {
-			isPlaying = true;
-		} else if (event.data === window.YT.PlayerState.PAUSED) {
-			isPlaying = false;
 		}
 	}
 
@@ -146,10 +140,10 @@
 <section class="player-wrapper">
 	<section class="player-container" bind:this={playerContainer}></section>
 	{#if !isPlayerReady || customLoadingMessage}
-	<section class="loading-overlay">
-		<LoadingIndicator />
-		<p>{!isPlayerReady ? 'Loading YouTube Player...' : customLoadingMessage}</p>
-	</section>
+		<section class="loading-overlay">
+			<LoadingIndicator />
+			<p>{!isPlayerReady ? 'Loading YouTube Player...' : customLoadingMessage}</p>
+		</section>
 	{/if}
 </section>
 

@@ -9,7 +9,7 @@
 	import Error from '../../../+error.svelte';
 
 	let success: boolean = false;
-	let error: string = "";
+	let error: string = '';
 	let user: User | null = null;
 
 	onMount(async () => {
@@ -23,7 +23,7 @@
 
 		if (!user) {
 			console.error('User is not logged in');
-			error = "User not logged in";
+			error = 'User not logged in';
 			return;
 		}
 
@@ -32,7 +32,7 @@
 			localStorage.setItem('turteg-kick-verifier', codeVerifier);
 
 			location.href = `${import.meta.env.VITE_LINK_KICK_URL}&state=test&code_challenge=${codeChallenge}`;
-            
+
 			return;
 		}
 
@@ -40,7 +40,7 @@
 			success = await LinkKickAccount(code, codeVerifier);
 		} catch (err) {
 			console.error('Error linking Kick account:', err);
-			error = err instanceof Error ? err.message : String(err).replace("Error: ", "");
+			error = err instanceof Error ? err.message : String(err).replace('Error: ', '');
 			return;
 		}
 
@@ -50,11 +50,15 @@
 
 <section class="loading">
 	{#if error}
-	<p>{error}</p>
-	{#if error.startsWith("Connection already linked")}
-		<p>Invoke "#unlink" command at <a href="https://kick.com/turtegbot" target="_blank">kick.com/turtegbot</a> with your kick account and try again.</p>
-	{/if}
-	<X size="40px" weight="bold" color="white" />
+		<p>{error}</p>
+		{#if error.startsWith('Connection already linked')}
+			<p>
+				Invoke "#unlink" command at <a href="https://kick.com/turtegbot" target="_blank"
+					>kick.com/turtegbot</a
+				> with your kick account and try again.
+			</p>
+		{/if}
+		<X size="40px" weight="bold" color="white" />
 	{:else if !error && !success}
 		<p>Linking...</p>
 		<LoadingIndicator />

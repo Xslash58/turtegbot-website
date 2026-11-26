@@ -2,17 +2,7 @@
 	import { page } from '$app/state';
 	import Button from '$components/Button.svelte';
 	import { can } from '$lib/stores/permissions';
-	import {
-		Coins,
-		Gift,
-		Graph,
-		House,
-		Moon,
-		Note,
-		Ticket,
-		Users,
-		Wrench
-	} from 'phosphor-svelte';
+	import { Coins, Gift, Graph, House, Moon, Note, Ticket, Users, Wrench } from 'phosphor-svelte';
 	import { onMount } from 'svelte';
 
 	const buttonVariant = 'transparent';
@@ -197,7 +187,7 @@
 				min-width: 120px;
 				padding: 5px 10px;
 				text-wrap: nowrap;
-	
+
 				display: flex;
 				justify-content: center;
 				align-items: center;

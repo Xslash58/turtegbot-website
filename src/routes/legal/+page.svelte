@@ -19,12 +19,12 @@
 </section>
 
 <style lang="scss">
-    .legal {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-        margin-top: 2rem;
-    }
+	.legal {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 5px;
+		margin-top: 2rem;
+	}
 </style>

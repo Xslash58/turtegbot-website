@@ -2,22 +2,15 @@
 	import { goto } from '$app/navigation';
 	import UserSearch from '$components/users/UserSearch.svelte';
 
-	let { data, children } = $props();
+	let { children } = $props();
 
-    let userSearch: UserSearch | null = $state(null);
-
-	function gotoUser(userId: number | undefined) {
-		if (userId) {
-			goto(`/admin/users/${userId}`);
-		} else {
-			goto(`/admin/users`);
-		}
-	}
+	const gotoUser = (userId: number | undefined) =>
+		userId ? goto(`/admin/users/${userId}`) : goto(`/admin/users`);
 </script>
 
 <section class="admin-users-layout">
 	<section class="settings">
-		<UserSearch onSelect={(user) => gotoUser(user?.ID)} selectionMode={true} bind:this={userSearch} />
+		<UserSearch onSelect={(user) => gotoUser(user?.ID)} selectionMode={true} />
 	</section>
 	<section class="admin-users-content">
 		{@render children?.()}

@@ -28,7 +28,7 @@
 
 <section class="reminders">
 	{#if isLoaded}
-		{#each reminders as reminder}
+		{#each reminders as reminder, i (i)}
 			<ReminderCard data={reminder} onDelete={(id: number) => deleteReminder(id)} />
 		{/each}
 	{:else}

@@ -8,7 +8,7 @@
 	import { myUser, profileUser } from '$lib/stores/userStore';
 	import { goto } from '$app/navigation';
 
-	let { data, children } = $props();
+	let { children } = $props();
 
 	let userPage: UserPage | null = $state(null);
 	let user: User | null = $state(null);
@@ -19,9 +19,8 @@
 	let prevUserId: string | undefined;
 
 	myUser.subscribe((value) => {
-		if (value) {
-			me = value;
-		}
+		if (value) me = value;
+
 		if (me && page.params.id && Number.isNaN(Number(page.params.id))) {
 			let path = window.location.pathname.substring(6);
 			goto(`/users/${me?.id}${path}`);
@@ -31,6 +30,7 @@
 	onMount(async () => {
 		console.log('User layout mounted');
 	});
+
 	$effect(() => {
 		const currentId = page.params.id ?? '';
 		if (currentId !== prevUserId) {

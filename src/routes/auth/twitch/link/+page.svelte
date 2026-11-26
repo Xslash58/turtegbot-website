@@ -8,7 +8,7 @@
 	import { Check, X } from 'phosphor-svelte';
 
 	let success: boolean = false;
-	let error: string = "";
+	let error: string = '';
 	let user: User | null = null;
 
 	onMount(async () => {
@@ -20,7 +20,7 @@
 
 		if (!user) {
 			console.error('User is not logged in');
-			error = "User not logged in";
+			error = 'User not logged in';
 			return;
 		}
 
@@ -29,11 +29,11 @@
 			return;
 		}
 
-        try {
+		try {
 			success = await LinkTwitchAccount(code);
 		} catch (err) {
 			console.error('Error linking Twitch account:', err);
-			error = err instanceof Error ? err.message : String(err).replace("Error: ", "");
+			error = err instanceof Error ? err.message : String(err).replace('Error: ', '');
 			return;
 		}
 
@@ -44,17 +44,21 @@
 <section class="loading">
 	{#if error}
 		<p>{error}</p>
-		{#if error.startsWith("Connection already linked")}
-		<p>Invoke "#unlink" command at <a href="https://twitch.tv/turtegbot" target="_blank">twitch.tv/turtegbot</a> with your twitch account and try again.</p>
+		{#if error.startsWith('Connection already linked')}
+			<p>
+				Invoke "#unlink" command at <a href="https://twitch.tv/turtegbot" target="_blank"
+					>twitch.tv/turtegbot</a
+				> with your twitch account and try again.
+			</p>
 		{/if}
-        <X size="40px" weight="bold" color="white" />
+		<X size="40px" weight="bold" color="white" />
 	{:else if !error && !success}
 		<p>Linking...</p>
 		<LoadingIndicator />
 	{:else}
 		<p>Link Successful!</p>
 		<p>You should be redirected soon.</p>
-        <Check size="40px" weight="bold" color="white" />
+		<Check size="40px" weight="bold" color="white" />
 	{/if}
 </section>
 

@@ -38,16 +38,15 @@
 		you authorize the Service to perform actions on your behalf strictly within the features you configure.
 	</p>
 	<p>
-		<b>Custom Webhooks:</b> You are responsible for keeping your custom incoming webhook identifiers
-		confidential. Any messages or triggers sent using your webhook identifier are treated as authorized
-		by you.
+		<b>Custom Webhooks:</b> You are responsible for keeping your custom incoming webhook identifiers confidential.
+		Any messages or triggers sent using your webhook identifier are treated as authorized by you.
 	</p>
 
 	<h2>4. User Content, Media Requests & Responsibility</h2>
 	<p>
 		<b>User Responsibility:</b> Broadcasters, channel moderators, and end users are solely responsible
-		for all text, commands, webhook payloads, links, and media (including YouTube videos) submitted,
-		queued, or displayed through TurtegBot.
+		for all text, commands, webhook payloads, links, and media (including YouTube videos) submitted, queued,
+		or displayed through TurtegBot.
 	</p>
 	<p>
 		<b>Copyright & DMCA:</b> TurtegBot acts solely as a technical pass-through tool for media request
@@ -122,11 +121,11 @@
 		These Terms are governed by and construed in accordance with the laws of Poland, without regard
 		to conflict-of-law principles.
 	</p>
-    <p>If you have questions regarding these Terms, you can reach us at:</p>
-    <ul>
-        <li>Email: <a href="mailto:support@xslash.ovh">support@xslash.ovh</a></li>
-        <li>Discord: <a href="https://dc.xslash.ovh/" target="_blank">Xslash's Shellter</a></li>
-    </ul>
+	<p>If you have questions regarding these Terms, you can reach us at:</p>
+	<ul>
+		<li>Email: <a href="mailto:support@xslash.ovh">support@xslash.ovh</a></li>
+		<li>Discord: <a href="https://dc.xslash.ovh/" target="_blank">Xslash's Shellter</a></li>
+	</ul>
 </article>
 
 <style lang="scss">

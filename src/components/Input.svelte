@@ -38,10 +38,6 @@
 		onPaste,
 		...restProps
 	}: Props = $props();
-
-	const clear = () => {
-		value = '';
-	};
 </script>
 
 <label class:disabled class:wide class:readonly>

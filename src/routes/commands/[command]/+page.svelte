@@ -5,18 +5,10 @@
 	import { onMount } from 'svelte';
 	import LoadingIndicator from '$components/LoadingIndicator.svelte';
 	import { X } from 'phosphor-svelte';
-	import type { User } from '$lib/API/Models/Users';
-	import { myUser } from '$lib/stores/userStore';
 	import { hasAnyInNamespace } from '$lib/stores/permissions';
 
 	let commandName = page.params.command;
 	let command: Command | undefined = $state(undefined);
-
-	let me: User | null = $state(null);
-
-	myUser.subscribe((value) => {
-		if (value) me = value;
-	});
 
 	onMount(async () => {
 		let commands = await GetCommands();
@@ -45,7 +37,7 @@
 		<hr />
 		{#if command.description.length > 0}
 			<section class="description">
-				{#each command.description as x}
+				{#each command.description as x, i (i)}
 					<p>{x}</p>
 				{/each}
 			</section>
@@ -61,7 +53,7 @@
 		{#if command.usage_examples.length > 0}
 			<h2>Usage Examples</h2>
 			<section class="usage-examples">
-				{#each command.usage_examples as example}
+				{#each command.usage_examples as example, i (i)}
 					<p>{example}</p>
 				{/each}
 			</section>

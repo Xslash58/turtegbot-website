@@ -82,7 +82,7 @@
 			{:else if founders.length === 0}
 				<p>No founders found.</p>
 			{:else}
-				{#each founders as founder}
+				{#each founders as founder, i (i)}
 					<button
 						class="founder"
 						onclick={() => window.open(`https://www.twitch.tv/${founder.login}`, '_blank')}
@@ -111,7 +111,7 @@
 						</section>
 					</button>
 				{/each}
-				{#each Array(Math.max(0, founderSlots - founders.length)) as _}
+				{#each { length: Math.max(0, founderSlots - founders.length) }, i (i)}
 					<button class="founder empty" disabled>
 						<img src={twitchLogo} alt="Empty Founder Slot" />
 						<section class="user-data">

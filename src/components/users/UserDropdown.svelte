@@ -7,7 +7,6 @@
 	import { fade } from 'svelte/transition';
 	import Button from '$components/Button.svelte';
 	import { Gavel, Gift, LockKey, SignOut } from 'phosphor-svelte';
-	import { hexToRgba } from '$lib/API/Helpers';
 	import { Logout } from '$lib/API/Auth';
 	import Role from './Role.svelte';
 	import Crowdin from '$components/Logo/Crowdin.svelte';
@@ -26,11 +25,6 @@
 		user: User | null;
 		isLoaded: boolean;
 	} = $props();
-
-	let roleBgColor: string | null = $state(null);
-	$effect(() => {
-		roleBgColor = user?.role?.color ? hexToRgba(user?.role?.color, 0.4) : null;
-	});
 
 	function openLoginModal() {
 		loginModalVisible.set(true);

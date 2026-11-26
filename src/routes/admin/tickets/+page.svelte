@@ -62,7 +62,7 @@
 		</label>
 	</section>
 	{#if isLoaded}
-		{#each tickets as ticket}
+		{#each tickets as ticket, i (i)}
 			<TicketCard
 				data={ticket}
 				adminMode={true}
