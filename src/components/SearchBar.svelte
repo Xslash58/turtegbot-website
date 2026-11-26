@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MagnifyingGlass, X } from 'phosphor-svelte';
+	import { MagnifyingGlass } from 'phosphor-svelte';
 	import LoadingIndicator from './LoadingIndicator.svelte';
 
 	export let searchTerm: string = '';

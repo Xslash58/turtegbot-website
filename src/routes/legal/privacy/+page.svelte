@@ -172,9 +172,9 @@
 		<li>Withdraw consent at any time by unlinking accounts or revoking OAuth permissions.</li>
 	</ul>
 	<p>
-		To submit a privacy request, email <a href="mailto:support@xslash.ovh">support@xslash.ovh</a> with your platform username/ID and the
-		specific action you are requesting. We may ask you to verify ownership of the account before
-		fulfilling the request.
+		To submit a privacy request, email <a href="mailto:support@xslash.ovh">support@xslash.ovh</a> with
+		your platform username/ID and the specific action you are requesting. We may ask you to verify ownership
+		of the account before fulfilling the request.
 	</p>
 
 	<h2>7. Age Requirement</h2>

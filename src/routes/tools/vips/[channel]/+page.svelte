@@ -73,7 +73,7 @@
 			{:else if vips.length === 0}
 				<p>No VIPs found.</p>
 			{:else}
-				{#each vips as vip}
+				{#each vips as vip, i (i)}
 					<button
 						class="vip"
 						onclick={() => window.open(`https://www.twitch.tv/${vip.login}`, '_blank')}

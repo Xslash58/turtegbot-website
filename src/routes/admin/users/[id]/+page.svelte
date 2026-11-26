@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import UserSearch from '$components/users/UserSearch.svelte';
-	import type { SearchUser, User } from '$lib/API/Models/Users';
+	import type { User } from '$lib/API/Models/Users';
 	import { GetUserPage } from '$lib/API/Users';
 	import KickLogo from '$lib/assets/KickLogo.svg';
 	import TwitchLogo from '$lib/assets/glitch_flat_white.svg';
@@ -41,8 +40,8 @@
 		if (user) {
 			selectedUser = user.user;
 			if (selectedUser == null) return;
-			userKickId = Number(selectedUser.kickId) ?? 0;
-			userTwitchId = Number(selectedUser.twitchId) ?? 0;
+			userKickId = Number(selectedUser.kickId);
+			userTwitchId = Number(selectedUser.twitchId);
 		} else {
 			selectedUser = null;
 			userKickId = 0;
@@ -194,7 +193,7 @@
 <style lang="scss">
 	.users {
 		display: flex;
-        flex-wrap: wrap;
+		flex-wrap: wrap;
 		flex-direction: row;
 		gap: 1rem;
 
@@ -259,16 +258,16 @@
 			}
 		}
 	}
-    @media (max-width: 768px) {
-        .users {
-            flex-direction: column;
-            align-items: center;
+	@media (max-width: 768px) {
+		.users {
+			flex-direction: column;
+			align-items: center;
 
-            .panel {
-                width: 100%;
-                padding: 0;
-                margin: 0;
-            }
-        }
-    }
+			.panel {
+				width: 100%;
+				padding: 0;
+				margin: 0;
+			}
+		}
+	}
 </style>

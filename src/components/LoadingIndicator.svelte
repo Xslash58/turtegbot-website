@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let size: number = 40;
+	export let size: number = 40;
 </script>
 
 <section class="loading-wrapper">

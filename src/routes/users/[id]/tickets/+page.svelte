@@ -30,7 +30,7 @@
 
 <section class="tickets">
 	{#if isLoaded}
-		{#each tickets as ticket}
+		{#each tickets as ticket, i (i)}
 			<TicketCard data={ticket} onDelete={(id) => deleteTicket(id)} />
 		{/each}
 	{:else}

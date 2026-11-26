@@ -60,7 +60,9 @@
 </script>
 
 <svelte:head>
-	<title>{channelName ? `Moderators for ${channelName} | TurtegBot` : 'Moderators | TurtegBot'}</title>
+	<title
+		>{channelName ? `Moderators for ${channelName} | TurtegBot` : 'Moderators | TurtegBot'}</title
+	>
 </svelte:head>
 
 <section class="mods">
@@ -73,7 +75,7 @@
 			{:else if mods.length === 0}
 				<p>No moderators found.</p>
 			{:else}
-				{#each mods as mod}
+				{#each mods as mod, i (i)}
 					<button
 						class="mod"
 						onclick={() => window.open(`https://www.twitch.tv/${mod.login}`, '_blank')}

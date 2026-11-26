@@ -32,25 +32,26 @@
 		isLoading = false;
 	});
 
-	async function handleForm(e: any) {
+	async function handleForm(e: SubmitEvent) {
 		e.preventDefault();
-		const formData = new FormData(e.target);
+		if (!e.target) return;
+		const formData = new FormData(e.currentTarget as HTMLFormElement);
 		const data = Object.fromEntries(formData);
 
 		const rawPlaylist = data['queue-backup-playlist'] as string;
 		const playlistId = getValidPlaylistId(rawPlaylist);
-		
-		if(rawPlaylist.trim() && !playlistId) {
-			feedbackDialog.set({
+
+		if (rawPlaylist.trim() && !playlistId) {
+			return feedbackDialog.set({
 				title: 'Invalid Playlist',
-				content: 'The provided playlist URL/ID is invalid. Please provide a valid YouTube playlist URL or ID.',
+				content:
+					'The provided playlist URL/ID is invalid. Please provide a valid YouTube playlist URL or ID.',
 				visible: true
 			});
-			return;
 		}
 
 		isLoading = true;
-		
+
 		const settings: MediaSettings = {
 			queue_backup_playlist_id: playlistId,
 			queue_requests_allowed: data['queue-requests-allowed'] === 'on',
@@ -60,10 +61,11 @@
 		};
 
 		if (user) {
-			for (const [_, roomId] of Object.entries(user.roomIds)) {
+			for (const roomId of Object.values(user.roomIds)) {
 				await PostMediaSettings(roomId, settings);
 			}
 		}
+
 		isLoading = false;
 	}
 
@@ -79,16 +81,17 @@
 			} else {
 				return null;
 			}
-		} catch {}
+		} catch {
+			return null;
+		}
 
 		const isValid = /^(PL|UU|LL|RD|OLAK|FL)[a-zA-Z0-9_-]{16,41}$/.test(candidate);
-		
+
 		return isValid ? candidate : null;
 	}
 
-	function getOverlayUrl(): string {
-		return `${window.location.origin}/users/${page.params.id}/mediarequests/overlay`;
-	}
+	const getOverlayUrl = (): string =>
+		`${window.location.origin}/users/${page.params.id}/mediarequests/overlay`;
 
 	function copyOverlayUrl() {
 		const overlayUrl = getOverlayUrl();
@@ -149,7 +152,7 @@
 					id="queue-requests-blacklist"
 					autocomplete="off"
 					disabled
-					value={'Not implemented yet...'}
+					value="Not implemented yet..."
 				/>
 			</label>
 

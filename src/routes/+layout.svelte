@@ -8,7 +8,7 @@
 	import { page } from '$app/state';
 	import AlertBar from '$components/AlertBar.svelte';
 
-	let { data, children } = $props();
+	let { children } = $props();
 
 	let isOverlay = $derived(page.url.pathname.includes('overlay'));
 	let isLegal = $derived(page.url.pathname.includes('legal'));

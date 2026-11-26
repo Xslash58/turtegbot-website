@@ -13,7 +13,7 @@
 	export let data: EntitlementGraphResponse;
 	export let requestedWidth: number | null = null;
 	export let requestedHeight: number | null = null;
-	
+
 	let svgElement: SVGSVGElement;
 	let gElement: SVGGElement;
 

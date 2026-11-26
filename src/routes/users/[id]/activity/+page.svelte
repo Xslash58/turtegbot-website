@@ -70,7 +70,7 @@
 	</section>
 	{#if logs && Object.keys(logs).length > 0 && isLoaded}
 		<ul>
-			{#each logs as log}
+			{#each logs as log, i (i)}
 				{@const details = log.details ? JSON.parse(log.details) : {}}
 				<li>
 					<section class="user">

@@ -66,7 +66,7 @@
 		{...restProps}
 		{onchange}
 	>
-		{#each options as option}
+		{#each options as option, i (i)}
 			<option value={option.value} disabled={option.disabled}>{option.label}</option>
 		{/each}
 	</select>
@@ -99,7 +99,7 @@
 				autofocus
 			/>
 			<ul role="listbox">
-				{#each filteredOptions as option}
+				{#each filteredOptions as option, i (i)}
 					<li>
 						<button
 							type="button"

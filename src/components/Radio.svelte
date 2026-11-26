@@ -40,7 +40,7 @@
 	{#if children}
 		<legend>{@render children()}</legend>
 	{/if}
-	{#each options as option}
+	{#each options as option, i (i)}
 		<label class:disabled={disabled || option.disabled}>
 			<input
 				type="radio"

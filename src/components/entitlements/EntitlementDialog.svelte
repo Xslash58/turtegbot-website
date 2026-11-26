@@ -39,7 +39,6 @@
 		user?: User;
 		entitlementId?: string;
 		mode: 'user' | 'entitlement';
-		onDelete?: (id: number) => void;
 	} = $props();
 
 	onMount(async () => {
@@ -127,8 +126,15 @@
 							disabled={selectedEntitlementId === null ||
 								isLoading ||
 								graphData?.links.some(
-									(e) => (mode === 'user' && user && e.source === `user:${user.id}` && e.target === selectedEntitlementId)
-									|| (mode === 'entitlement' && entitlementId && e.source === `${entitlementId}` && e.target === selectedEntitlementId)
+									(e) =>
+										(mode === 'user' &&
+											user &&
+											e.source === `user:${user.id}` &&
+											e.target === selectedEntitlementId) ||
+										(mode === 'entitlement' &&
+											entitlementId &&
+											e.source === `${entitlementId}` &&
+											e.target === selectedEntitlementId)
 								)}
 							onclick={addEntitlement}
 						>
@@ -143,8 +149,15 @@
 							disabled={selectedEntitlementId === null ||
 								isLoading ||
 								!graphData?.links.some(
-									(e) => (mode === 'user' && user && e.source === `user:${user.id}` && e.target === selectedEntitlementId)
-									|| (mode === 'entitlement' && entitlementId && e.source === `${entitlementId}` && e.target === selectedEntitlementId)
+									(e) =>
+										(mode === 'user' &&
+											user &&
+											e.source === `user:${user.id}` &&
+											e.target === selectedEntitlementId) ||
+										(mode === 'entitlement' &&
+											entitlementId &&
+											e.source === `${entitlementId}` &&
+											e.target === selectedEntitlementId)
 								)}
 							onclick={removeEntitlement}
 						>
@@ -210,10 +223,6 @@
 
 			padding: 10px;
 			gap: 10px;
-
-			.radios {
-				text-align: left;
-			}
 
 			h2 {
 				margin: 0;

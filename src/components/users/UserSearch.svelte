@@ -23,7 +23,7 @@
 	let mounted = false;
 	let showDropdown = false;
 	let isLoading = false;
-	let timeout: number | null = null;
+	let timeout: ReturnType<typeof setTimeout> | null = null;
 
 	onMount(() => {
 		mounted = true;
@@ -81,7 +81,7 @@
 		</section>
 		{#if users.length > 0 && showDropdown}
 			<section class="users-dropdown" transition:fade={{ duration: 100, easing: cubicIn }}>
-				{#each users as user}
+				{#each users as user, i (i)}
 					<button
 						on:mousedown={(e) => {
 							e.preventDefault();
@@ -103,14 +103,25 @@
 		{/if}
 	{:else if selectionMode}
 		<section class="search-bar">
-			<button class="fake-cover" on:click={() => selectUser(null)} aria-label="Clear result"></button>
+			<button class="fake-cover" on:click={() => selectUser(null)} aria-label="Clear result"
+			></button>
 			<section class="icon">
-				<img src={selectedUser.profile?.profile_image_url ?? loadingTexture} alt="" width="16" height="16" style="border-radius: 50%;" />
+				<img
+					src={selectedUser.profile?.profile_image_url ?? loadingTexture}
+					alt=""
+					width="16"
+					height="16"
+					style="border-radius: 50%;"
+				/>
 			</section>
 			<input
-				type="text" value={selectedUser.profile?.display_name ?? selectedUser.twitchUsername ?? selectedUser.kickUsername}
+				type="text"
+				value={selectedUser.profile?.display_name ??
+					selectedUser.twitchUsername ??
+					selectedUser.kickUsername}
 				readonly
-				disabled />
+				disabled
+			/>
 			<section style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);">
 				<X fill="white" weight="bold" />
 			</section>
@@ -119,7 +130,7 @@
 </section>
 
 <style lang="scss">
-	@use "sass:color";
+	@use 'sass:color';
 	.search-bar {
 		display: flex;
 		align-items: center;

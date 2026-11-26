@@ -231,7 +231,7 @@
 			<tbody>
 				{#each codes.filter((x) => x.code
 						.toLowerCase()
-						.includes(searchPhrase.toLowerCase())) as code}
+						.includes(searchPhrase.toLowerCase())) as code, i (i)}
 					<tr class:deleted={code.deleted}>
 						<td id="action-buttons">
 							<button on:click={() => deleteCode(code.ID)} disabled={code.deleted}>
@@ -287,40 +287,8 @@
 				gap: 5px;
 				width: 100%;
 			}
-			input {
-				width: 75%;
-				background-color: #303030;
-				color: white;
-				text-align: center;
-				border: none;
-				margin: 2px 2px;
-				border-radius: 5px;
-
-				&:disabled {
-					background-color: #202020;
-					cursor: not-allowed;
-				}
-			}
-			input[type='checkbox'] {
-				width: auto;
-			}
 			label[for='mass-generate'] {
 				justify-content: left;
-			}
-
-			button {
-				background-color: #33ca00;
-				color: white;
-				padding: 0.5rem 1rem;
-				border: none;
-				border-radius: 5px;
-				margin: 5px 0;
-				width: 100%;
-
-				&:disabled {
-					background-color: #202020;
-					cursor: not-allowed;
-				}
 			}
 			small {
 				text-align: center;

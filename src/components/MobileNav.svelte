@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { hexToRgba } from '$lib/API/Helpers';
 	import type { User } from '$lib/API/Models/Users';
 	import { fade } from 'svelte/transition';
 	import { Gift, Hash, House, Rewind, SignOut, Wrench } from 'phosphor-svelte';
@@ -10,8 +9,6 @@
 	import Role from './users/Role.svelte';
 
 	const { user, onAction }: { user: User | null; onAction?: () => void } = $props();
-
-	const roleBgColor = user?.role?.color ? hexToRgba(user?.role?.color, 0.4) : null;
 
 	function handleClick() {
 		onAction?.();
@@ -140,20 +137,14 @@
 						background-color: #18181885;
 					}
 				}
+
 				p {
 					margin: 0;
 					font-weight: 600;
 					font-size: large;
 					color: white;
-
-					&.role {
-						font-size: small;
-						padding: 2px 5px;
-						border-radius: 5px;
-						color: white;
-						background-color: var(--role-color);
-					}
 				}
+
 				img {
 					width: 40px;
 					height: 40px;

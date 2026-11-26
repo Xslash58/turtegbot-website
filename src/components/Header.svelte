@@ -6,9 +6,7 @@
 	import christmasLights from '$lib/assets/header-xmas-lights.avif';
 	import turtegLogo from '$lib/assets/favicon.png';
 
-	import { loginModalVisible } from '$lib/stores/modalStore';
 	import { onMount } from 'svelte';
-	import LoadingIndicator from './LoadingIndicator.svelte';
 	import { page } from '$app/state';
 	import { myUser } from '$lib/stores/userStore';
 	import UserSearch from './users/UserSearch.svelte';
@@ -41,11 +39,6 @@
 
 		if (!page.route.id?.startsWith('/auth/')) isLoaded = true;
 	});
-
-	function openLoginModal() {
-		loginModalVisible.set(true);
-		console.log('Login modal opened');
-	}
 </script>
 
 <header style={import.meta.env.VITE_CHRISTMAS == '1' ? `background: url(${christmasBg});` : ''}>

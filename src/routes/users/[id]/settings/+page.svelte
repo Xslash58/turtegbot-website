@@ -3,10 +3,10 @@
 	import Input from '$components/Input.svelte';
 	import Select from '$components/Select.svelte';
 	import Toggle from '$components/Toggle.svelte';
-import type { Language, RoomSettings } from '$lib/API/Models/Room';
+	import type { Language, RoomSettings } from '$lib/API/Models/Room';
 	import type { Webhook } from '$lib/API/Models/Users';
 	import {
-	DeleteWebhook,
+		DeleteWebhook,
 		GetAvailableLanguages,
 		GetRoomPowers,
 		GetRoomSettings,
@@ -59,9 +59,9 @@ import type { Language, RoomSettings } from '$lib/API/Models/Room';
 	}
 
 	async function removeWebhook(webhookId: string, force: boolean = false) {
-		if(user == null) return;
-		
-		if(!force) {
+		if (user == null) return;
+
+		if (!force) {
 			confirmationDialog.set({
 				visible: true,
 				text: `Are you sure you want to delete this webhook?
@@ -73,8 +73,8 @@ import type { Language, RoomSettings } from '$lib/API/Models/Room';
 			return;
 		}
 
-		const success = await DeleteWebhook(user.roomIds[selectedPlatform], webhookId);
-		webhooks = webhooks?.filter(w => w.webhookId !== webhookId) ?? null;
+		await DeleteWebhook(user.roomIds[selectedPlatform], webhookId);
+		webhooks = webhooks?.filter((w) => w.webhookId !== webhookId) ?? null;
 	}
 
 	async function handleForm(e: any) {
@@ -102,7 +102,7 @@ import type { Language, RoomSettings } from '$lib/API/Models/Room';
 
 		let redirectUri = import.meta.env.VITE_AUTH_TWITCH_URL_SCOPES + '&scope=';
 
-		let scopes = ["channel:bot"];
+		let scopes = ['channel:bot'];
 		for (const key in data) {
 			scopes.push(key);
 		}
@@ -142,7 +142,12 @@ import type { Language, RoomSettings } from '$lib/API/Models/Room';
 				<section class="form-group">
 					<label
 						>Language:
-						<Select id="language" name="language" options={languages.map((lang) => ({ value: lang.locale, label: lang.name }))} value={settings?.language} />
+						<Select
+							id="language"
+							name="language"
+							options={languages.map((lang) => ({ value: lang.locale, label: lang.name }))}
+							value={settings?.language}
+						/>
 					</label>
 
 					<label
@@ -173,12 +178,9 @@ import type { Language, RoomSettings } from '$lib/API/Models/Room';
 							><Toggle name="channel:manage:vips" /> Allow bot to grant VIPs on your behalf
 						</label>
 						<label
-							><Toggle name="channel:manage:moderators" /> Allow bot to grant Moderators
-							on your behalf
+							><Toggle name="channel:manage:moderators" /> Allow bot to grant Moderators on your behalf
 						</label>
-						<label
-							><Toggle name="channel:manage:broadcast" /> Allow bot to manage broadcast
-						</label>
+						<label><Toggle name="channel:manage:broadcast" /> Allow bot to manage broadcast </label>
 					</section>
 				</section>
 				<Button type="submit" variant="dark">Save Settings</Button>
@@ -199,7 +201,7 @@ import type { Language, RoomSettings } from '$lib/API/Models/Room';
 							</tr>
 						</thead>
 						<tbody>
-							{#each Object.entries(userPowers) as [username, power]}
+							{#each Object.entries(userPowers) as [username, power], i (i)}
 								<tr>
 									<td class="username"><b>{username}</b></td>
 									<td>{power}</td>
@@ -226,7 +228,7 @@ import type { Language, RoomSettings } from '$lib/API/Models/Room';
 							</tr>
 						</thead>
 						<tbody>
-							{#each webhooks as webhook}
+							{#each webhooks as webhook, i (i)}
 								<tr>
 									<td class="actions">
 										<button on:click={() => removeWebhook(webhook.webhookId)}>
@@ -235,7 +237,12 @@ import type { Language, RoomSettings } from '$lib/API/Models/Room';
 									</td>
 									<td>{formatDate(webhook.createdAt)}</td>
 									<td class="webhook-id">
-										<button on:click={() => copyToClipboard(`https://turteghook.xslash.ovh/webhooks/${webhook.webhookId}`)}>
+										<button
+											on:click={() =>
+												copyToClipboard(
+													`https://turteghook.xslash.ovh/webhooks/${webhook.webhookId}`
+												)}
+										>
 											{webhook.webhookId}
 										</button>
 									</td>
@@ -290,43 +297,10 @@ import type { Language, RoomSettings } from '$lib/API/Models/Room';
 		border-radius: 10px;
 	}
 
-	input,
-	select {
-		background-color: #191919;
-		color: white;
-		border: none;
-		outline: none;
-
-		text-align: center;
-
-		&:focus {
-			outline: none;
-			outline: 1px solid #4a90e2;
-		}
-
-		&:hover {
-			background-color: #282828;
-		}
-	}
-
-	input[type='text'],
-	select {
-		border-radius: 4px;
-	}
-
 	section.user-powers {
 		td {
 			text-align: center;
-			button {
-				background: none;
-				border: none;
-				cursor: pointer;
-				transition: 0.1s transform;
 
-				&:hover {
-					transform: scale(1.1);
-				}
-			}
 			&.username {
 				text-align: left;
 			}

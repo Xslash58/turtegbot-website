@@ -1,41 +1,19 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import {
-		Backpack,
-		Bed,
-		Briefcase,
-		DotsThree,
-		Exam,
-		ListMagnifyingGlass,
-		Moon,
-		Shower,
-	} from 'phosphor-svelte';
-	import type { AFK, User } from '$lib/API/Models/Users';
+	import { ListMagnifyingGlass } from 'phosphor-svelte';
+	import type { AFK } from '$lib/API/Models/Users';
 	import { DeleteAFK, GetAFKs, PatchAFK } from '$lib/API/Admin';
 	import { confirmationDialog } from '$lib/stores/modalStore';
 	import UserSearch from '$components/users/UserSearch.svelte';
-	import { myUser } from '$lib/stores/userStore';
 	import { AFKType } from '$lib/API/Models/Admin';
 	import SearchBar from '$components/SearchBar.svelte';
 	import AFKCard from '$components/admin/AFKCard.svelte';
-
-	let me: User | null = $myUser;
 
 	let isLoaded: boolean = $state(false);
 	let afks: AFK[] = $state([]);
 
 	let searchContent: string = $state('');
 	let searchUserId: number | null = null;
-
-	let typeIcons: Record<AFKType, typeof DotsThree> = {
-		[AFKType.NORMAL]: DotsThree,
-		[AFKType.SLEEP]: Bed,
-		[AFKType.SHOWER]: Shower,
-		[AFKType.SCHOOL]: Backpack,
-		[AFKType.STUDY]: Exam,
-		[AFKType.WORK]: Briefcase,
-		[AFKType.NAP]: Moon
-	};
 
 	onMount(async () => {
 		console.log('AFKs page mounted');
@@ -115,7 +93,7 @@
 		</button>
 	</section>
 	{#if isLoaded}
-		{#each afks as afk}
+		{#each afks as afk, i (i)}
 			<AFKCard
 				data={afk}
 				adminMode={true}
